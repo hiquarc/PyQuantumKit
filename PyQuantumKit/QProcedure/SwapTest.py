@@ -7,11 +7,11 @@ from PyQuantumKit.Classical.RunResult import *
 from .Common import *
 
 
-def SwapTestCircuit(framework : str, qctrlindex : int, s1indexlist : list[int], s2indexlist : list[int]):
+def AppendSwapTestCircuit(q_circuit, qctrlindex : int, s1indexlist : list[int], s2indexlist : list[int]):
     """
     Generate a quantum circuit for SWAP test
 
-        framework   : the target framework
+        q_circuit   : the quantum circuit to be appended
         qctrlindex  : the index of controlling qubit
         s1indexlist : the index list of target qubit array 1
         s2indexlist : the index list of target qubit array 2
@@ -22,12 +22,11 @@ def SwapTestCircuit(framework : str, qctrlindex : int, s1indexlist : list[int], 
     if N != len(s2indexlist):
         raise ValueError('s1indexlist and s2indexlist must have same length!')
     
-    qc = NewCircuit(framework, 2 * N + 1)
-    ApplyGate(qc, 'H', [qctrlindex])
+    ApplyGate(q_circuit, 'H', [qctrlindex])
     for i in range(0, N):
-        ApplyGate(qc, 'CSW', [qctrlindex, s1indexlist[i], s2indexlist[i]])
-    ApplyGate(qc, 'H', [qctrlindex])
-    return qc
+        ApplyGate(q_circuit, 'CSW', [qctrlindex, s1indexlist[i], s2indexlist[i]])
+    ApplyGate(q_circuit, 'H', [qctrlindex])
+    return q_circuit
 
 
 def RunSwapTest(qvm, GenProc, state1qlist : list[int], state2qlist : list[int], Ntimes : int) -> int:
@@ -49,7 +48,7 @@ def RunSwapTest(qvm, GenProc, state1qlist : list[int], state2qlist : list[int], 
 
     ptest = NewProgram(framework, Nqs + 1, Ncs + 1)
     AppendProgram(ptest, GenProc)
-    AppendCircuit(ptest, SwapTestCircuit(framework, Nqs, state1qlist, state2qlist))
+    AppendSwapTestCircuit(ptest, Nqs, state1qlist, state2qlist)
     Measure(ptest, [Nqs], [Ncs])
 
     counts = RunAndGetCounts(qvm, ptest, Ntimes)
@@ -77,7 +76,7 @@ def CheckTrRho1Rho2Equals1(qvm, GenProc, state1qlist : list[int], state2qlist : 
 
     ptest = NewProgram(framework, Nqs + 1, Ncs + 1)
     AppendProgram(ptest, GenProc)
-    AppendCircuit(ptest, SwapTestCircuit(framework, Nqs, state1qlist, state2qlist))
+    AppendSwapTestCircuit(framework, Nqs, state1qlist, state2qlist)
     Measure(ptest, [Nqs], [Ncs])
 
     for i in range(0, Ntimes):

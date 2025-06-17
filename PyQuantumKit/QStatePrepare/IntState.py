@@ -7,27 +7,6 @@ from PyQuantumKit.QProcedure.Common import *
 from PyQuantumKit.Classical.Common import *
 
 
-def CreateStateFromBinStr(q_circuit, binstr : str, qbitlist : list[int]):
-    """
-    Apply a quantum circuit to create classical state, which is given by a binary string.
-
-        e.g., '11001' --> q[0]=|1>, q[1]=|1>, q[2]=|0>, q[3]=|0>, q[4]=|1>
-
-        q_circuit : applied quantum circuit
-        binstr    : the '0'/'1' string to describe the state
-        qbitlist  : the target qubit array
-
-    -> Return : q_circuit
-    """
-    N = len(qbitlist)
-    for i in range(0, N):
-        if (binstr[i] != '1' and binstr[i] != '0'):
-            raise ValueError('binstr must be 0/1 string!')
-        if (binstr[i] == '1'):
-            ApplyGate(q_circuit, 'X', [qbitlist[i]])
-    return q_circuit
-
-
 def CreateKetIntLE(q_circuit, number : int, qbitlist : list[int]):
     """
     Apply a quantum circuit to create classical state, which is given by an integer with little-endian mode.
@@ -167,13 +146,13 @@ def UncomputeKetIntPlusEPhiNegationBE(q_circuit, number : int, phi : float, qbit
 
 def CreateKetInt1PlusEPhiKetInt2LE(q_circuit, number1 : int, number2 : int, phi : float, qbitlist : list[int]):
     """
-        Apply a quantum circuit to create state |x> + e^{iφ}|y>, where integers x and y are in little-endian.
+    Apply a quantum circuit to create state |x> + e^{iφ}|y>, where integers x and y are in little-endian.
 
-            q_circuit : applied quantum circuit
-            number1   : x
-            number2   : y
-            phi       : φ
-            qbitlist  : index of target qubits
+        q_circuit : applied quantum circuit
+        number1   : x
+        number2   : y
+        phi       : φ
+        qbitlist  : index of target qubits
 
     -> Return : q_circuit
     """
@@ -199,13 +178,13 @@ def CreateKetInt1PlusEPhiKetInt2LE(q_circuit, number1 : int, number2 : int, phi 
 
 def CreateKetInt1PlusEPhiKetInt2BE(q_circuit, number1 : int, number2 : int, phi : float, qbitlist : list[int]):
     """
-        Apply a quantum circuit to create state |x> + e^{iφ}|y>, where integers x and y are in big-endian.
+    Apply a quantum circuit to create state |x> + e^{iφ}|y>, where integers x and y are in big-endian.
 
-            q_circuit : applied quantum circuit
-            number1   : x
-            number2   : y
-            phi       : φ
-            qbitlist  : index of target qubits
+        q_circuit : applied quantum circuit
+        number1   : x
+        number2   : y
+        phi       : φ
+        qbitlist  : index of target qubits
 
     -> Return : q_circuit
     """
@@ -213,13 +192,13 @@ def CreateKetInt1PlusEPhiKetInt2BE(q_circuit, number1 : int, number2 : int, phi 
 
 def UncomputeKetInt1PlusEPhiKetInt2LE(q_circuit, number1 : int, number2 : int, phi : float, qbitlist : list[int]):
     """
-        Apply a quantum circuit to uncompute state |x> + e^{iφ}|y>, where integers x and y are in little-endian.
+    Apply a quantum circuit to uncompute state |x> + e^{iφ}|y>, where integers x and y are in little-endian.
 
-            q_circuit : applied quantum circuit
-            number1   : x
-            number2   : y
-            phi       : φ
-            qbitlist  : index of target qubits
+        q_circuit : applied quantum circuit
+        number1   : x
+        number2   : y
+        phi       : φ
+        qbitlist  : index of target qubits
 
     -> Return : q_circuit
     """
@@ -227,13 +206,13 @@ def UncomputeKetInt1PlusEPhiKetInt2LE(q_circuit, number1 : int, number2 : int, p
 
 def UncomputeKetInt1PlusEPhiKetInt2BE(q_circuit, number1 : int, number2 : int, phi : float, qbitlist : list[int]):
     """
-        Apply a quantum circuit to uncompute state |x> + e^{iφ}|y>, where integers x and y are in big-endian.
+    Apply a quantum circuit to uncompute state |x> + e^{iφ}|y>, where integers x and y are in big-endian.
 
-            q_circuit : applied quantum circuit
-            number1   : x
-            number2   : y
-            phi       : φ
-            qbitlist  : index of target qubits
+        q_circuit : applied quantum circuit
+        number1   : x
+        number2   : y
+        phi       : φ
+        qbitlist  : index of target qubits
 
     -> Return : q_circuit
     """
