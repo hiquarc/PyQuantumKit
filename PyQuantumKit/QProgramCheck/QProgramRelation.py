@@ -125,7 +125,7 @@ def RunIdentityCheck(qvm, TargetProc, NPoints : int = Default_Identity_NPoints) 
         CreatePauliState(ptest, randompaulis, qlist)
         AppendProgram(ptest, TargetProc)
         UncomputePauliState(ptest, randompaulis, qlist)
-        Measure(ptest, qlist, mlist)
+        ApplyMeasure(ptest, qlist, mlist)
 
         counts = CountLastBitsOfResultDict(RunAndGetCounts(qvm, ptest, 1), Nqs, fw_req_reverse)
         result = int(FirstResultStr(counts, fw_req_reverse))
@@ -243,7 +243,7 @@ def RunKeepBasisCheck(qvm, TargetProc,
 
             CreateKetIntLE(ptest, num, qlist)
             AppendProgram(ptest, TargetProc)
-            Measure(ptest, qlist, mlist)
+            ApplyMeasure(ptest, qlist, mlist)
 
             counts = CountLastBitsOfResultDict(RunAndGetCounts(qvm, ptest, 1), Nqs, fw_req_reverse)
             m = int(FirstResultStr(counts, fw_req_reverse))

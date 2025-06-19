@@ -49,7 +49,7 @@ def RunSwapTest(qvm, GenProc, state1qlist : list[int], state2qlist : list[int], 
     ptest = NewProgram(framework, Nqs + 1, Ncs + 1)
     AppendProgram(ptest, GenProc)
     AppendSwapTestCircuit(ptest, Nqs, state1qlist, state2qlist)
-    Measure(ptest, [Nqs], [Ncs])
+    ApplyMeasure(ptest, [Nqs], [Ncs])
 
     counts = RunAndGetCounts(qvm, ptest, Ntimes)
     res = CountLastBitsOfResultDict(counts, 1, fw_req_reverse)
@@ -77,7 +77,7 @@ def CheckTrRho1Rho2Equals1(qvm, GenProc, state1qlist : list[int], state2qlist : 
     ptest = NewProgram(framework, Nqs + 1, Ncs + 1)
     AppendProgram(ptest, GenProc)
     AppendSwapTestCircuit(framework, Nqs, state1qlist, state2qlist)
-    Measure(ptest, [Nqs], [Ncs])
+    ApplyMeasure(ptest, [Nqs], [Ncs])
 
     for i in range(0, Ntimes):
         counts = RunAndGetCounts(qvm, ptest, 1)

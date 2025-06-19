@@ -46,7 +46,7 @@ def ApplyGate(q_circuit, gate_str : str, qbits : list[int], paras : list = []):
     return q_circuit
 
 
-def Measure(q_circuit, qindex : list[int], cindex : list[int]):
+def ApplyMeasure(q_circuit, qindex : list[int], cindex : list[int]):
     """
     Apply measurement operation on a quantum circuit
 
@@ -76,7 +76,7 @@ def MultiApplySQGate(q_circuit, gate_str : str, qbitlist : list[int], paras : li
     return q_circuit
 
 
-def Reverse(q_circuit, qbitlist : list[int]):
+def ApplyReverse(q_circuit, qbitlist : list[int]):
     """
     Apply a reverse operation on a qubit array.
 

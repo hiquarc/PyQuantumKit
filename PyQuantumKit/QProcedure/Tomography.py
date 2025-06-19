@@ -30,9 +30,9 @@ def RunQubitTomography(qvm, GenProc, qbitindex : int, Ntimes : int) -> tuple[com
     AppendProgram(py, GenProc)
     AppendProgram(pz, GenProc)
 
-    MeasureX(px, [qbitindex], [Ncs])
-    MeasureY(py, [qbitindex], [Ncs])
-    MeasureZ(pz, [qbitindex], [Ncs])
+    ApplyMeasureX(px, [qbitindex], [Ncs])
+    ApplyMeasureY(py, [qbitindex], [Ncs])
+    ApplyMeasureZ(pz, [qbitindex], [Ncs])
 
     res_x = CountLastBitsOfResultDict(RunAndGetCounts(qvm, px, Ntimes), 1, fw_req_reverse)
     Nof0 = res_x.get('0', 0)
