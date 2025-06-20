@@ -1,20 +1,22 @@
-# qframes/_pyqpanda3.py
+# _qframes/_pyqpanda3.py
 #    2025/6/10
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from .code_translate import *
+from .code_translate import get_args_assign_str, get_standard_gatename
 
 # Whether the reverse of output 0/1 string is required to let the index of characters match corresponding cbits
-ReverseRunOutputString = True
+REVERSE_OUTPUT_STRING = True
 
 # Translate the gate applying into the code of calling in pyqpanda3
 def GATE(gate_name : str, nqs : int, nps : int) -> str:
-    g = ConvertToSandard(gate_name).upper()
+    g = get_standard_gatename(gate_name).upper()
     if g == 'I':
         return ''
     if g == 'M':
-        execstr = "qc<<Framework_Namespace['pyqpanda3'].measure([" + ArgsAssignStr('qbits', nqs) + "],[" + ArgsAssignStr('paras', nps) + "])"
+        execstr = "qc<<Framework_Namespace['pyqpanda3'].measure([" + \
+                  get_args_assign_str('qbits', nqs) + "],[" + \
+                  get_args_assign_str('paras', nps) + "])"
         return execstr
 
     if g == 'CX':
@@ -46,9 +48,10 @@ def GATE(gate_name : str, nqs : int, nps : int) -> str:
         return execstr
 
     if nps == 0:
-        execstr += g + "(" + ArgsAssignStr('qbits', nqs) + ")"
+        execstr += g + "(" + get_args_assign_str('qbits', nqs) + ")"
     else:
-        execstr += g + "(" + ArgsAssignStr('qbits', nqs) + "," + ArgsAssignStr('paras', nps) + ")"
+        execstr += g + "(" + get_args_assign_str('qbits', nqs) + "," + \
+                   get_args_assign_str('paras', nps) + ")"
     return execstr
 
 
@@ -85,16 +88,17 @@ def NEW(is_qprog : bool) -> str:
 
 
 def BITS(ret_cbit : bool, ret_list : bool) -> str:
-    execstr = "0 if isinstance(qc, Framework_Namespace['pyqpanda3'].QCircuit) else LengthOfIndexList(qc.cbits())" if ret_cbit else "LengthOfIndexList(qc.qubits())"
+    execstr = "0 if isinstance(qc, Framework_Namespace['pyqpanda3'].QCircuit) else indexlist_length(qc.cbits())" \
+              if ret_cbit else "indexlist_length(qc.qubits())"
     if ret_list:
         return "list(range(" + execstr + "))"
     else:
         return execstr
-    
+
 
 def RUN(line : int, model) -> str:
     if line == 1:
-        if model == None:
+        if model is None:
             return "qvm.run(qc,run_shots,model)"
         else:
             return "qvm.run(qc,run_shots)"

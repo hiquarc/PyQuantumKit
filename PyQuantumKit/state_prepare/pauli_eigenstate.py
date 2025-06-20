@@ -1,9 +1,9 @@
-# QStatePrepare/Pauli.py
+# state_prepare/pauli_eigenstate.py
 #    2025/6/12
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from PyQuantumKit.QProcedure.Common import *
+from pyquantumkit.procedure.general import apply_gate, derivative
 
 PauliZ_1    = 0
 PauliZ_Neg1 = 1
@@ -12,7 +12,7 @@ PauliX_Neg1 = 3
 PauliY_1    = 4
 PauliY_Neg1 = 5
 
-def CreatePauliState(q_circuit, paulilist : list[int], qbitlist : list[int]):
+def create_pauli_eigenstate(q_circuit, paulilist : list[int], qbitlist : list[int]):
     """
      Apply a quantum circuit to create multi-qubit Pauli eigenstate, where each index takes from 0 to 5
 
@@ -35,21 +35,21 @@ def CreatePauliState(q_circuit, paulilist : list[int], qbitlist : list[int]):
         #if paulilist[i] == PauliZ_1:
         #    pass
         if paulilist[i] == PauliZ_Neg1:
-            ApplyGate(q_circuit, 'X', [qbitlist[i]])
+            apply_gate(q_circuit, 'X', [qbitlist[i]])
         elif paulilist[i] == PauliX_1:
-            ApplyGate(q_circuit, 'H', [qbitlist[i]])
+            apply_gate(q_circuit, 'H', [qbitlist[i]])
         elif paulilist[i] == PauliX_Neg1:
-            ApplyGate(q_circuit, 'H', [qbitlist[i]])
-            ApplyGate(q_circuit, 'X', [qbitlist[i]])
+            apply_gate(q_circuit, 'H', [qbitlist[i]])
+            apply_gate(q_circuit, 'X', [qbitlist[i]])
         elif paulilist[i] == PauliY_1:
-            ApplyGate(q_circuit, 'H', [qbitlist[i]])
-            ApplyGate(q_circuit, 'S', [qbitlist[i]])
+            apply_gate(q_circuit, 'H', [qbitlist[i]])
+            apply_gate(q_circuit, 'S', [qbitlist[i]])
         elif paulilist[i] == PauliY_Neg1:
-            ApplyGate(q_circuit, 'H', [qbitlist[i]])
-            ApplyGate(q_circuit, 'SD', [qbitlist[i]])
+            apply_gate(q_circuit, 'H', [qbitlist[i]])
+            apply_gate(q_circuit, 'SD', [qbitlist[i]])
     return q_circuit
 
-def UncomputePauliState(q_circuit, paulilist : list[int], qbitlist : list[int]):
+def uncompute_pauli_eigenstate(q_circuit, paulilist : list[int], qbitlist : list[int]):
     """
      Apply a quantum circuit to uncompute multi-qubit Pauli eigenstate, where each index takes from 0 to 5
 
@@ -67,4 +67,4 @@ def UncomputePauliState(q_circuit, paulilist : list[int], qbitlist : list[int]):
 
     -> Return : q_circuit
     """
-    return Derivative(q_circuit, qbitlist, CreatePauliState, False, True, paulilist, qbitlist)
+    return derivative(q_circuit, qbitlist, create_pauli_eigenstate, False, True, paulilist, qbitlist)

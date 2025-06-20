@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 import sys
 import importlib as IL
@@ -17,25 +17,25 @@ Supported_Frameworks = {
 }
 Framework_Namespace = {}
 
-def GetFrameworkFromType(t : type) -> str:
+def get_framework_from_type(t : type) -> str:
     modstr = t.__module__
     for fname in Supported_Frameworks:
         if fname in modstr:
             return fname
     return ''
 
-def GetFrameworkFromObject(obj) -> str:
-    return GetFrameworkFromType(type(obj))
+def get_framework_from_object(obj) -> str:
+    return get_framework_from_type(type(obj))
 
 # the error type for unsupported error
-class UnsupportedError(Exception):
+class PyQuantumKitError(Exception):
     pass
 
-def PyQuantumKit_Initialize():
+def pyquantumkit_init():
     for fname in Supported_Frameworks:
         if fname in sys.modules:
             # Initialize the namespace of imported frameworks
             Framework_Namespace[fname] = IL.import_module(Supported_Frameworks[fname])
 
 
-PyQuantumKit_Initialize()
+pyquantumkit_init()

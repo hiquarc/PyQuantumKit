@@ -1,9 +1,9 @@
-# qframes/code_translate.py
+# _qframes/code_translate.py
 #    2025/6/10
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from PyQuantumKit import UnsupportedError
+from pyquantumkit import PyQuantumKitError
 
 Standard_Gate_Name = [
     'I', 'X', 'Y', 'Z', 'S', 'T', 'H',
@@ -14,7 +14,7 @@ Standard_Gate_Name = [
 ]
 
 
-def ArgsAssignStr(argname : str, nargs : int) -> str:
+def get_args_assign_str(argname : str, nargs : int) -> str:
     s = ""
     for i in range(nargs):
         s += (argname + "[" + str(i) + "]")
@@ -24,7 +24,7 @@ def ArgsAssignStr(argname : str, nargs : int) -> str:
 
 
 # Map the original gate name into standard name
-def ConvertToSandard(origin_gate_name : str) -> str:
+def get_standard_gatename(origin_gate_name : str) -> str:
     g = origin_gate_name.upper()
 
     # Convert the nonstandard gate name into standard gate name
@@ -52,7 +52,7 @@ def ConvertToSandard(origin_gate_name : str) -> str:
         return 'CU1'
     if g == 'U3' or g == 'U':
         return 'U3'
-    
+
     if g in Standard_Gate_Name:
         return g
-    raise UnsupportedError("Gate is not supported: " + g)
+    raise PyQuantumKitError("Gate is not supported: " + g)

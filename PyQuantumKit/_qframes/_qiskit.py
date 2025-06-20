@@ -1,20 +1,20 @@
-# qframes/_qiskit.py
+# _qframes/_qiskit.py
 #    2025/6/10
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from .code_translate import *
+from .code_translate import get_args_assign_str, get_standard_gatename
 
 # Whether the reverse of output 0/1 string is required to let the index of characters match corresponding cbits
-ReverseRunOutputString = True
+REVERSE_OUTUPT_STRING = True
 
 # Translate the gate applying into the code of calling in qiskit
 def GATE(gate_name : str, nqs : int, nps : int) -> str:
-    g = ConvertToSandard(gate_name).lower()
+    g = get_standard_gatename(gate_name).lower()
     if g == 'i':
         return ''
     if g == 'm':
-        execstr = "qc.measure([" + ArgsAssignStr('qbits', nqs) + "],[" + ArgsAssignStr('paras', nps) + "])"
+        execstr = "qc.measure([" + get_args_assign_str('qbits', nqs) + "],[" + get_args_assign_str('paras', nps) + "])"
         return execstr
 
     if g == 'sw':
@@ -36,9 +36,9 @@ def GATE(gate_name : str, nqs : int, nps : int) -> str:
 
     execstr = "qc." + g + "("
     if nps == 0:
-        execstr += ArgsAssignStr('qbits', nqs) + ")"
+        execstr += get_args_assign_str('qbits', nqs) + ")"
     else:
-        execstr += ArgsAssignStr('paras', nps) + "," + ArgsAssignStr('qbits', nqs) + ")"
+        execstr += get_args_assign_str('paras', nps) + "," + get_args_assign_str('qbits', nqs) + ")"
     return execstr
 
 

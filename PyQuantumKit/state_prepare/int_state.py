@@ -1,13 +1,11 @@
-# QStatePrepare/IntState.py
+# state_prepare/int_state.py
 #    2025/6/11
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from PyQuantumKit.QProcedure.Common import *
-from PyQuantumKit.Classical.Common import *
+from pyquantumkit.procedure.general import apply_gate, derivative
 
-
-def CreateKetIntLE(q_circuit, number : int, qbitlist : list[int]):
+def create_ket_int_le(q_circuit, number : int, qbitlist : list[int]):
     """
     Apply a quantum circuit to create classical state, which is given by an integer with little-endian mode.
 
@@ -23,11 +21,11 @@ def CreateKetIntLE(q_circuit, number : int, qbitlist : list[int]):
     temp = number
     for i in range(0, N):
         if ((temp & 1) == 1):
-            ApplyGate(q_circuit, 'X', [qbitlist[i]])
+            apply_gate(q_circuit, 'X', [qbitlist[i]])
         temp >>= 1
     return q_circuit
 
-def CreateKetIntBE(q_circuit, number : int, qbitlist : list[int]):
+def create_ket_int_be(q_circuit, number : int, qbitlist : list[int]):
     """
     Apply a quantum circuit to create classical state, which is given by an integer with big-endian mode.
 
@@ -39,9 +37,9 @@ def CreateKetIntBE(q_circuit, number : int, qbitlist : list[int]):
 
     -> Return : q_circuit
     """
-    return Derivative(q_circuit, qbitlist, CreateKetIntLE, True, False, number, qbitlist)
+    return derivative(q_circuit, qbitlist, create_ket_int_le, True, False, number, qbitlist)
 
-def UncomputeKetIntLE(q_circuit, number : int, qbitlist : list[int]):
+def uncompute_ket_int_le(q_circuit, number : int, qbitlist : list[int]):
     """
     Apply a quantum circuit to uncompute classical state, which is given by an integer with little-endian mode.
 
@@ -53,9 +51,9 @@ def UncomputeKetIntLE(q_circuit, number : int, qbitlist : list[int]):
 
     -> Return : q_circuit
     """
-    return CreateKetIntLE(q_circuit, number, qbitlist)
+    return create_ket_int_le(q_circuit, number, qbitlist)
 
-def UncomputeKetIntBE(q_circuit, number : int, qbitlist : list[int]):
+def uncompute_ket_int_be(q_circuit, number : int, qbitlist : list[int]):
     """
     Apply a quantum circuit to uncompute classical state, which is given by an integer with big-endian mode.
 
@@ -67,11 +65,11 @@ def UncomputeKetIntBE(q_circuit, number : int, qbitlist : list[int]):
 
     -> Return : q_circuit
     """
-    return CreateKetIntBE(q_circuit, number, qbitlist)
+    return create_ket_int_be(q_circuit, number, qbitlist)
 
 
 
-def CreateKetIntPlusEPhiNegationLE(q_circuit, number : int, phi : float, qbitlist : list[int]):
+def create_ket_int_plus_eiphi_neg_le(q_circuit, number : int, phi : float, qbitlist : list[int]):
     """
     Apply a quantum circuit to create state |x> + e^{iφ}|~x>, where ~x is the bitwise negation of x, and x is in little-endian mode.
 
@@ -85,25 +83,25 @@ def CreateKetIntPlusEPhiNegationLE(q_circuit, number : int, phi : float, qbitlis
     N = len(qbitlist)
     temp = number >> 1
 
-    ApplyGate(q_circuit, 'H', [qbitlist[0]])
+    apply_gate(q_circuit, 'H', [qbitlist[0]])
     if ((number & 1) == 1):
-        ApplyGate(q_circuit, 'U1', [qbitlist[0]], [phi])
+        apply_gate(q_circuit, 'U1', [qbitlist[0]], [phi])
         for i in range(1, N):
             if ((temp & 1) == 0):
-                ApplyGate(q_circuit, 'X', [qbitlist[i]])
+                apply_gate(q_circuit, 'X', [qbitlist[i]])
             temp >>= 1
-            ApplyGate(q_circuit, 'CX', [qbitlist[0], qbitlist[i]])
+            apply_gate(q_circuit, 'CX', [qbitlist[0], qbitlist[i]])
     else:
-        ApplyGate(q_circuit, 'U1', [qbitlist[0]], [-phi])
+        apply_gate(q_circuit, 'U1', [qbitlist[0]], [-phi])
         for i in range(1, N):
             if ((temp & 1) == 1):
-                ApplyGate(q_circuit, 'X', [qbitlist[i]])
+                apply_gate(q_circuit, 'X', [qbitlist[i]])
             temp >>= 1
-            ApplyGate(q_circuit, 'CX', [qbitlist[0], qbitlist[i]])
+            apply_gate(q_circuit, 'CX', [qbitlist[0], qbitlist[i]])
 
     return q_circuit
 
-def CreateKetIntPlusEPhiNegationBE(q_circuit, number : int, phi : float, qbitlist : list[int]):
+def create_ket_int_plus_eiphi_neg_be(q_circuit, number : int, phi : float, qbitlist : list[int]):
     """
     Apply a quantum circuit to create state |x> + e^{iφ}|~x>, where ~x is the bitwise negation of x, and x is in big-endian mode.
 
@@ -114,9 +112,9 @@ def CreateKetIntPlusEPhiNegationBE(q_circuit, number : int, phi : float, qbitlis
 
     -> Return : q_circuit
     """
-    return Derivative(q_circuit, qbitlist, CreateKetIntPlusEPhiNegationLE, True, False, number, phi, qbitlist)
+    return derivative(q_circuit, qbitlist, create_ket_int_plus_eiphi_neg_le, True, False, number, phi, qbitlist)
 
-def UncomputeKetIntPlusEPhiNegationLE(q_circuit, number : int, phi : float, qbitlist : list[int]):
+def uncompute_ket_int_plus_eiphi_neg_le(q_circuit, number : int, phi : float, qbitlist : list[int]):
     """
     Apply a quantum circuit to uncompute state |x> + e^{iφ}|~x>, where ~x is the bitwise negation of x, and x is in little-endian mode.
 
@@ -127,9 +125,9 @@ def UncomputeKetIntPlusEPhiNegationLE(q_circuit, number : int, phi : float, qbit
 
     -> Return : q_circuit
     """
-    return Derivative(q_circuit, qbitlist, CreateKetIntPlusEPhiNegationLE, False, True, number, phi, qbitlist)
+    return derivative(q_circuit, qbitlist, create_ket_int_plus_eiphi_neg_le, False, True, number, phi, qbitlist)
 
-def UncomputeKetIntPlusEPhiNegationBE(q_circuit, number : int, phi : float, qbitlist : list[int]):
+def uncompute_ket_int_plus_eiphi_neg_be(q_circuit, number : int, phi : float, qbitlist : list[int]):
     """
     Apply a quantum circuit to uncompute state |x> + e^{iφ}|~x>, where ~x is the bitwise negation of x, and x is in big-endian mode.
 
@@ -140,11 +138,11 @@ def UncomputeKetIntPlusEPhiNegationBE(q_circuit, number : int, phi : float, qbit
 
     -> Return : q_circuit
     """
-    return Derivative(q_circuit, qbitlist, CreateKetIntPlusEPhiNegationLE, True, True, number, phi, qbitlist)
+    return derivative(q_circuit, qbitlist, create_ket_int_plus_eiphi_neg_le, True, True, number, phi, qbitlist)
 
 
 
-def CreateKetInt1PlusEPhiKetInt2LE(q_circuit, number1 : int, number2 : int, phi : float, qbitlist : list[int]):
+def create_ket_int1_plus_eiphi_ket_int2_le(q_circuit, number1 : int, number2 : int, phi : float, qbitlist : list[int]):
     """
     Apply a quantum circuit to create state |x> + e^{iφ}|y>, where integers x and y are in little-endian.
 
@@ -165,7 +163,7 @@ def CreateKetInt1PlusEPhiKetInt2LE(q_circuit, number1 : int, number2 : int, phi 
     for i in range(0, N):
         if ((temp1 & 1) == (temp2 & 1)):
             if ((temp1 & 1) == 1):
-                ApplyGate(q_circuit, 'X', [qbitlist[i]])
+                apply_gate(q_circuit, 'X', [qbitlist[i]])
         else:
             temp3 |= ((temp1 & 1) << len(difflist))
             difflist.append(i)
@@ -173,10 +171,10 @@ def CreateKetInt1PlusEPhiKetInt2LE(q_circuit, number1 : int, number2 : int, phi 
         temp2 >>= 1
 
     if (len(difflist) > 0):
-        CreateKetIntPlusEPhiNegationLE(q_circuit, temp3, phi, difflist)
+        create_ket_int_plus_eiphi_neg_le(q_circuit, temp3, phi, difflist)
     return q_circuit
 
-def CreateKetInt1PlusEPhiKetInt2BE(q_circuit, number1 : int, number2 : int, phi : float, qbitlist : list[int]):
+def create_ket_int1_plus_eiphi_ket_int2_be(q_circuit, number1 : int, number2 : int, phi : float, qbitlist : list[int]):
     """
     Apply a quantum circuit to create state |x> + e^{iφ}|y>, where integers x and y are in big-endian.
 
@@ -188,9 +186,9 @@ def CreateKetInt1PlusEPhiKetInt2BE(q_circuit, number1 : int, number2 : int, phi 
 
     -> Return : q_circuit
     """
-    return Derivative(q_circuit, qbitlist, CreateKetInt1PlusEPhiKetInt2LE, True, False, number1, number2, phi, qbitlist)
+    return derivative(q_circuit, qbitlist, create_ket_int1_plus_eiphi_ket_int2_le, True, False, number1, number2, phi, qbitlist)
 
-def UncomputeKetInt1PlusEPhiKetInt2LE(q_circuit, number1 : int, number2 : int, phi : float, qbitlist : list[int]):
+def uncompute_ket_int1_plus_eiphi_ket_int2_le(q_circuit, number1 : int, number2 : int, phi : float, qbitlist : list[int]):
     """
     Apply a quantum circuit to uncompute state |x> + e^{iφ}|y>, where integers x and y are in little-endian.
 
@@ -202,9 +200,9 @@ def UncomputeKetInt1PlusEPhiKetInt2LE(q_circuit, number1 : int, number2 : int, p
 
     -> Return : q_circuit
     """
-    return Derivative(q_circuit, qbitlist, CreateKetInt1PlusEPhiKetInt2LE, False, True, number1, number2, phi, qbitlist)
+    return derivative(q_circuit, qbitlist, create_ket_int1_plus_eiphi_ket_int2_le, False, True, number1, number2, phi, qbitlist)
 
-def UncomputeKetInt1PlusEPhiKetInt2BE(q_circuit, number1 : int, number2 : int, phi : float, qbitlist : list[int]):
+def uncompute_ket_int1_plus_eiphi_ket_int2_be(q_circuit, number1 : int, number2 : int, phi : float, qbitlist : list[int]):
     """
     Apply a quantum circuit to uncompute state |x> + e^{iφ}|y>, where integers x and y are in big-endian.
 
@@ -216,4 +214,4 @@ def UncomputeKetInt1PlusEPhiKetInt2BE(q_circuit, number1 : int, number2 : int, p
 
     -> Return : q_circuit
     """
-    return Derivative(q_circuit, qbitlist, CreateKetInt1PlusEPhiKetInt2LE, True, True, number1, number2, phi, qbitlist)
+    return derivative(q_circuit, qbitlist, create_ket_int1_plus_eiphi_ket_int2_le, True, True, number1, number2, phi, qbitlist)

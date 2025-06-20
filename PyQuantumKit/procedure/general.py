@@ -1,14 +1,15 @@
-# QProcedure/Common.py
+# procedure/general.py
 #    2025/6/9
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from PyQuantumKit import GetFrameworkFromObject
-from PyQuantumKit.qframes.framework_map import *
-from PyQuantumKit.Classical.Common import LengthOfIndexList
+from pyquantumkit import get_framework_from_object
+from pyquantumkit._qframes.framework_map import quantum_action, Action
+from pyquantumkit.classical.common import indexlist_length
 
 
-def Derivative(q_circuit, qbitlist : list[int], createfunc : callable, rev_endian = False, uncomp = False, *args, **kwargs):
+def derivative(q_circuit, qbitlist : list[int], createfunc : callable, rev_endian = False, uncomp = False,\
+                *args, **kwargs):
     """
     Generate the derivative circuit based on quantum circuit function <createfunc>
 
@@ -19,19 +20,19 @@ def Derivative(q_circuit, qbitlist : list[int], createfunc : callable, rev_endia
         uncomp     : whether generate the inverse version of target quantum circuit
         ...        : the parameters required in <createfunc>
 
-    -> Return : q_circuit; if q_circuit == None, create a new circuit
+    -> Return : q_circuit; if q_circuit is None, create a new circuit
     """
-    f = GetFrameworkFromObject(q_circuit)
-    tempqc = NewCircuit(f, LengthOfIndexList(qbitlist))
+    f = get_framework_from_object(q_circuit)
+    tempqc = new_circuit(f, indexlist_length(qbitlist))
     createfunc(tempqc, *args, **kwargs)
     if rev_endian:
-        AppendCircuit(q_circuit, tempqc, range(0, len(qbitlist))[::-1], uncomp)
+        append_circuit(q_circuit, tempqc, range(0, len(qbitlist))[::-1], uncomp)
     else:
-        AppendCircuit(q_circuit, tempqc, None, uncomp)
+        append_circuit(q_circuit, tempqc, None, uncomp)
     return q_circuit
 
 
-def ApplyGate(q_circuit, gate_str : str, qbits : list[int], paras : list = []):
+def apply_gate(q_circuit, gate_str : str, qbits : list[int], paras : list = []):
     """
     Apply a quantum gate on a quantum circuit
 
@@ -42,11 +43,11 @@ def ApplyGate(q_circuit, gate_str : str, qbits : list[int], paras : list = []):
 
     -> Return : q_circuit
     """
-    QuantumActionMap(Action.GATE, q_circuit, gate_str, qbits, paras)
+    quantum_action(Action.GATE, q_circuit, gate_str, qbits, paras)
     return q_circuit
 
 
-def ApplyMeasure(q_circuit, qindex : list[int], cindex : list[int]):
+def apply_measure(q_circuit, qindex : list[int], cindex : list[int]):
     """
     Apply measurement operation on a quantum circuit
 
@@ -56,11 +57,11 @@ def ApplyMeasure(q_circuit, qindex : list[int], cindex : list[int]):
 
     -> Return : q_circuit
     """
-    QuantumActionMap(Action.GATE, q_circuit, 'M', qindex, cindex)
+    quantum_action(Action.GATE, q_circuit, 'M', qindex, cindex)
     return q_circuit
 
 
-def MultiApplySQGate(q_circuit, gate_str : str, qbitlist : list[int], paras : list = []):
+def multi_apply_sqgate(q_circuit, gate_str : str, qbitlist : list[int], paras : list = []):
     """
     Apply a series of same single-qubit gate on a quantum circuit
 
@@ -72,11 +73,11 @@ def MultiApplySQGate(q_circuit, gate_str : str, qbitlist : list[int], paras : li
     -> Return : q_circuit
     """
     for i in qbitlist:
-        ApplyGate(q_circuit, gate_str, [i], paras)
+        apply_gate(q_circuit, gate_str, [i], paras)
     return q_circuit
 
 
-def ApplyReverse(q_circuit, qbitlist : list[int]):
+def apply_reverse(q_circuit, qbitlist : list[int]):
     """
     Apply a reverse operation on a qubit array.
 
@@ -87,11 +88,11 @@ def ApplyReverse(q_circuit, qbitlist : list[int]):
     """
     N = len(qbitlist)
     for i in range(0, N // 2):
-        ApplyGate(q_circuit, 'SW', [qbitlist[i], qbitlist[N - i - 1]])
+        apply_gate(q_circuit, 'SW', [qbitlist[i], qbitlist[N - i - 1]])
     return q_circuit
 
 
-def AppendCircuit(dest_qcir, src_qcir, remap = 0, inverse : bool = False, control : bool = False):
+def append_circuit(dest_qcir, src_qcir, remap = 0, inverse : bool = False, control : bool = False):
     """
     Apply a quantum circuit on a qubit array.
 
@@ -108,14 +109,14 @@ def AppendCircuit(dest_qcir, src_qcir, remap = 0, inverse : bool = False, contro
     remaplist = None
     if isinstance(remap, int):
         if remap > 0:
-            remaplist = [x + remap for x in GetQubitList(src_qcir)]
+            remaplist = [x + remap for x in get_qubit_list(src_qcir)]
     else:
         remaplist = remap
-    QuantumActionMap(Action.CIRCUIT, dest_qcir, src_qcir, remaplist, inverse, control)
+    quantum_action(Action.CIRCUIT, dest_qcir, src_qcir, remaplist, inverse, control)
     return dest_qcir
 
 
-def CopyCircuit(src_qcir, remap = 0, inverse : bool = False, control : bool = False):
+def copy_circuit(src_qcir, remap = 0, inverse : bool = False, control : bool = False):
     """
     Copy a quantum circuit
 
@@ -128,11 +129,11 @@ def CopyCircuit(src_qcir, remap = 0, inverse : bool = False, control : bool = Fa
 
     -> Return : a replica quantum circuit of src_qcir
     """
-    return AppendCircuit(None, src_qcir, remap, inverse, control)
+    return append_circuit(None, src_qcir, remap, inverse, control)
 
 
 
-def AppendProgram(dest_qp, src_qp, qbits_remap = 0, cbits_remap = 0):
+def append_program(dest_qp, src_qp, qbits_remap = 0, cbits_remap = 0):
     """
     Apply a quantum program on a qubit array.
 
@@ -151,20 +152,20 @@ def AppendProgram(dest_qp, src_qp, qbits_remap = 0, cbits_remap = 0):
     crlist = None
     if isinstance(qbits_remap, int):
         if qbits_remap > 0:
-            qrlist = [x + qbits_remap for x in GetQubitList(src_qp)]
+            qrlist = [x + qbits_remap for x in get_qubit_list(src_qp)]
     else:
         qrlist = qbits_remap
     if isinstance(cbits_remap, int):
         if cbits_remap > 0:
-            crlist = [x + cbits_remap for x in GetCbitList(src_qp)]
+            crlist = [x + cbits_remap for x in get_cbit_list(src_qp)]
     else:
         crlist = cbits_remap
 
-    QuantumActionMap(Action.PROGRAM, dest_qp, src_qp, qrlist, crlist)
+    quantum_action(Action.PROGRAM, dest_qp, src_qp, qrlist, crlist)
     return dest_qp
 
 
-def CopyProgram(src_qp, qbits_remap = 0, cbits_remap = 0):
+def copy_program(src_qp, qbits_remap = 0, cbits_remap = 0):
     """
     Copy a quantum program
 
@@ -178,11 +179,11 @@ def CopyProgram(src_qp, qbits_remap = 0, cbits_remap = 0):
 
     -> Return : a replica quantum program of src_qp
     """
-    return AppendProgram(None, src_qp, qbits_remap, cbits_remap)
+    return append_program(None, src_qp, qbits_remap, cbits_remap)
 
 
 
-def NewCircuit(framework, nqbits : int):
+def new_circuit(framework, nqbits : int):
     """
     Generate an empty quantum circuit
 
@@ -191,10 +192,10 @@ def NewCircuit(framework, nqbits : int):
 
     -> Return : an empty quantum circuit with type of target framework
     """
-    return QuantumActionMap(Action.NEW, framework, False, nqbits, 0)
+    return quantum_action(Action.NEW, framework, False, nqbits, 0)
 
 
-def NewProgram(framework, nqbits : int, ncbits : int = 0):
+def new_program(framework, nqbits : int, ncbits : int = 0):
     """
     Generate an empty quantum program (which contains classical bits)
 
@@ -204,10 +205,10 @@ def NewProgram(framework, nqbits : int, ncbits : int = 0):
 
     -> Return : an empty quantum program with type of target framework
     """
-    return QuantumActionMap(Action.NEW, framework, True, nqbits, ncbits)
+    return quantum_action(Action.NEW, framework, True, nqbits, ncbits)
 
 
-def GetNQubits(q_prog) -> int:
+def get_n_qubits(q_prog) -> int:
     """
     Get the number of qubits of a quantum circuit or program
 
@@ -215,9 +216,9 @@ def GetNQubits(q_prog) -> int:
 
     -> Return : the number of qubits
     """
-    return QuantumActionMap(Action.BITS, q_prog, False, False)
+    return quantum_action(Action.BITS, q_prog, False, False)
 
-def GetQubitList(q_prog) -> list[int]:
+def get_qubit_list(q_prog) -> list[int]:
     """
     Get the qubit list a quantum circuit or program
 
@@ -225,9 +226,9 @@ def GetQubitList(q_prog) -> list[int]:
 
     -> Return : list of the qubits
     """
-    return QuantumActionMap(Action.BITS, q_prog, False, True)
+    return quantum_action(Action.BITS, q_prog, False, True)
 
-def GetNCbits(q_prog) -> int:
+def get_n_cbits(q_prog) -> int:
     """
     Get the number of classical bits of a quantum program
 
@@ -236,9 +237,9 @@ def GetNCbits(q_prog) -> int:
     -> Return : the number of classical bits
                 0 if q_prog is a quantum circuit
     """
-    return QuantumActionMap(Action.BITS, q_prog, True, False)
+    return quantum_action(Action.BITS, q_prog, True, False)
 
-def GetCbitList(q_prog) -> list[int]:
+def get_cbit_list(q_prog) -> list[int]:
     """
     Get the classical bit list of a quantum program
 
@@ -247,19 +248,29 @@ def GetCbitList(q_prog) -> list[int]:
     -> Return : list of the classical bits
                 [] if q_prog is a quantum circuit
     """
-    return QuantumActionMap(Action.BITS, q_prog, True, True)
+    return quantum_action(Action.BITS, q_prog, True, True)
 
 
-def RunAndGetCounts(q_machine, q_prog, shots : int = 1, model = None):
-    return QuantumActionMap(Action.RUN, q_machine, q_prog, shots, model)
+def run_and_get_counts(q_machine, q_prog, shots : int = 1, model = None):
+    """
+    Run quantum programs on quantum machine and get the result dict
+
+        q_machine : target quantum machine
+        q_prog    : target quantum program
+        shots     : running shots (repeat times)
+        model     : (current unsupported)
+
+    -> Return : dict of results
+    """
+    return quantum_action(Action.RUN, q_machine, q_prog, shots, model)
 
 
-def ParallelPrograms(*args, **kwargs):
+def juxtapose_programs(*args):
     """
     Generate a quantum program to parallel several subprograms
 
         Variable parameters:
-            e.g., ParallelPrograms(qp1, qp2, qp3)
+            e.g., juxtapose_programs(qp1, qp2, qp3)
 
     -> Return : result quantum program
     """
@@ -267,41 +278,41 @@ def ParallelPrograms(*args, **kwargs):
     cofflist = []
     ntotalqs = 0
     ntotalcs = 0
-    f = GetFrameworkFromObject(args[0])
+    f = get_framework_from_object(args[0])
 
     for i in range(len(args)):
-        nqs = GetNQubits(args[i])
-        ncs = GetNCbits(args[i])
+        nqs = get_n_qubits(args[i])
+        ncs = get_n_cbits(args[i])
         qofflist.append(nqs)
         cofflist.append(ncs)
         ntotalqs += nqs
         ntotalcs += ncs
 
-    retqp = NewProgram(f, ntotalqs, ntotalcs)
+    retqp = new_program(f, ntotalqs, ntotalcs)
     for i in range(len(args)):
-        AppendProgram(retqp, args[i], qofflist[i], cofflist[i])
+        append_program(retqp, args[i], qofflist[i], cofflist[i])
     return retqp
 
 
-def ParallelCircuits(*args, **kwargs):
+def juxtapose_circuits(*args):
     """
     Generate a quantum circuit to parallel several subcircuits
 
         Variable parameters:
-            e.g., ParallelCircuits(qc1, qc2, qc3)
+            e.g., juxtapose_circuits(qc1, qc2, qc3)
 
     -> Return : result quantum circuit
     """
     qofflist = []
     ntotalqs = 0
-    f = GetFrameworkFromObject(args[0])
+    f = get_framework_from_object(args[0])
 
     for i in range(len(args)):
-        nqs = GetNQubits(args[i])
+        nqs = get_n_qubits(args[i])
         qofflist.append(ntotalqs)
         ntotalqs += nqs
 
-    retqc = NewCircuit(f, ntotalqs)
+    retqc = new_circuit(f, ntotalqs)
     for i in range(len(args)):
-        AppendCircuit(retqc, args[i], qofflist[i])
+        append_circuit(retqc, args[i], qofflist[i])
     return retqc

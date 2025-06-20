@@ -1,12 +1,11 @@
-# QStatePrepare/ByString.py
+# state_prepare/by_string.py
 #    2025/6/17
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from PyQuantumKit.QProcedure.Common import *
-from PyQuantumKit.Classical.Common import *
+from pyquantumkit.procedure.general import apply_gate
 
-def CreateStateFromBinStr(q_circuit, binstr : str, qbitlist : list[int]):
+def create_state_from_binstr(q_circuit, binstr : str, qbitlist : list[int]):
     """
     Apply a quantum circuit to create classical state, which is given by a binary string.
 
@@ -23,5 +22,5 @@ def CreateStateFromBinStr(q_circuit, binstr : str, qbitlist : list[int]):
         if (binstr[i] != '1' and binstr[i] != '0'):
             raise ValueError('binstr must be 0/1 string!')
         if (binstr[i] == '1'):
-            ApplyGate(q_circuit, 'X', [qbitlist[i]])
+            apply_gate(q_circuit, 'X', [qbitlist[i]])
     return q_circuit
