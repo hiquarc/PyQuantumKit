@@ -4,7 +4,7 @@
 #    Computing Center, Institute of High Energy Physics, CAS
 
 from .paulis import apply_measure_x, apply_measure_y, apply_measure_z
-from pyquantumkit.procedure.general import new_program, append_program, get_n_cbits, get_n_qubits, run_and_get_counts
+from pyquantumkit.procedure.generic import new_program, append_program, get_n_cbits, get_n_qubits, run_and_get_counts
 from pyquantumkit import get_framework_from_object
 from pyquantumkit._qframes.framework_map import get_reverse_output_str
 from pyquantumkit.classical.run_result import count_last_bits_of_result_dict

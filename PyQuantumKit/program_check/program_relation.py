@@ -6,7 +6,8 @@
 from random import randint
 from math import pi
 from pyquantumkit.classical.common import *
-from pyquantumkit.procedure.general import *
+from pyquantumkit.classical.run_result import *
+from pyquantumkit.procedure.generic import *
 from pyquantumkit.state_prepare.int_state import *
 from pyquantumkit.state_prepare.pauli_eigenstate import *
 from pyquantumkit.procedure.swaptest import *
@@ -128,8 +129,10 @@ def run_identity_check(qvm, TargetProc, NPoints : int = Default_Identity_NPoints
         uncompute_pauli_eigenstate(ptest, randompaulis, qlist)
         apply_measure(ptest, qlist, mlist)
 
-        counts = count_last_bits_of_result_dict(run_and_get_counts(qvm, ptest, 1), Nqs, fw_req_reverse)
-        result = int(get_first_result_str(counts, fw_req_reverse))
+        raw = run_and_get_counts(qvm, ptest, 1)
+        counts = count_last_bits_of_result_dict(raw, Nqs, fw_req_reverse)
+        result = int(list(get_result_str_set(counts))[0])
+
         if result != 0:
             return False
     return True
@@ -205,7 +208,7 @@ def run_unitarity_check(qvm, TargetProc,
             if (abs(r) > epsilon):
                 return False
         else:
-            (num1, num2) = randdiffintpair(0, (1 << Nqs) - 1)
+            (num1, num2) = rand_diff_int_pair(0, (1 << Nqs) - 1)
             create_ket_int_le(STproc, num1, qlist1)
             create_ket_int_le(STproc, num2, qlist2)
             append_program(STproc, juxtapose_programs(TargetProc, TargetProc))
@@ -247,7 +250,7 @@ def run_keep_basis_check(qvm, TargetProc,
             apply_measure(ptest, qlist, mlist)
 
             counts = count_last_bits_of_result_dict(run_and_get_counts(qvm, ptest, 1), Nqs, fw_req_reverse)
-            m = int(get_first_result_str(counts, fw_req_reverse))
+            m = int(list(get_result_str_set(counts))[0])
             if mr < 0:
                 mr = m
             if mr != m:

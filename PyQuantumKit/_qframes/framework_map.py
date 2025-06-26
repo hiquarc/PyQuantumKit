@@ -28,8 +28,8 @@ def get_apply_function(action : Action, framework : str) -> callable:
         return ret
 
     if action == Action.CIRCUIT:
-        def ret(qc_dest, qc_src, rmlist : list[int], inv : bool, ctrl : bool) -> None:
-            exec(Translate_Namespace[framework].CIRCUIT(qc_dest is None, rmlist != None, inv, ctrl))
+        def ret(qc_dest, qc_src, rmlist : list[int], inv : bool) -> None:
+            exec(Translate_Namespace[framework].CIRCUIT(qc_dest is None, rmlist != None, inv))
         return ret
 
     if action == Action.PROGRAM:

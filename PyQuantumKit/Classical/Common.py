@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-def randdiffintpair(a : int, b : int) -> tuple[int, int]:
+def rand_diff_int_pair(a : int, b : int) -> tuple[int, int]:
     """
     Generate two different random int in range [a, b]
     """

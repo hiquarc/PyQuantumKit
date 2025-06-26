@@ -3,10 +3,10 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from pyquantumkit.procedure.general import apply_gate, new_program, append_program, get_n_cbits, get_n_qubits, apply_measure, run_and_get_counts
+from pyquantumkit.procedure.generic import apply_gate, new_program, append_program, get_n_cbits, get_n_qubits, apply_measure, run_and_get_counts
 from pyquantumkit import get_framework_from_object
 from pyquantumkit._qframes.framework_map import get_reverse_output_str
-from pyquantumkit.classical.run_result import count_last_bits_of_result_dict, get_first_result_str
+from pyquantumkit.classical.run_result import count_last_bits_of_result_dict
 
 
 def append_swaptest_circuit(q_circuit, qctrlindex : int, s1indexlist : list[int], s2indexlist : list[int]):
@@ -83,8 +83,8 @@ def check_tr_rho1_rho2_equals_1(qvm, GenProc, state1qlist : list[int], state2qli
 
     for i in range(0, Ntimes):
         counts = run_and_get_counts(qvm, ptest, 1)
-        result = get_first_result_str(counts, fw_req_reverse)
-        if result != '0':
+        result = count_last_bits_of_result_dict(counts, 1, fw_req_reverse)
+        if result.get('1', 0) > 0:
             return False
     return True
 

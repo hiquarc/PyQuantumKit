@@ -6,7 +6,7 @@
 from .code_translate import get_args_assign_str, get_standard_gatename
 
 # Whether the reverse of output 0/1 string is required to let the index of characters match corresponding cbits
-REVERSE_OUTUPT_STRING = True
+REVERSE_OUTPUT_STRING = True
 
 # Translate the gate applying into the code of calling in qiskit
 def GATE(gate_name : str, nqs : int, nps : int) -> str:
@@ -43,7 +43,7 @@ def GATE(gate_name : str, nqs : int, nps : int) -> str:
 
 
 # Translate the circuit applying into the code of calling in qiskit
-def CIRCUIT(dest_none : bool, is_remap : bool, is_inv : bool, is_ctrl : bool) -> str:
+def CIRCUIT(dest_none : bool, is_remap : bool, is_inv : bool) -> str:
     execstr = ""
     if dest_none:
         execstr += "tempqc=Framework_Namespace['qiskit'].QuantumCircuit(qc_src);tempqc"
@@ -52,7 +52,6 @@ def CIRCUIT(dest_none : bool, is_remap : bool, is_inv : bool, is_ctrl : bool) ->
     execstr += ".compose(qc_src"
     if is_inv:
         execstr += ".inverse()"
-    #if is_ctrl:
     if is_remap:
         execstr += ",rmlist"
     execstr += ",inplace=True)"

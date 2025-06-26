@@ -56,7 +56,7 @@ def GATE(gate_name : str, nqs : int, nps : int) -> str:
 
 
 # Translate the circuit applying into the code of calling in pyqpanda3
-def CIRCUIT(dest_none : bool, is_remap : bool, is_inv : bool, is_ctrl : bool) -> str:
+def CIRCUIT(dest_none : bool, is_remap : bool, is_inv : bool) -> str:
     execstr = "tempqc=Framework_Namespace['pyqpanda3'].QCircuit(qc_src);"
     if dest_none:
         execstr += "tempqc"
@@ -64,7 +64,6 @@ def CIRCUIT(dest_none : bool, is_remap : bool, is_inv : bool, is_ctrl : bool) ->
         execstr += "qc_dest<<tempqc"
     if is_inv:
         execstr += ".dagger()"
-    #if is_ctrl:
     if is_remap:
         execstr += ".remap(rmlist)"
     return execstr

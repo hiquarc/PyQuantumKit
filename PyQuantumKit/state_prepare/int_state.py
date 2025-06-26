@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from pyquantumkit.procedure.general import apply_gate, derivative
+from pyquantumkit.procedure.generic import apply_gate, derivative
 
 def create_ket_int_le(q_circuit, number : int, qbitlist : list[int]):
     """
@@ -11,14 +11,21 @@ def create_ket_int_le(q_circuit, number : int, qbitlist : list[int]):
 
         e.g., 25 = 11001b --> q[0]=|1>, q[1]=|0>, q[2]=|0>, q[3]=|1>, q[4]=|1>
 
+        NOTE: if number >= 2**len(qbitlist), the high bits of <number> will be discarded
+
         q_circuit : applied quantum circuit
         number    : the integer to describe the state
         qbitlist  : index list of the target qubit array
 
     -> Return : q_circuit
     """
+    if number < 0:
+        raise ValueError('<number> must be a non-negative integer!')
+    if qbitlist is None or len(qbitlist) <= 0:
+        raise ValueError('<qbitlist> must be an non-empty list!')
     N = len(qbitlist)
     temp = number
+
     for i in range(0, N):
         if ((temp & 1) == 1):
             apply_gate(q_circuit, 'X', [qbitlist[i]])
@@ -30,6 +37,8 @@ def create_ket_int_be(q_circuit, number : int, qbitlist : list[int]):
     Apply a quantum circuit to create classical state, which is given by an integer with big-endian mode.
 
         e.g., 25 = 11001b --> q[0]=|1>, q[1]=|1>, q[2]=|0>, q[3]=|0>, q[4]=|1>
+
+        NOTE: if number >= 2**len(qbitlist), the high bits of <number> will be discarded
 
         q_circuit : applied quantum circuit
         number    : the integer to describe the state
@@ -45,6 +54,8 @@ def uncompute_ket_int_le(q_circuit, number : int, qbitlist : list[int]):
 
         e.g., 25 = 11001b --> q[0]=|1>, q[1]=|0>, q[2]=|0>, q[3]=|1>, q[4]=|1>
 
+        NOTE: if number >= 2**len(qbitlist), the high bits of <number> will be discarded
+
         q_circuit : applied quantum circuit
         number    : the integer to describe the state
         qbitlist  : index list of the target qubit array
@@ -58,6 +69,8 @@ def uncompute_ket_int_be(q_circuit, number : int, qbitlist : list[int]):
     Apply a quantum circuit to uncompute classical state, which is given by an integer with big-endian mode.
 
         e.g., 25 = 11001b --> q[0]=|1>, q[1]=|1>, q[2]=|0>, q[3]=|0>, q[4]=|1>
+
+        NOTE: if number >= 2**len(qbitlist), the high bits of <number> will be discarded
 
         q_circuit : applied quantum circuit
         number    : the integer to describe the state
@@ -73,6 +86,10 @@ def create_ket_int_plus_eiphi_neg_le(q_circuit, number : int, phi : float, qbitl
     """
     Apply a quantum circuit to create state |x> + e^{iφ}|~x>, where ~x is the bitwise negation of x, and x is in little-endian mode.
 
+        e.g. 25 = 11001b --> |10011> + e^{iφ}|01100>
+
+        NOTE: if number >= 2**len(qbitlist), the high bits of <number> will be discarded
+
         q_circuit : applied quantum circuit
         number    : x
         phi       : φ
@@ -80,6 +97,10 @@ def create_ket_int_plus_eiphi_neg_le(q_circuit, number : int, phi : float, qbitl
 
     -> Return : q_circuit
     """
+    if number < 0:
+        raise ValueError('<number> must be a non-negative integer!')
+    if qbitlist is None or len(qbitlist) <= 0:
+        raise ValueError('<qbitlist> must be an non-empty list!')
     N = len(qbitlist)
     temp = number >> 1
 
@@ -105,6 +126,10 @@ def create_ket_int_plus_eiphi_neg_be(q_circuit, number : int, phi : float, qbitl
     """
     Apply a quantum circuit to create state |x> + e^{iφ}|~x>, where ~x is the bitwise negation of x, and x is in big-endian mode.
 
+        e.g. 25 = 11001b --> |11001> + e^{iφ}|00110>
+
+        NOTE: if number >= 2**len(qbitlist), the high bits of <number> will be discarded
+
         q_circuit : applied quantum circuit
         number    : x
         phi       : φ
@@ -118,6 +143,8 @@ def uncompute_ket_int_plus_eiphi_neg_le(q_circuit, number : int, phi : float, qb
     """
     Apply a quantum circuit to uncompute state |x> + e^{iφ}|~x>, where ~x is the bitwise negation of x, and x is in little-endian mode.
 
+        NOTE: if number >= 2**len(qbitlist), the high bits of <number> will be discarded
+
         q_circuit : applied quantum circuit
         number    : x
         phi       : φ
@@ -130,6 +157,8 @@ def uncompute_ket_int_plus_eiphi_neg_le(q_circuit, number : int, phi : float, qb
 def uncompute_ket_int_plus_eiphi_neg_be(q_circuit, number : int, phi : float, qbitlist : list[int]):
     """
     Apply a quantum circuit to uncompute state |x> + e^{iφ}|~x>, where ~x is the bitwise negation of x, and x is in big-endian mode.
+
+        NOTE: if number >= 2**len(qbitlist), the high bits of <number> will be discarded
 
         q_circuit : applied quantum circuit
         number    : x
@@ -146,6 +175,8 @@ def create_ket_int1_plus_eiphi_ket_int2_le(q_circuit, number1 : int, number2 : i
     """
     Apply a quantum circuit to create state |x> + e^{iφ}|y>, where integers x and y are in little-endian.
 
+        NOTE: if number1/2 >= 2**len(qbitlist), the high bits of <number1/2> will be discarded
+
         q_circuit : applied quantum circuit
         number1   : x
         number2   : y
@@ -154,6 +185,10 @@ def create_ket_int1_plus_eiphi_ket_int2_le(q_circuit, number1 : int, number2 : i
 
     -> Return : q_circuit
     """
+    if number1 < 0 or number2 < 0:
+        raise ValueError('<number1>,<number2> must be non-negative integers!')
+    if qbitlist is None or len(qbitlist) <= 0:
+        raise ValueError('<qbitlist> must be an non-empty list!')
     N = len(qbitlist)
     temp1 = number1
     temp2 = number2
@@ -178,6 +213,8 @@ def create_ket_int1_plus_eiphi_ket_int2_be(q_circuit, number1 : int, number2 : i
     """
     Apply a quantum circuit to create state |x> + e^{iφ}|y>, where integers x and y are in big-endian.
 
+        NOTE: if number1/2 >= 2**len(qbitlist), the high bits of <number1/2> will be discarded
+
         q_circuit : applied quantum circuit
         number1   : x
         number2   : y
@@ -192,6 +229,8 @@ def uncompute_ket_int1_plus_eiphi_ket_int2_le(q_circuit, number1 : int, number2 
     """
     Apply a quantum circuit to uncompute state |x> + e^{iφ}|y>, where integers x and y are in little-endian.
 
+        NOTE: if number1/2 >= 2**len(qbitlist), the high bits of <number1/2> will be discarded
+
         q_circuit : applied quantum circuit
         number1   : x
         number2   : y
@@ -205,6 +244,8 @@ def uncompute_ket_int1_plus_eiphi_ket_int2_le(q_circuit, number1 : int, number2 
 def uncompute_ket_int1_plus_eiphi_ket_int2_be(q_circuit, number1 : int, number2 : int, phi : float, qbitlist : list[int]):
     """
     Apply a quantum circuit to uncompute state |x> + e^{iφ}|y>, where integers x and y are in big-endian.
+
+        NOTE: if number1/2 >= 2**len(qbitlist), the high bits of <number1/2> will be discarded
 
         q_circuit : applied quantum circuit
         number1   : x

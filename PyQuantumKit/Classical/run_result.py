@@ -14,7 +14,7 @@ def get_substr_by_indexlist(string : str, index_list : list[int], reverse : bool
     return ret
 
 
-def count_subset_of_result_dict(counts_dict : dict, bit_index_list : list[int], reverse : bool) -> dict:
+def count_subset_of_result_dict(counts_dict : dict, bit_index_list : list[int], reverse : bool = False) -> dict:
     """
     Count the number from a subset of result dict
 
@@ -38,34 +38,53 @@ def count_subset_of_result_dict(counts_dict : dict, bit_index_list : list[int], 
     return ret
 
 
-def count_first_bits_of_result_dict(counts_dict : dict, length : int, reverse : bool) -> dict:
+def count_first_bits_of_result_dict(counts_dict : dict, index_length : int, reverse : bool = False) -> dict:
     """
     Count the number from the first several bits of result dict
 
         e.g. counts_dict = {'000' : 5, '010' : 6, '100' : 7, '110' : 8}
-             bit_index_list = 2
+             index_length = 2
              reverse = False
           -> {'00' : 5, '01' : 6, '10' : 7, '11' : 8}
     """
-    return count_subset_of_result_dict(counts_dict, range(length), reverse)
+    return count_subset_of_result_dict(counts_dict, range(index_length), reverse)
 
-def count_last_bits_of_result_dict(counts_dict : dict, length : int, reverse : bool) -> dict:
+def count_last_bits_of_result_dict(counts_dict : dict, index_length : int, reverse : bool = False) -> dict:
     """
     Count the number from the last several bits of result dict
 
         e.g. counts_dict = {'000' : 5, '010' : 6, '100' : 7, '110' : 8}
-             bit_index_list = 2
+             index_length = 2
              reverse = False
           -> {'00' : 12, '10' : 14}
     """
-    return count_subset_of_result_dict(counts_dict, range(length), not reverse)
+    return count_subset_of_result_dict(counts_dict, range(index_length), not reverse)
 
 
-def get_first_result_str(counts_dict : str, bit_index_list : list[int] = None, reverse : bool = False) -> str:
+def get_result_str_set(counts_dict : dict, reverse : bool = False) -> set:
     """
-    Count the number from the last several bits of result dict
+    Get the keys list of counts dict (i.e., existing results)
+
+        e.g. counts_dict = {'000' : 5, '010' : 6, '100' : 7, '110' : 8}
+            reverse = False
+        -> {'000', '010', '100', '110'}
+
+        {} -> {}
+        None -> {}
     """
-    if bit_index_list is None:
-        return next(iter(counts_dict))
-    temp = count_subset_of_result_dict(counts_dict, bit_index_list, reverse)
-    return next(iter(temp))
+    if counts_dict is None or len(counts_dict) == 0:
+        return {}
+    ret = set(counts_dict.keys())
+    if reverse:
+        ret = {s[::-1] for s in ret}
+    return ret
+
+
+# def get_first_result_str(counts_dict : dict, bit_index_list : list[int] = None, reverse : bool = False) -> str:
+#     """
+#     Count the number from the last several bits of result dict
+#     """
+#     if bit_index_list is None:
+#         return next(iter(counts_dict))
+#     temp = count_subset_of_result_dict(counts_dict, bit_index_list, reverse)
+#     return next(iter(temp))

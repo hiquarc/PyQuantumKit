@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from pyquantumkit.procedure.general import apply_gate, derivative
+from pyquantumkit.procedure.generic import apply_gate, derivative
 
 PauliZ_1    = 0
 PauliZ_Neg1 = 1
@@ -30,8 +30,16 @@ def create_pauli_eigenstate(q_circuit, paulilist : list[int], qbitlist : list[in
 
     -> Return : q_circuit
     """
+    if qbitlist is None or len(qbitlist) <= 0 or\
+      paulilist is None or len(paulilist) <= 0:
+        raise ValueError('<paulilist> and <qbitlist> must be an non-empty list!')
     N = len(qbitlist)
+    if N != len(paulilist):
+        raise ValueError('<paulilist> and <qbitlist> must be have same length!')
+
     for i in range(0, N):
+        if paulilist[i] > 5 or paulilist[i] < 0:
+            raise ValueError('elements in <paulilist> must in [0,1,2,3,4,5]')
         #if paulilist[i] == PauliZ_1:
         #    pass
         if paulilist[i] == PauliZ_Neg1:
@@ -39,8 +47,8 @@ def create_pauli_eigenstate(q_circuit, paulilist : list[int], qbitlist : list[in
         elif paulilist[i] == PauliX_1:
             apply_gate(q_circuit, 'H', [qbitlist[i]])
         elif paulilist[i] == PauliX_Neg1:
-            apply_gate(q_circuit, 'H', [qbitlist[i]])
             apply_gate(q_circuit, 'X', [qbitlist[i]])
+            apply_gate(q_circuit, 'H', [qbitlist[i]])
         elif paulilist[i] == PauliY_1:
             apply_gate(q_circuit, 'H', [qbitlist[i]])
             apply_gate(q_circuit, 'S', [qbitlist[i]])

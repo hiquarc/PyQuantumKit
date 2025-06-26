@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from pyquantumkit.procedure.general import apply_gate, apply_measure
+from pyquantumkit.procedure.generic import apply_gate, apply_measure
 
 Pauli_Strings = ['I', 'X', 'Y', 'Z']
 
