@@ -1,3 +1,6 @@
+#    Author: Peixun Long
+#    Computing Center, Institute of High Energy Physics, CAS
+
 import unittest as UT
 from .common import *
 from pyquantumkit import *
@@ -22,7 +25,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_create_ket_int_le(self):
         cases = {
-            (0, 0) : ValueError,
+            (0, 0) : {},
             (2, -2) : ValueError,
             (1, 2) : {'0'},
             (1, 1) : {'1'},
@@ -44,7 +47,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_create_ket_int_be(self):
         cases = {
-            (0, 0) : ValueError,
+            (0, 0) : {},
             (2, -2) : ValueError,
             (1, 2) : {'0'},
             (1, 1) : {'1'},
@@ -66,7 +69,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_uncompute_ket_int_le(self):
         cases = {
-            (0, 0) : ValueError,
+            (0, 0) : None,
             (2, -2) : ValueError,
             (1, 2) : None,
             (1, 1) : None,
@@ -88,7 +91,7 @@ class Test_state_prepare_int_state(UT.TestCase):
         
     def test_uncompute_ket_int_be(self):
         cases = {
-            (0, 0) : ValueError,
+            (0, 0) : None,
             (2, -2) : ValueError,
             (1, 2) : None,
             (1, 1) : None,
@@ -112,7 +115,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_create_ket_int_plus_eiphi_neg_le(self):
         cases = {
-            (0, 0, 0.0) : ValueError,
+            (0, 0, 0.0) : {},
             (2, -2, -1.0) : ValueError,
             (1, 0, 0.0) : {'0', '1'},
             (1, 1, 1.0) : {'0', '1'},
@@ -136,7 +139,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_create_ket_int_plus_eiphi_neg_be(self):
         cases = {
-            (0, 0, 0.0) : ValueError,
+            (0, 0, 0.0) : {},
             (2, -2, -1.0) : ValueError,
             (1, 0, 0.0) : {'0', '1'},
             (1, 1, 1.0) : {'0', '1'},
@@ -160,7 +163,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_uncompute_ket_int_plus_eiphi_neg_le(self):
         cases = {
-            (0, 0, 0.0) : ValueError,
+            (0, 0, 0.0) : None,
             (2, -2, -1.0) : ValueError,
             (1, 0, 0.0) : None,
             (1, 1, 1.0) : None,
@@ -186,7 +189,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_uncompute_ket_int_plus_eiphi_neg_be(self):
         cases = {
-            (0, 0, 0.0) : ValueError,
+            (0, 0, 0.0) : None,
             (2, -2, -1.0) : ValueError,
             (1, 0, 0.0) : None,
             (1, 1, 1.0) : None,
@@ -213,7 +216,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_create_ket_int1_plus_eiphi_ket_int2_le(self):
         cases = {
-            (0, 0, 0, 0.0) : ValueError,
+            (0, 0, 0, 0.0) : {},
             (2, -2, 3, -1.0) : ValueError,
             (1, 0, 0, 0.5) : {'0'},
             (1, 0, 1, 1.0) : {'0', '1'},
@@ -241,7 +244,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_create_ket_int1_plus_eiphi_ket_int2_be(self):
         cases = {
-            (0, 0, 0, 0.0) : ValueError,
+            (0, 0, 0, 0.0) : {},
             (2, 2, -3, -1.0) : ValueError,
             (1, 0, 0, 0.5) : {'0'},
             (1, 0, 1, 1.0) : {'0', '1'},
@@ -269,7 +272,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_uncompute_ket_int1_plus_eiphi_ket_int2_le(self):
         cases = {
-            (0, 0, 0, 0.0) : ValueError,
+            (0, 0, 0, 0.0) : None,
             (2, 2, -3, -1.0) : ValueError,
             (1, 0, 0, 0.5) : None,
             (1, 0, 1, 1.0) : None,
@@ -297,7 +300,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_uncompute_ket_int1_plus_eiphi_ket_int2_be(self):
         cases = {
-            (0, 0, 0, 0.0) : ValueError,
+            (0, 0, 0, 0.0) : None,
             (2, -2, 3, -1.0) : ValueError,
             (1, 0, 0, 0.5) : None,
             (1, 0, 1, 1.0) : None,
@@ -338,7 +341,7 @@ class Test_state_prepare_by_string(UT.TestCase):
 
     def test_create_state_by_01pm(self):
         cases = {
-            (0, '+-')     : ValueError,
+            (0, '+-')     : {},
             (5, '10+-X')  : ValueError,
             (3, '')       : ValueError,
             (2, '1')      : ValueError,
@@ -361,7 +364,7 @@ class Test_state_prepare_by_string(UT.TestCase):
 
     def test_uncompute_state_by_01pm(self):
         cases = {
-            (0, '+-')     : ValueError,
+            (0, '+-')     : None,
             (5, '10+-X')  : ValueError,
             (3, '')       : ValueError,
             (2, '1')      : ValueError,
@@ -385,7 +388,7 @@ class Test_state_prepare_by_string(UT.TestCase):
 
     def test_create_state_by_sqgate_str(self):
         cases = {
-            (0, 'XYZ') : ValueError,
+            (0, 'XYZ') : {},
             (7, 'history') : ValueError,
             (3, '') : ValueError,
             (2, 'i') : ValueError,
@@ -408,7 +411,7 @@ class Test_state_prepare_by_string(UT.TestCase):
 
     def test_uncompute_state_by_sqgate_str(self):
         cases = {
-            (0, 'XYZ') : ValueError,
+            (0, 'XYZ') : None,
             (7, 'history') : ValueError,
             (3, '') : ValueError,
             (2, 'i') : ValueError,
@@ -444,7 +447,7 @@ class Test_state_prepare_pauli_eigenstate(UT.TestCase):
 
     def test_create_pauli_eigenstate_1(self):
         cases = {
-            (0, (0,1,2,3,4,5)) : ValueError,
+            (0, (0,1,2,3,4,5)) : '',
             (2, (0,3,2,3)) : ValueError,
             (3, (2,3,6)) : ValueError,
             (4, (0,1,0,1)) : '0101',
@@ -488,7 +491,7 @@ class Test_state_prepare_pauli_eigenstate(UT.TestCase):
 
     def test_uncompute_pauli_eigenstate(self):
         cases = {
-            (0, (0,1,2,3,4,5)) : ValueError,
+            (0, (0,1,2,3,4,5)) : None,
             (2, (0,3,2,3)) : ValueError,
             (3, (2,3,6)) : ValueError,
             (4, (0,1,0,1)) : None,

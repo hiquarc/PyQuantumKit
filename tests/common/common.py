@@ -1,3 +1,6 @@
+#    Author: Peixun Long
+#    Computing Center, Institute of High Energy Physics, CAS
+
 from pyquantumkit import *
 from pyquantumkit._qframes.framework_map import get_reverse_output_str
 from pyquantumkit.procedure.generic import *

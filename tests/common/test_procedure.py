@@ -7,11 +7,12 @@ from pyquantumkit import *
 from pyquantumkit.classical.run_result import *
 from pyquantumkit.classical.common import *
 from pyquantumkit.procedure.generic import *
+from pyquantumkit.procedure.qft import *
 
 
-class Test_program_check_program_relation(UT.TestCase):
+class Test_procedure_qft(UT.TestCase):
     """
-    Test cases for subpackage "program_check/program_relation"
+    Test cases for subpackage "procedure/qft"
     """
     def __init__(self, methodName = "runTest"):
         super().__init__(methodName)
