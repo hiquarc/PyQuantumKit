@@ -1,3 +1,5 @@
+# test: common/test_classical.py
+#    2025/6/23
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
@@ -13,7 +15,7 @@ class Test_classical_common(UT.TestCase):
         }
         for input in cases:
             for i in range(10):
-                with self.subTest():
+                with self.subTest(input):
                     rndpair = rand_diff_int_pair(input[0], input[1])
                     self.assertIn(rndpair[0], range(input[0], input[1] + 1))
                     self.assertIn(rndpair[1], range(input[0], input[1] + 1))
@@ -28,7 +30,7 @@ class Test_classical_common(UT.TestCase):
             '00110100' : 44,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 self.assertEqual(cases[input], get_int_from_binstr_le(input))
 
     def test_get_int_from_binstr_be(self):
@@ -40,7 +42,7 @@ class Test_classical_common(UT.TestCase):
             '00110100' : 52,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 self.assertEqual(cases[input], get_int_from_binstr_be(input))
 
     def test_indexlist_length(self):
@@ -51,7 +53,7 @@ class Test_classical_common(UT.TestCase):
             (0, 2, 4, 7) : 8,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 self.assertEqual(cases[input], indexlist_length(input))
 
 
@@ -78,7 +80,7 @@ class Test_classical_run_result(UT.TestCase):
             ('12345', (1,4,6), False) : IndexError,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 inputstr = input[0]
                 indexlist = list(input[1])
                 reverse = input[2]
@@ -102,7 +104,7 @@ class Test_classical_run_result(UT.TestCase):
             (('00',5 , '01',6 , '10',7 , '11',8), (1,2), True) : IndexError
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 inputdict = tuple2dict(input[0])
                 indexlist = list(input[1])
                 reverse = input[2]
@@ -124,7 +126,7 @@ class Test_classical_run_result(UT.TestCase):
             (('000',5 , '010',6 , '100',7 , '110',8), 4, True) : IndexError,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 inputdict = tuple2dict(input[0])
                 indexlen = input[1]
                 reverse = input[2]
@@ -146,7 +148,7 @@ class Test_classical_run_result(UT.TestCase):
             (('000',5 , '010',6 , '100',7 , '110',8), 4, True) : IndexError,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 inputdict = tuple2dict(input[0])
                 indexlen = input[1]
                 reverse = input[2]
@@ -160,13 +162,13 @@ class Test_classical_run_result(UT.TestCase):
 
     def test_get_result_str_set(self):
         cases = {
-            (None, False) : {},
-            ((), True) : {},
+            (None, False) : set(),
+            ((), True) : set(),
             (('000',5 , '010',6 , '100',7 , '110',8), False) : {'000', '010', '100', '110'},
             (('000',5 , '010',6 , '100',7 , '110',8), True) : {'000', '010', '001', '011'},
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 inputdict = tuple2dict(input[0])
                 reverse = input[1]
                 if is_exception(cases[input]):

@@ -1,4 +1,4 @@
-# procedure/swaptest.py
+# library/swaptest.py
 #    2025/6/13
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
@@ -78,7 +78,7 @@ def check_tr_rho1_rho2_equals_1(qvm, GenProc, state1qlist : list[int], state2qli
 
     ptest = new_program(framework, Nqs + 1, Ncs + 1)
     append_program(ptest, GenProc)
-    append_swaptest_circuit(framework, Nqs, state1qlist, state2qlist)
+    append_swaptest_circuit(ptest, Nqs, state1qlist, state2qlist)
     apply_measure(ptest, [Nqs], [Ncs])
 
     for i in range(0, Ntimes):

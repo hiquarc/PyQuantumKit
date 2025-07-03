@@ -3,14 +3,16 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
+import math
 from random import randint
-from math import pi
-from pyquantumkit.classical.common import *
-from pyquantumkit.classical.run_result import *
-from pyquantumkit.procedure.generic import *
-from pyquantumkit.state_prepare.int_state import *
-from pyquantumkit.state_prepare.pauli_eigenstate import *
-from pyquantumkit.procedure.swaptest import *
+from pyquantumkit.classical.common import rand_diff_int_pair
+from pyquantumkit.classical.run_result import count_last_bits_of_result_dict, get_result_str_set
+from pyquantumkit.procedure.generic import new_program, get_n_qubits, get_n_cbits, get_qubit_list, copy_program,\
+      get_framework_from_object, append_program, apply_measure, run_and_get_counts, juxtapose_programs
+from pyquantumkit.state_prepare.int_state import create_ket_int_le, create_ket_int_plus_eiphi_neg_le
+from pyquantumkit.state_prepare.pauli_eigenstate import create_pauli_eigenstate, uncompute_pauli_eigenstate
+from pyquantumkit.library.swaptest import run_swaptest, check_tr_rho1_rho2_equals_1
+from pyquantumkit._qframes.framework_map import get_reverse_output_str
 
 # Implement the relation checking for quantum programs,
 #   based on the article: https://arxiv.org/abs/2307.01481
@@ -67,8 +69,8 @@ def run_equivalence_check(qvm, TargetProc1, TargetProc2,
     
     qlist1 = get_qubit_list(TargetProc1)
     qlist2 = [x + Nqs for x in qlist1]
-    #tp1 = copy_program(TargetProc1)
-    #tp2 = copy_program(TargetProc2)
+    tp1 = copy_program(TargetProc1)
+    tp2 = copy_program(TargetProc2)
 
     for i in range(0, NPoints):
         STprocA = new_program(framework, 2 * Nqs, 2 * Ncs1)
@@ -78,13 +80,13 @@ def run_equivalence_check(qvm, TargetProc1, TargetProc2,
 
         create_pauli_eigenstate(STprocA, randompaulis, qlist1)
         create_pauli_eigenstate(STprocA, randompaulis, qlist2)
-        append_program(STprocA, juxtapose_circuits(TargetProc1, TargetProc1))
+        append_program(STprocA, juxtapose_programs(tp1, tp1))
         create_pauli_eigenstate(STprocB, randompaulis, qlist1)
         create_pauli_eigenstate(STprocB, randompaulis, qlist2)
-        append_program(STprocB, juxtapose_circuits(TargetProc2, TargetProc2))
+        append_program(STprocB, juxtapose_programs(tp2, tp2))
         create_pauli_eigenstate(STprocAB, randompaulis, qlist1)
         create_pauli_eigenstate(STprocAB, randompaulis, qlist2)
-        append_program(STprocAB, juxtapose_circuits(TargetProc1, TargetProc2))
+        append_program(STprocAB, juxtapose_programs(tp1, tp2))
         
         Pa = check_tr_rho1_rho2_equals_1(qvm, STprocA, qlist1, qlist2, NTrace)
         Pb = check_tr_rho1_rho2_equals_1(qvm, STprocB, qlist1, qlist2, NTrace)
@@ -161,7 +163,7 @@ def run_keep_purity_check(qvm, TargetProc,
     Ncs = get_n_cbits(TargetProc)
     qlist1 = get_qubit_list(TargetProc)
     qlist2 = [x + Nqs for x in qlist1]
-    #tp = QProg(TargetProc)
+    tp = copy_program(TargetProc)
 
     for i in range(0, NPoints):
         STproc = new_program(framework, 2 * Nqs, 2 * Ncs)
@@ -169,7 +171,7 @@ def run_keep_purity_check(qvm, TargetProc,
 
         create_pauli_eigenstate(STproc, randompaulis, qlist1)
         create_pauli_eigenstate(STproc, randompaulis, qlist2)
-        append_program(STproc, juxtapose_programs(TargetProc, TargetProc))
+        append_program(STproc, juxtapose_programs(tp, tp))
 
         isTr1 = check_tr_rho1_rho2_equals_1(qvm, STproc, qlist1, qlist2, NTrace)
         if (not isTr1):
@@ -201,7 +203,7 @@ def run_unitarity_check(qvm, TargetProc,
     Ncs = get_n_cbits(TargetProc)
     qlist1 = get_qubit_list(TargetProc)
     qlist2 = [x + Nqs for x in qlist1]
-    #tp = QProg(TargetProc)
+    tp = copy_program(TargetProc)
     
     for i in range(0, NPoints):
         STproc = new_program(framework, 2 * Nqs, 2 * Ncs)
@@ -209,8 +211,8 @@ def run_unitarity_check(qvm, TargetProc,
         if (i <= (NPoints - 1) / 2):
             num = randint(0, (1 << Nqs) - 1)
             create_ket_int_plus_eiphi_neg_le(STproc, num, 0.0, qlist1)
-            create_ket_int_plus_eiphi_neg_le(STproc, num, pi, qlist2)
-            append_program(STproc, juxtapose_programs(TargetProc, TargetProc))
+            create_ket_int_plus_eiphi_neg_le(STproc, num, math.pi, qlist2)
+            append_program(STproc, juxtapose_programs(tp, tp))
 
             Npm = run_swaptest(qvm, STproc, qlist1, qlist2, NSTrepeat)
             r = 1.0 - 2.0 * float(Npm) / float(NSTrepeat)
@@ -220,7 +222,7 @@ def run_unitarity_check(qvm, TargetProc,
             (num1, num2) = rand_diff_int_pair(0, (1 << Nqs) - 1)
             create_ket_int_le(STproc, num1, qlist1)
             create_ket_int_le(STproc, num2, qlist2)
-            append_program(STproc, juxtapose_programs(TargetProc, TargetProc))
+            append_program(STproc, juxtapose_programs(tp, tp))
 
             Nab = run_swaptest(qvm, STproc, qlist1, qlist2, NSTrepeat)
             r = 1.0 - 2.0 * float(Nab) / float(NSTrepeat)

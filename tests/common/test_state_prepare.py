@@ -1,3 +1,5 @@
+# test: common/test_state_prepare.py
+#    2025/6/23
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
@@ -25,7 +27,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_create_ket_int_le(self):
         cases = {
-            (0, 0) : {},
+            (0, 0) : set(),
             (2, -2) : ValueError,
             (1, 2) : {'0'},
             (1, 1) : {'1'},
@@ -33,7 +35,7 @@ class Test_state_prepare_int_state(UT.TestCase):
             (3, 22) : {'011'},        # overflow case
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 number = input[1]
                 qbitlist = range(nbits)
@@ -47,7 +49,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_create_ket_int_be(self):
         cases = {
-            (0, 0) : {},
+            (0, 0) : set(),
             (2, -2) : ValueError,
             (1, 2) : {'0'},
             (1, 1) : {'1'},
@@ -55,7 +57,7 @@ class Test_state_prepare_int_state(UT.TestCase):
             (3, 22) :   {'110'},      # overflow case
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 number = input[1]
                 qbitlist = range(nbits)
@@ -77,7 +79,7 @@ class Test_state_prepare_int_state(UT.TestCase):
             (3, 22) : None,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 qbitlist = range(nbits)
                 number = input[1]
@@ -99,7 +101,7 @@ class Test_state_prepare_int_state(UT.TestCase):
             (3, 22) : None,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 qbitlist = range(nbits)
                 number = input[1]
@@ -115,7 +117,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_create_ket_int_plus_eiphi_neg_le(self):
         cases = {
-            (0, 0, 0.0) : {},
+            (0, 0, 0.0) : set(),
             (2, -2, -1.0) : ValueError,
             (1, 0, 0.0) : {'0', '1'},
             (1, 1, 1.0) : {'0', '1'},
@@ -124,7 +126,7 @@ class Test_state_prepare_int_state(UT.TestCase):
             (3, 22, 4.0) : {'011',   '100'},        # overflow case
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 number = input[1]
                 phi = input[2]
@@ -139,7 +141,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_create_ket_int_plus_eiphi_neg_be(self):
         cases = {
-            (0, 0, 0.0) : {},
+            (0, 0, 0.0) : set(),
             (2, -2, -1.0) : ValueError,
             (1, 0, 0.0) : {'0', '1'},
             (1, 1, 1.0) : {'0', '1'},
@@ -148,7 +150,7 @@ class Test_state_prepare_int_state(UT.TestCase):
             (3, 22, 4.0) : {  '110',   '001'},      # overflow case
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 number = input[1]
                 phi = input[2]
@@ -172,7 +174,7 @@ class Test_state_prepare_int_state(UT.TestCase):
             (3, 22, 4.0) : None,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 number = input[1]
                 phi = input[2]
@@ -198,7 +200,7 @@ class Test_state_prepare_int_state(UT.TestCase):
             (3, 22, 4.0) : None,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 number = input[1]
                 phi = input[2]
@@ -216,7 +218,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_create_ket_int1_plus_eiphi_ket_int2_le(self):
         cases = {
-            (0, 0, 0, 0.0) : {},
+            (0, 0, 0, 0.0) : set(),
             (2, -2, 3, -1.0) : ValueError,
             (1, 0, 0, 0.5) : {'0'},
             (1, 0, 1, 1.0) : {'0', '1'},
@@ -226,7 +228,7 @@ class Test_state_prepare_int_state(UT.TestCase):
             (3, 44, 58, 3.0) : {'001'   , '010'   },    # overflow case
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 num1 = input[1]
                 num2 = input[2]
@@ -244,7 +246,7 @@ class Test_state_prepare_int_state(UT.TestCase):
 
     def test_create_ket_int1_plus_eiphi_ket_int2_be(self):
         cases = {
-            (0, 0, 0, 0.0) : {},
+            (0, 0, 0, 0.0) : set(),
             (2, 2, -3, -1.0) : ValueError,
             (1, 0, 0, 0.5) : {'0'},
             (1, 0, 1, 1.0) : {'0', '1'},
@@ -254,7 +256,7 @@ class Test_state_prepare_int_state(UT.TestCase):
             (3, 44, 58, 3.0) : {   '100',    '010'},    # overflow case
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 num1 = input[1]
                 num2 = input[2]
@@ -282,7 +284,7 @@ class Test_state_prepare_int_state(UT.TestCase):
             (3, 44, 58, 3.0) : None,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 num1 = input[1]
                 num2 = input[2]
@@ -310,7 +312,7 @@ class Test_state_prepare_int_state(UT.TestCase):
             (3, 44, 58, 3.0) : None,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 num1 = input[1]
                 num2 = input[2]
@@ -341,7 +343,7 @@ class Test_state_prepare_by_string(UT.TestCase):
 
     def test_create_state_by_01pm(self):
         cases = {
-            (0, '+-')     : {},
+            (0, '+-')     : set(),
             (5, '10+-X')  : ValueError,
             (3, '')       : ValueError,
             (2, '1')      : ValueError,
@@ -350,7 +352,7 @@ class Test_state_prepare_by_string(UT.TestCase):
             (4, '1-01')   : {'1001', '1101'},
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 s = input[1]
                 qbitlist = range(nbits)
@@ -373,7 +375,7 @@ class Test_state_prepare_by_string(UT.TestCase):
             (4, '1-01')   : None,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 s = input[1]
                 qbitlist = range(nbits)
@@ -388,7 +390,7 @@ class Test_state_prepare_by_string(UT.TestCase):
 
     def test_create_state_by_sqgate_str(self):
         cases = {
-            (0, 'XYZ') : {},
+            (0, 'XYZ') : set(),
             (7, 'history') : ValueError,
             (3, '') : ValueError,
             (2, 'i') : ValueError,
@@ -397,7 +399,7 @@ class Test_state_prepare_by_string(UT.TestCase):
             (7, 'iXYZsth') : {'0110000', '0110001'},
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 s = input[1]
                 qbitlist = range(nbits)
@@ -420,7 +422,7 @@ class Test_state_prepare_by_string(UT.TestCase):
             (7, 'iXYZsth') : None,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 s = input[1]
                 qbitlist = range(nbits)
@@ -455,7 +457,7 @@ class Test_state_prepare_pauli_eigenstate(UT.TestCase):
             (6, (0,1,2,3,0,1)) : '01+-01',
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 paulilist = list(input[1])
                 qbitlist = range(nbits)
@@ -476,7 +478,7 @@ class Test_state_prepare_pauli_eigenstate(UT.TestCase):
             (6, (0,1,2,3,4,5)) : 'zzxxyy',
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 paulilist = list(input[1])
                 qbitlist = range(nbits)
@@ -499,7 +501,7 @@ class Test_state_prepare_pauli_eigenstate(UT.TestCase):
             (6, (0,1,2,3,4,5)) : None,
         }
         for input in cases:
-            with self.subTest():
+            with self.subTest(input):
                 nbits = input[0]
                 paulilist = list(input[1])
                 qbitlist = range(nbits)

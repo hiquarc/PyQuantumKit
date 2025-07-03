@@ -1,4 +1,4 @@
-# procedure/qft.py
+# library/qft.py
 #    2025/6/27
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS

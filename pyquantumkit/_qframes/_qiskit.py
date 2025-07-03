@@ -43,13 +43,8 @@ def GATE(gate_name : str, nqs : int, nps : int) -> str:
 
 
 # Translate the circuit applying into the code of calling in qiskit
-def CIRCUIT(dest_none : bool, is_remap : bool, is_inv : bool) -> str:
-    execstr = ""
-    if dest_none:
-        execstr += "tempqc=Framework_Namespace['qiskit'].QuantumCircuit(qc_src);tempqc"
-    else:
-        execstr += "qc_dest"
-    execstr += ".compose(qc_src"
+def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
+    execstr = "qc_dest.compose(qc_src"
     if is_inv:
         execstr += ".inverse()"
     if is_remap:
@@ -58,13 +53,8 @@ def CIRCUIT(dest_none : bool, is_remap : bool, is_inv : bool) -> str:
     return execstr
 
 
-def PROGRAM(dest_none : bool, remap_q : bool, remap_c : bool) -> str:
-    execstr = ""
-    if dest_none:
-        execstr += "tempqp=Framework_Namespace['qiskit'].QuantumCircuit(qp_src);tempqp"
-    else:
-        execstr += "qp_dest"
-    execstr += ".compose(qp_src"
+def PROGRAM(remap_q : bool, remap_c : bool) -> str:
+    execstr = "qp_dest.compose(qp_src"
     if remap_q:
         execstr += ",qbits_remap"
     if remap_c:

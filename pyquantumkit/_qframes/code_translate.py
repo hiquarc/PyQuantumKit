@@ -5,13 +5,12 @@
 
 from pyquantumkit import PyQuantumKitError
 
-Standard_Gate_Name = [
-    'I', 'X', 'Y', 'Z', 'S', 'T', 'H',
+Standard_Gate_Name = {
+    'I', 'X', 'Y', 'Z', 'S', 'T', 'H', 'M',
     'CX', 'CY', 'CZ', 'CH', 'RX', 'RY', 'RZ', 'SW', 'ISW',
     'CRX', 'CRY', 'CRZ', 'RXX', 'RYY', 'RZZ', 'CSW',
     'CCX', 'CCZ', 'SD', 'TD', 'U1', 'CU1', 'U3',
-    'M', 'MA'
-]
+}
 
 
 def get_args_assign_str(argname : str, nargs : int) -> str:
@@ -28,7 +27,7 @@ def get_standard_gatename(origin_gate_name : str) -> str:
     g = origin_gate_name.upper()
 
     # Convert the nonstandard gate name into standard gate name
-    if g == 'M' or g == 'MEASURE':
+    if g == 'M' or g == 'MA' or g == 'MEASURE':
         return 'M'
     if g == 'I' or g == 'ID':
         return 'I'

@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-__version__ = '0.0.4'
+__version__ = '0.1.0'
 
 import sys
 import importlib as IL

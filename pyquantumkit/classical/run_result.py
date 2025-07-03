@@ -85,7 +85,7 @@ def get_result_str_set(counts_dict : dict, reverse : bool = False) -> set:
         None -> {}
     """
     if not counts_dict:
-        return {}
+        return set()
     ret = set(counts_dict.keys())
     if reverse:
         ret = {s[::-1] for s in ret}

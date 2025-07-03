@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from pyquantumkit import get_framework_from_object
+from pyquantumkit import get_framework_from_object, PyQuantumKitError
 from pyquantumkit._qframes.framework_map import quantum_action, Action
 from pyquantumkit.classical.common import indexlist_length
 
@@ -32,7 +32,7 @@ def derivative(q_circuit, qbitlist : list[int], createfunc : callable, rev_endia
     return q_circuit
 
 
-def apply_gate(q_circuit, gate_str : str, qbits : list[int], paras : list = []):
+def apply_gate(q_circuit, gate_str : str, qbits : list[int], paras : list = None):
     """
     Apply a quantum gate on a quantum circuit
 
@@ -43,7 +43,7 @@ def apply_gate(q_circuit, gate_str : str, qbits : list[int], paras : list = []):
 
     -> Return : q_circuit
     """
-    quantum_action(Action.GATE, q_circuit, gate_str, qbits, paras)
+    quantum_action(Action.GATE, 0, q_circuit, gate_str, qbits, paras)
     return q_circuit
 
 
@@ -57,11 +57,11 @@ def apply_measure(q_circuit, qindex : list[int], cindex : list[int]):
 
     -> Return : q_circuit
     """
-    quantum_action(Action.GATE, q_circuit, 'M', qindex, cindex)
+    quantum_action(Action.GATE, 0, q_circuit, 'M', qindex, cindex)
     return q_circuit
 
 
-def multi_apply_sqgate(q_circuit, gate_str : str, qbitlist : list[int], paras : list = []):
+def multi_apply_sqgate(q_circuit, gate_str : str, qbitlist : list[int], paras : list = None):
     """
     Apply a series of same single-qubit gate on a quantum circuit
 
@@ -92,13 +92,15 @@ def apply_reverse(q_circuit, qbitlist : list[int]):
     return q_circuit
 
 
-def append_circuit(dest_qcir, src_qcir, remap = 0, inverse : bool = False):
+def append_circuit(dest_qcir, src_qcir, remap = None, inverse : bool = False):
     """
     Apply a quantum circuit on a qubit array.
 
         dest_qcir  : destination quantum circuit to be appended
+            NOTE: <dest_qcir> can be quantum circuit or quantum program
         src_qcir   : source quantum circuit
-        remap      : (int or list[int], default 0)
+        remap      : (None or int or list[int], default None)
+                     if <remap> is None, no remap will be applied
                      if the type of <remap> is int, give the offset of each qubit index
                      if the type of <remap> is list[int], give the remap list of the qubit indices
         inverse    : (default False) whether apply the inverse circuit
@@ -106,78 +108,101 @@ def append_circuit(dest_qcir, src_qcir, remap = 0, inverse : bool = False):
     -> Return : dest_qcir
     """
     remaplist = None
-    if isinstance(remap, int):
-        if remap > 0:
-            remaplist = [x + remap for x in get_qubit_list(src_qcir)]
-    else:
+    if remap is None:
+        remaplist = None
+    elif isinstance(remap, int):
+        remaplist = [x + remap for x in get_qubit_list(src_qcir)]
+    elif isinstance(remap, (list, range)):
         remaplist = remap
-    quantum_action(Action.CIRCUIT, dest_qcir, src_qcir, remaplist, inverse)
+    else:
+        raise PyQuantumKitError('Invalid remap: ' + str(remap))
+    
+    quantum_action(Action.CIRCUIT, 1, dest_qcir, src_qcir, remaplist, inverse)
     return dest_qcir
 
 
-def copy_circuit(src_qcir, remap = 0, inverse : bool = False):
+def copy_circuit(src_qcir, remap = None, inverse : bool = False):
     """
     Copy a quantum circuit
 
         src_qcir   : source quantum circuit
-        remap      : (int or list[int], default 0)
+        remap      : (int or list[int], default None)
+                     if <remap> is None, no remap will be applied
                      if the type of <remap> is int, give the offset of each qubit index
                      if the type of <remap> is list[int], give the remap list of the qubit indices
         inverse    : (default False) whether apply the inverse circuit
 
     -> Return : a replica quantum circuit of src_qcir
     """
-    return append_circuit(None, src_qcir, remap, inverse)
+    framework = get_framework_from_object(src_qcir)
+    nqbits = get_n_qubits(src_qcir)
+    retqc = new_circuit(framework, nqbits)
+    append_circuit(retqc, src_qcir, remap, inverse)
+    return retqc
 
 
 
-def append_program(dest_qp, src_qp, qbits_remap = 0, cbits_remap = 0):
+def append_program(dest_qp, src_qp, qbits_remap = None, cbits_remap = None):
     """
     Apply a quantum program on a qubit array.
 
         destqp      : destination quantum program to be appended
         src_qp      : source quantum program
-        qbits_remap : (int or list[int], default 0)
+        qbits_remap : (None or int or list[int], default None)
                      if the type of <qbits_remap> is int, give the offset of each qubit index
                      if the type of <qbits_remap> is list[int], give the remap list of the qubit indices
-        cbits_remap : (int or list[int], default 0)
+        cbits_remap : (None or int or list[int], default None)
                      if the type of <cbits_remap> is int, give the offset of each classical bit index
                      if the type of <cbits_remap> is list[int], give the remap list of the classical bit indices
+            NOTE: if one of <qbits_remap> or <cbits_remap> is None, no remap will be applied.
 
     -> Return : dest_qp
     """
+    if qbits_remap is None or cbits_remap is None:
+        quantum_action(Action.PROGRAM, 1, dest_qp, src_qp, None, None)
+        return dest_qp
+    
     qrlist = None
     crlist = None
     if isinstance(qbits_remap, int):
-        if qbits_remap > 0:
-            qrlist = [x + qbits_remap for x in get_qubit_list(src_qp)]
-    else:
+        qrlist = [x + qbits_remap for x in get_qubit_list(src_qp)]
+    elif isinstance(qbits_remap, (list, range)):
         qrlist = qbits_remap
-    if isinstance(cbits_remap, int):
-        if cbits_remap > 0:
-            crlist = [x + cbits_remap for x in get_cbit_list(src_qp)]
     else:
+        raise PyQuantumKitError('Invalid qbits_remap: ' + str(qbits_remap))
+    if isinstance(cbits_remap, int):
+        crlist = [x + cbits_remap for x in get_cbit_list(src_qp)]
+    elif isinstance(cbits_remap, (list, range)):
         crlist = cbits_remap
+    else:
+        raise PyQuantumKitError('Invalid cbits_remap: ' + str(cbits_remap))
 
-    quantum_action(Action.PROGRAM, dest_qp, src_qp, qrlist, crlist)
+    quantum_action(Action.PROGRAM, 1, dest_qp, src_qp, qrlist, crlist)
     return dest_qp
 
 
-def copy_program(src_qp, qbits_remap = 0, cbits_remap = 0):
+def copy_program(src_qp, qbits_remap = None, cbits_remap = None):
     """
     Copy a quantum program
 
         src_qp      : source quantum program
-        qbits_remap : (int or list[int], default 0)
+            NOTE: <src_qp> can be a quantum circuit. But if so, please remain <qbits_remap> and <cbits_remap> are None.
+        qbits_remap : (None or int or list[int], default None)
                      if the type of <qbits_remap> is int, give the offset of each qubit index
                      if the type of <qbits_remap> is list[int], give the remap list of the qubit indices
-        cbits_remap : (int or list[int], default 0)
+        cbits_remap : (None or list[int], default None)
                      if the type of <cbits_remap> is int, give the offset of each classical bit index
                      if the type of <cbits_remap> is list[int], give the remap list of the classical bit indices
+            NOTE: if one of <qbits_remap> or <cbits_remap> is None, no remap will be applied.
 
     -> Return : a replica quantum program of src_qp
     """
-    return append_program(None, src_qp, qbits_remap, cbits_remap)
+    framework = get_framework_from_object(src_qp)
+    nqbits = get_n_qubits(src_qp)
+    ncbits = get_n_cbits(src_qp)
+    retqp = new_program(framework, nqbits, ncbits)
+    append_program(retqp, src_qp, qbits_remap, cbits_remap)
+    return retqp
 
 
 
@@ -214,7 +239,7 @@ def get_n_qubits(q_prog) -> int:
 
     -> Return : the number of qubits
     """
-    return quantum_action(Action.BITS, q_prog, False, False)
+    return quantum_action(Action.BITS, 0, q_prog, False, False)
 
 def get_qubit_list(q_prog) -> list[int]:
     """
@@ -224,7 +249,7 @@ def get_qubit_list(q_prog) -> list[int]:
 
     -> Return : list of the qubits
     """
-    return quantum_action(Action.BITS, q_prog, False, True)
+    return quantum_action(Action.BITS, 0, q_prog, False, True)
 
 def get_n_cbits(q_prog) -> int:
     """
@@ -235,7 +260,7 @@ def get_n_cbits(q_prog) -> int:
     -> Return : the number of classical bits
                 0 if q_prog is a quantum circuit
     """
-    return quantum_action(Action.BITS, q_prog, True, False)
+    return quantum_action(Action.BITS, 0, q_prog, True, False)
 
 def get_cbit_list(q_prog) -> list[int]:
     """
@@ -246,7 +271,7 @@ def get_cbit_list(q_prog) -> list[int]:
     -> Return : list of the classical bits
                 [] if q_prog is a quantum circuit
     """
-    return quantum_action(Action.BITS, q_prog, True, True)
+    return quantum_action(Action.BITS, 0, q_prog, True, True)
 
 
 def run_and_get_counts(q_machine, q_prog, shots : int = 1, model = None):
@@ -260,7 +285,7 @@ def run_and_get_counts(q_machine, q_prog, shots : int = 1, model = None):
 
     -> Return : dict of results
     """
-    return quantum_action(Action.RUN, q_machine, q_prog, shots, model)
+    return quantum_action(Action.RUN, 1, q_machine, q_prog, shots, model)
 
 
 def juxtapose_programs(*args):
@@ -281,8 +306,8 @@ def juxtapose_programs(*args):
     for i in range(len(args)):
         nqs = get_n_qubits(args[i])
         ncs = get_n_cbits(args[i])
-        qofflist.append(nqs)
-        cofflist.append(ncs)
+        qofflist.append(ntotalqs)
+        cofflist.append(ntotalcs)
         ntotalqs += nqs
         ntotalcs += ncs
 
