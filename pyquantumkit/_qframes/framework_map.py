@@ -6,7 +6,7 @@
 from enum import Enum, auto
 import importlib
 from pyquantumkit import PyQuantumKitError
-from pyquantumkit import Supported_Frameworks, Framework_Namespace, get_framework_from_object
+from pyquantumkit import Supported_Frameworks, FN, get_framework_from_object
 from pyquantumkit.classical.common import indexlist_length
 
 Translate_Namespace = {}
@@ -52,10 +52,10 @@ def get_apply_function(action : Action, framework : str) -> callable:
         return ret
 
     if action == Action.RUN:
-        def ret(qvm, qc, run_shots : int, model):
+        def ret(qvm, qc, run_shots : int, **kwargs):
             try:
-                exec(Translate_Namespace[framework].RUN(1, model is not None))
-                return eval(Translate_Namespace[framework].RUN(2, model is not None))
+                exec(Translate_Namespace[framework].RUN(1, **kwargs))
+                return eval(Translate_Namespace[framework].RUN(2, **kwargs))
             except Exception:
                 return {}
         return ret

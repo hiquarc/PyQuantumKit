@@ -15,14 +15,14 @@ def GATE(gate_name : str, nqs : int, nps : int) -> str:
         return ''
     if g == 'M':
         # NOTE: there are some bugs in measure(list, list) in pyqpanda3 (ver 0.3.1)
-        #execstr = "qc<<Framework_Namespace['pyqpanda3'].measure([" + \
+        #execstr = "qc<<FN('pyqpanda3').measure([" + \
         #          get_args_assign_str('qbits', nqs) + "],[" + \
         #          get_args_assign_str('paras', nps) + "])"
 
         # Temporarily use bit-by-bit operation to avoid the bugs in pyqpanda3
         execstr = "qc"
         for i in range(nqs):
-            execstr += "<<Framework_Namespace['pyqpanda3'].measure(qbits["\
+            execstr += "<<FN('pyqpanda3').measure(qbits["\
                      + str(i) + "],paras[" + str(i) + "])"
         return execstr
 
@@ -37,7 +37,7 @@ def GATE(gate_name : str, nqs : int, nps : int) -> str:
     elif g == 'CU1':
         g = 'CR'
     
-    execstr = "qc<<Framework_Namespace['pyqpanda3']."
+    execstr = "qc<<FN('pyqpanda3')."
     if g == 'CH' or g == 'CY':
         execstr += g[1] + "(qbits[1]).control(qbits[0])"
         return execstr
@@ -65,7 +65,7 @@ def GATE(gate_name : str, nqs : int, nps : int) -> str:
 
 # Translate the circuit applying into the code of calling in pyqpanda3
 def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
-    execstr = "tempqc=Framework_Namespace['pyqpanda3'].QCircuit(qc_src);qc_dest<<tempqc"
+    execstr = "tempqc=FN('pyqpanda3').QCircuit(qc_src);qc_dest<<tempqc"
     if is_inv:
         execstr += ".dagger()"
     if is_remap:
@@ -74,7 +74,7 @@ def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
 
 
 def PROGRAM(remap_q : bool, remap_c : bool) -> str:
-    execstr = "tempqp=Framework_Namespace['pyqpanda3'].QProg(qp_src);qp_dest<<tempqp"
+    execstr = "tempqp=FN('pyqpanda3').QProg(qp_src);qp_dest<<tempqp"
     if remap_q or remap_c:
         execstr += ".remap(qbits_remap,cbits_remap)"
     return execstr
@@ -82,12 +82,12 @@ def PROGRAM(remap_q : bool, remap_c : bool) -> str:
 
 def NEW(is_qprog : bool) -> str:
     if is_qprog:
-        return "Framework_Namespace['pyqpanda3'].QProg(nqbits)"
-    return "Framework_Namespace['pyqpanda3'].QCircuit(nqbits)"
+        return "FN('pyqpanda3').QProg(nqbits)"
+    return "FN('pyqpanda3').QCircuit(nqbits)"
 
 
 def BITS(ret_cbit : bool, ret_list : bool) -> str:
-    execstr = "0 if isinstance(qc, Framework_Namespace['pyqpanda3'].QCircuit) else indexlist_length(qc.cbits())" \
+    execstr = "0 if isinstance(qc, FN('pyqpanda3').QCircuit) else indexlist_length(qc.cbits())" \
               if ret_cbit else "indexlist_length(qc.qubits())"
     if ret_list:
         return "list(range(" + execstr + "))"
@@ -95,10 +95,10 @@ def BITS(ret_cbit : bool, ret_list : bool) -> str:
         return execstr
 
 
-def RUN(line : int, model) -> str:
+def RUN(line : int, **kwargs) -> str:
     if line == 1:
-        if model is None:
-            return "qvm.run(qc,run_shots,model)"
+        if kwargs is not None and kwargs.get('model') is not None:
+            return "qvm.run(qc,run_shots,model=kwargs['model'])"
         else:
             return "qvm.run(qc,run_shots)"
     if line == 2:

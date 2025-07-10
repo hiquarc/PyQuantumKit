@@ -1,0 +1,7 @@
+# init_frame.txt
+#   This file indicates the name of quantum frameworks and how to import
+
+qiskit           qiskit
+pyqpanda3        pyqpanda3.core
+quafu            quafu            quafu.elements.element_gates
+# cqlib            cqlib

@@ -274,18 +274,18 @@ def get_cbit_list(q_prog) -> list[int]:
     return quantum_action(Action.BITS, 0, q_prog, True, True)
 
 
-def run_and_get_counts(q_machine, q_prog, shots : int = 1, model = None):
+def run_and_get_counts(q_machine, q_prog, shots : int = 1, **kwargs):
     """
     Run quantum programs on quantum machine and get the result dict
 
         q_machine : target quantum machine
         q_prog    : target quantum program
         shots     : running shots (repeat times)
-        model     : (current unsupported)
+        kwargs    : (optional) Other parameters
 
     -> Return : dict of results
     """
-    return quantum_action(Action.RUN, 1, q_machine, q_prog, shots, model)
+    return quantum_action(Action.RUN, 1, q_machine, q_prog, shots, **kwargs)
 
 
 def juxtapose_programs(*args):

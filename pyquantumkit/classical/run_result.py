@@ -91,12 +91,3 @@ def get_result_str_set(counts_dict : dict, reverse : bool = False) -> set:
         ret = {s[::-1] for s in ret}
     return ret
 
-
-# def get_first_result_str(counts_dict : dict, bit_index_list : list[int] = None, reverse : bool = False) -> str:
-#     """
-#     Count the number from the last several bits of result dict
-#     """
-#     if bit_index_list is None:
-#         return next(iter(counts_dict))
-#     temp = count_subset_of_result_dict(counts_dict, bit_index_list, reverse)
-#     return next(iter(temp))

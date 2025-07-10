@@ -65,8 +65,8 @@ def PROGRAM(remap_q : bool, remap_c : bool) -> str:
 
 def NEW(is_qprog : bool) -> str:
     if is_qprog:
-        return "Framework_Namespace['qiskit'].QuantumCircuit(nqbits, ncbits)"
-    return "Framework_Namespace['qiskit'].QuantumCircuit(nqbits)"
+        return "FN('qiskit').QuantumCircuit(nqbits, ncbits)"
+    return "FN('qiskit').QuantumCircuit(nqbits)"
 
 
 def BITS(ret_cbit : bool, ret_list : bool) -> str:
@@ -76,7 +76,7 @@ def BITS(ret_cbit : bool, ret_list : bool) -> str:
         return "qc.num_clbits" if ret_cbit else "qc.num_qubits"
 
 
-def RUN(line : int, model) -> str:
+def RUN(line : int, **kwargs) -> str:
     if line == 1:
         return "job=qvm.run(qc,shots=run_shots)"
     if line == 2:
