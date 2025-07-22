@@ -7,6 +7,10 @@ from .code_translate import get_args_assign_str, get_standard_gatename
 
 # Whether the reverse of output 0/1 string is required to let the index of characters match corresponding cbits
 REVERSE_OUTPUT_STRING = True
+# Wether support inverse circuit
+SUPPORT_INVERSE = True
+# Wether support remap the index of bits
+SUPPORT_REMAP = True
 
 # Translate the gate applying into the code of calling in pyqpanda3
 def GATE(gate_name : str, nqs : int, nps : int) -> str:

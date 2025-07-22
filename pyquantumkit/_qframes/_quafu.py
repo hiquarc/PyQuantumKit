@@ -8,6 +8,10 @@ from pyquantumkit import PyQuantumKitError
 
 # Whether the reverse of output 0/1 string is required to let the index of characters match corresponding cbits
 REVERSE_OUTPUT_STRING = False
+# Wether support inverse circuit
+SUPPORT_INVERSE = False
+# Wether support remap the index of bits
+SUPPORT_REMAP = False
 
 # Translate the gate applying into the code of calling in qiskit
 def GATE(gate_name : str, nqs : int, nps : int) -> str:

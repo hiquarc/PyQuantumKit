@@ -8,30 +8,6 @@ from pyquantumkit._qframes.framework_map import quantum_action, Action
 from pyquantumkit.classical.common import indexlist_length
 
 
-def derivative(q_circuit, qbitlist : list[int], createfunc : callable, rev_endian = False, uncomp = False,\
-                *args, **kwargs):
-    """
-    Generate the derivative circuit based on quantum circuit function <createfunc>
-
-        q_circuit  : the circuit to be appended
-        qbitlist   : index of qubit list to apply the circuit
-        createfunc : the functions to create target quantum circuit
-        rev_endian : whether reverse the order of target quantum circuit
-        uncomp     : whether generate the inverse version of target quantum circuit
-        ...        : the parameters required in <createfunc>
-
-    -> Return : q_circuit; if q_circuit is None, create a new circuit
-    """
-    f = get_framework_from_object(q_circuit)
-    tempqc = new_circuit(f, indexlist_length(qbitlist))
-    createfunc(tempqc, *args, **kwargs)
-    if rev_endian:
-        append_circuit(q_circuit, tempqc, range(0, len(qbitlist))[::-1], uncomp)
-    else:
-        append_circuit(q_circuit, tempqc, None, uncomp)
-    return q_circuit
-
-
 def apply_gate(q_circuit, gate_str : str, qbits : list[int], paras : list = None):
     """
     Apply a quantum gate on a quantum circuit
@@ -288,12 +264,12 @@ def run_and_get_counts(q_machine, q_prog, shots : int = 1, **kwargs):
     return quantum_action(Action.RUN, 1, q_machine, q_prog, shots, **kwargs)
 
 
-def juxtapose_programs(*args):
+def parallel_programs(*args):
     """
     Generate a quantum program to parallel several subprograms
 
         Variable parameters:
-            e.g., juxtapose_programs(qp1, qp2, qp3)
+            e.g., parallel_programs(qp1, qp2, qp3)
 
     -> Return : result quantum program
     """
@@ -317,12 +293,12 @@ def juxtapose_programs(*args):
     return retqp
 
 
-def juxtapose_circuits(*args):
+def parallel_circuits(*args):
     """
     Generate a quantum circuit to parallel several subcircuits
 
         Variable parameters:
-            e.g., juxtapose_circuits(qc1, qc2, qc3)
+            e.g., parallel_circuits(qc1, qc2, qc3)
 
     -> Return : result quantum circuit
     """
