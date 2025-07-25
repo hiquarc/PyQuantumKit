@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from .code_translate import get_args_assign_str, get_standard_gatename
+from .code_translate import get_standard_gatename
 
 # Whether the reverse of output 0/1 string is required to let the index of characters match corresponding cbits
 REVERSE_OUTPUT_STRING = True
@@ -11,25 +11,44 @@ REVERSE_OUTPUT_STRING = True
 SUPPORT_INVERSE = True
 # Wether support remap the index of bits
 SUPPORT_REMAP = True
+# List of supported algorithms
+SUPPORT_ALGORITHMS = []
 
-# Translate the gate applying into the code of calling in pyqpanda3
-def GATE(gate_name : str, nqs : int, nps : int) -> str:
+
+def CODE(cir_name : str, gate_lib_name : str, linebreak : str,
+          gate_name : str, qbits : list[int], paras : list) -> str:
     g = get_standard_gatename(gate_name).upper()
-    if g == 'I':
-        return ''
+    execstr = cir_name
+    glib = '' if gate_lib_name is None else gate_lib_name + "."
+
+    #if g == 'I':
+    #    return ''
     if g == 'M':
         # NOTE: there are some bugs in measure(list, list) in pyqpanda3 (ver 0.3.1)
-        #execstr = "qc<<FN('pyqpanda3').measure([" + \
-        #          get_args_assign_str('qbits', nqs) + "],[" + \
-        #          get_args_assign_str('paras', nps) + "])"
-
+        #execstr = " << FN('pyqpanda3').measure(" + str(qbits) + ", " + str(paras) + ")"
         # Temporarily use bit-by-bit operation to avoid the bugs in pyqpanda3
-        execstr = "qc"
-        for i in range(nqs):
-            execstr += "<<FN('pyqpanda3').measure(qbits["\
-                     + str(i) + "],paras[" + str(i) + "])"
+        for i in range(len(qbits)):
+            execstr += " << " + glib + "measure(" + str(qbits[i]) + ", " + str(paras[i]) + ")"
         return execstr
-
+    
+    execstr += " << " + glib
+    if g == 'CH' or g == 'CY':
+        execstr += g[1] + "(" + str(qbits[1]) + ").control(" + str(qbits[0]) + ")"
+        return execstr
+    if g == 'CSW':
+        execstr += "SWAP(" + str(qbits[1]) + ", " + str(qbits[2]) + ").control(" + str(qbits[0]) + ")"
+        return execstr
+    # pyqpanda3 verion 0.3 supports CRX, CRY, CRZ directly
+    #if g == 'CRX' or g == 'CRY' or g == 'CRZ':
+    #    execstr += g[1:3] + "(qbits[1],paras[0]).control(qbits[0])"
+    #    return execstr
+    if g == 'SD' or g == 'TD':
+        execstr += g[0] + "(" + str(qbits[0]) + ").dagger()"
+        return execstr
+    if g == 'CCZ':
+        execstr += "Z(" + str(qbits[2]) + ").control(" + str(qbits[0:2]) + ")"
+        return execstr
+    
     if g == 'CX':
         g = 'CNOT'
     elif g == 'SW':
@@ -40,31 +59,17 @@ def GATE(gate_name : str, nqs : int, nps : int) -> str:
         g = 'TOFFOLI'
     elif g == 'CU1':
         g = 'CR'
-    
-    execstr = "qc<<FN('pyqpanda3')."
-    if g == 'CH' or g == 'CY':
-        execstr += g[1] + "(qbits[1]).control(qbits[0])"
-        return execstr
-    if g == 'CSW':
-        execstr += "SWAP(qbits[1],qbits[2]).control(qbits[0])"
-        return execstr
-    # pyqpanda3 verion 0.3 supports CRX, CRY, CRZ directly
-    #if g == 'CRX' or g == 'CRY' or g == 'CRZ':
-    #    execstr += g[1:3] + "(qbits[1],paras[0]).control(qbits[0])"
-    #    return execstr
-    if g == 'SD' or g == 'TD':
-        execstr += g[0] + "(qbits[0]).dagger()"
-        return execstr
-    if g == 'CCZ':
-        execstr += "Z(qbits[2]).control([qbits[0],qbits[1]])"
-        return execstr
 
-    if nps == 0:
-        execstr += g + "(" + get_args_assign_str('qbits', nqs) + ")"
+    if not paras:
+        execstr += g + "(" + str(qbits)[1:-1] + ")"
     else:
-        execstr += g + "(" + get_args_assign_str('qbits', nqs) + "," + \
-                   get_args_assign_str('paras', nps) + ")"
+        execstr += g + "(" + str(qbits)[1:-1] + ", " + str(paras)[1:-1] + ")"
     return execstr
+
+
+# Translate the gate applying into the code of calling in pyqpanda3
+def GATE(gate_name : str, qbits : list[int], paras : list) -> str:
+    return CODE("qc", "FN('pyqpanda3')", ";", gate_name, qbits, paras)
 
 
 # Translate the circuit applying into the code of calling in pyqpanda3

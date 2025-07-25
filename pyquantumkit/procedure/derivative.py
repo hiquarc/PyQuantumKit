@@ -39,7 +39,7 @@ def derivative(q_circuit, qbitlist : list[int], createfunc : callable, rev_endia
         if uncomp:
             tempqc.inverse()
         if rev_endian:
-            tempqc.remap_qubits(range(0, len(qbitlist))[::-1])
+            tempqc.remap_qbits(range(0, len(qbitlist))[::-1])
         tempqc.append_into_actual_circuit(q_circuit)
 
     return q_circuit

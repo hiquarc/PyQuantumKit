@@ -28,20 +28,20 @@ class On_quafu_Test_procedure_generic(T_P.Test_procedure_generic):
 # END ---------- procedure ----------
 
 # BEGIN ---------- state_prepare ----------
-class On_quafu_Test_state_prepare_int_state(T_SP.Test_state_prepare_int_state):
-    def setUp(self):
-        self._fm = RUN_TEST_FRAMEWORK
-        self._qvm = RUN_TEST_MACHINE
+# class On_quafu_Test_state_prepare_int_state(T_SP.Test_state_prepare_int_state):
+#     def setUp(self):
+#         self._fm = RUN_TEST_FRAMEWORK
+#         self._qvm = RUN_TEST_MACHINE
 
-class On_quafu_Test_state_prepare_by_string(T_SP.Test_state_prepare_by_string):
-    def setUp(self):
-        self._fm = RUN_TEST_FRAMEWORK
-        self._qvm = RUN_TEST_MACHINE
+# class On_quafu_Test_state_prepare_by_string(T_SP.Test_state_prepare_by_string):
+#     def setUp(self):
+#         self._fm = RUN_TEST_FRAMEWORK
+#         self._qvm = RUN_TEST_MACHINE
 
-class On_quafu_Test_state_prepare_pauli_eigenstate(T_SP.Test_state_prepare_pauli_eigenstate):
-    def setUp(self):
-        self._fm = RUN_TEST_FRAMEWORK
-        self._qvm = RUN_TEST_MACHINE
+# class On_quafu_Test_state_prepare_pauli_eigenstate(T_SP.Test_state_prepare_pauli_eigenstate):
+#     def setUp(self):
+#         self._fm = RUN_TEST_FRAMEWORK
+#         self._qvm = RUN_TEST_MACHINE
 # END ---------- state_prepare ----------
 
 # BEGIN ---------- program_check ----------

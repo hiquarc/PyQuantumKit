@@ -108,7 +108,7 @@ print(quafu_result.counts)    # print running results
 
 ## 三、功能简介
 
-基于v.0.1.1版本
+基于v.0.1.2版本
 
 ### 3.1 当前支持的量子软件栈
 
@@ -203,21 +203,20 @@ PyQuantumKit提供了一个`CircuitIO`类，用于暂存构建的量子线路以
 `CircuitIO`类可以像一个量子软件栈的量子线路类一样使用，也可以对其执行`apply_gate`, `apply_measure`等操作。`CircuitIO`对象保存了量子线路的信息，随后可以格式化输出为字符串或插入具体的量子软件栈的量子线路对象中。
 
 ```python
-cio = CircuitIO(2, 2)   # define a CircuitIO object with 5 qubits and 5 cbits
-apply_gate(cio, 'H', [0])
-cio.apply_gate('CX', [0, 1])
+cio = PQK.CircuitIO(2, 2)        # define a CircuitIO object
+PQK.apply_gate(cio, 'H', [0])    # Use generic function <gate_apply>
+cio.apply_gate('CX', [0, 1])     # Use CircuitIO member function <gate_apply>
 ```
 
-由于某些量子软件栈不支持自动生成逆线路和量子比特的重映射，可以利用`CircuitIO`类间接完成构造：先在CircuitIO对象上构造线路并生成逆线路或重映射（使用`inverse`和`remap_qubits`、`remap_cbits`成员函数），然后利用`append_into_actual_circuit`成员函数将CircuitIO包含的量子线路插入到具体量子软件栈的量子线路中。
+由于某些量子软件栈不支持自动生成逆线路和量子比特的重映射，可以利用`CircuitIO`类间接完成构造：先在CircuitIO对象上构造线路并生成逆线路或重映射（使用`inverse`和`remap_qbits`、`remap_cbits`成员函数），然后利用`>>`运算符（或等价的，`append_into_actual_circuit`成员函数）将CircuitIO包含的量子线路插入到具体量子软件栈的量子线路中。
 
 ```python
 # quafu framework does not support qubits remap and circuit auto-inverse
 # Here we use CircuitIO object to implement indirectly
-cio.inverse()
-cio.remap_qubits([1, 0])
+cio.inverse()              # inverse the circuit in CircuitIO object cio
+cio.remap_qbits([1, 0])    # remap the circuit in cio
 quafu_circuit = quafu.QuantumCircuit(2, 2)
-# insert the CircuitIO object into quafu's circuit
-cio.append_into_actual_circuit(quafu_circuit)
+cio >> quafu_circuit       # insert the CircuitIO object cio into quafu's circuit
 ```
 
 ### 一些尚处于实验阶段的功能
@@ -278,5 +277,9 @@ longpx@ihep.ac.cn
 
 ## 五、版本历史
 
-2025/7/22 v.0.1.2 引入CircuitIO类
-2025/7/10 首个预览版本 (v.0.1.1) 发布
+2025/7/25 v.0.1.2
+- 新增CircuitIO类，用于量子线路的格式化操作
+- 修改了应用门的代码的翻译方式，以适应CircuitIO类输出为用户可读代码的功能
+
+2025/7/10 v.0.1.1
+- 首个预览版本 (v.0.1.1) 发布

@@ -5,7 +5,7 @@
 
 from pyquantumkit import *
 from pyquantumkit._qframes.framework_map import get_reverse_output_str
-from pyquantumkit.procedure.generic import *
+from pyquantumkit.procedure.circuit_io import *
 from pyquantumkit.classical.run_result import *
 from pyquantumkit.classical.common import *
 from pyquantumkit.program_check.program_relation import *
@@ -86,26 +86,29 @@ def EmptyCir(framework : str):
     return new_circuit(framework, 4)
 
 def CancelCir(framework : str):
-    qc = new_circuit(framework, 4)
-    apply_gate(qc, 'RX', [0], [0.5])
-    apply_gate(qc, 'RY', [0], [1.5])
-    apply_gate(qc, 'RZ', [0], [2.5])
-    apply_gate(qc, 'RXX', [1, 2], [0.7])
-    apply_gate(qc, 'RYY', [1, 2], [1.4])
-    apply_gate(qc, 'RZZ', [1, 2], [2.1])
-    apply_gate(qc, 'CRX', [0, 3], [-0.3])
-    apply_gate(qc, 'CRY', [0, 3], [-0.6])
-    apply_gate(qc, 'CRZ', [0, 3], [-0.9])
+    cio = CircuitIO(4)
+    cio1 = CircuitIO(4)
+    cio2 = CircuitIO(4)
+    cio3 = CircuitIO(4)
 
-    apply_gate(qc, 'CRZ', [0, 3], [0.9])
-    apply_gate(qc, 'CRY', [0, 3], [0.6])
-    apply_gate(qc, 'CRX', [0, 3], [0.3])
-    apply_gate(qc, 'RZZ', [1, 2], [-2.1])
-    apply_gate(qc, 'RYY', [1, 2], [-1.4])
-    apply_gate(qc, 'RXX', [1, 2], [-0.7])
-    apply_gate(qc, 'RZ', [0], [-2.5])
-    apply_gate(qc, 'RY', [0], [-1.5])
-    apply_gate(qc, 'RX', [0], [-0.5])
+    apply_gate(cio3, 'CRX', [0, 3], [-0.3])
+    apply_gate(cio3, 'CRY', [0, 3], [-0.6])
+    apply_gate(cio3, 'CRZ', [0, 3], [-0.9])
+    apply_gate(cio1, 'RX', [0], [0.5])
+    apply_gate(cio1, 'RY', [0], [1.5])
+    apply_gate(cio1, 'RZ', [0], [2.5])
+    apply_gate(cio2, 'RXX', [1, 2], [0.7])
+    apply_gate(cio2, 'RYY', [1, 2], [1.4])
+    apply_gate(cio2, 'RZZ', [1, 2], [2.1])
+
+    cio << cio1 << cio2 << cio3
+    cio1.inverse()
+    cio2.inverse()
+    cio3.inverse()
+    cio << cio3 << cio2 << cio1
+
+    qc = new_circuit(framework, 4)
+    cio >> qc
     return qc
 
 def Cir1A(framework : str):
@@ -119,6 +122,18 @@ def Cir1A(framework : str):
 def Cir1B(framework : str):
     qc = new_circuit(framework, 2)
     apply_gate(qc, 'X', [1])
+    return qc
+def Cir1C(framework : str):
+    cio = CircuitIO()
+    cio.apply_gate('H', [0])
+    cio.apply_gate('CNOT', [1, 0])
+    cio.apply_gate('z', [0])
+    cio.apply_gate('Z', [1])
+    cio.apply_gate('CX', [1, 0])
+    cio.apply_gate('H', [0])
+    cio.remap_qbits([1, 0])
+    qc = new_circuit(framework, 2)
+    cio >> qc
     return qc
 
 # Buggy programs:
