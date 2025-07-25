@@ -5,6 +5,7 @@
 
 import math
 from pyquantumkit.procedure.generic import apply_gate, apply_reverse, derivative
+from pyquantumkit.procedure.derivative import derivative
 from qiskit.circuit.library import QFT
 
 

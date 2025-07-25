@@ -6,6 +6,7 @@
 import unittest as UT
 from tests.common.test_classical import Test_classical_common, Test_classical_run_result
 from tests.common.test_qframes import Test_qframes_code_translate
+from tests.common.test_procedure import Test_procedure_circuit_io
 
 if __name__ == '__main__':
     UT.main()

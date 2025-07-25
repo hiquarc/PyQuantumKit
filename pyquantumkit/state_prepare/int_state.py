@@ -3,7 +3,8 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from pyquantumkit.procedure.generic import apply_gate, derivative
+from pyquantumkit.procedure.generic import apply_gate
+from pyquantumkit.procedure.derivative import derivative
 
 def create_ket_int_le(q_circuit, number : int, qbitlist : list[int]):
     """

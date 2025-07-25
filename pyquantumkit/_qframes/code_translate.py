@@ -12,7 +12,6 @@ Standard_Gate_Name = {
     'CCX', 'CCZ', 'SD', 'TD', 'U1', 'CU1', 'U3',
 }
 
-
 def get_args_assign_str(argname : str, nargs : int) -> str:
     s = ""
     for i in range(nargs):
@@ -21,35 +20,34 @@ def get_args_assign_str(argname : str, nargs : int) -> str:
             s += ","
     return s
 
-
 # Map the original gate name into standard name
 def get_standard_gatename(origin_gate_name : str) -> str:
     g = origin_gate_name.upper()
 
     # Convert the nonstandard gate name into standard gate name
-    if g == 'M' or g == 'MA' or g == 'MEASURE':
+    if g in {'M', 'MA', 'MEASURE'}:
         return 'M'
-    if g == 'I' or g == 'ID':
+    if g in {'I', 'ID'}:
         return 'I'
-    if g == 'CX' or g == 'CNOT':
+    if g in {'CX', 'CNOT'}:
         return 'CX'
-    if g == 'SW' or g == 'SWAP':
+    if g in {'SW', 'SWAP'}:
         return 'SW'
-    if g == 'ISW' or g == 'ISWAP':
+    if g in {'ISW', 'ISWAP'}:
         return 'ISW'
-    if g == 'CCX' or g == 'TOFFOLI' or g == 'CCNOT':
+    if g in {'CCX', 'CCNOT', 'TOFFOLI'}:
         return 'CCX'
-    if g == 'CSW' or g == 'CSWAP':
+    if g in {'CSW', 'CSWAP', 'FREDKIN'}:
         return 'CSW'
-    if g == 'SD' or g == 'SDG' or g == 'SDAG' or g == 'SDAGGER':
+    if g in {'SD', 'SDG', 'SDAG', 'SDAGGER'}:
         return 'SD'
-    if g == 'TD' or g == 'TDG' or g == 'TDAG' or g == 'TDAGGER':
+    if g in {'TD', 'TDG', 'TDAG', 'TDAGGER'}:
         return 'TD'
-    if g == 'U1' or g == 'R1' or g == 'P':
+    if g in {'U1', 'R1', 'P'}:
         return 'U1'
-    if g == 'CU1' or g == 'CR1' or g == 'CR' or g == 'CP':
+    if g in {'CU1', 'CR1', 'CR', 'CP'}:
         return 'CU1'
-    if g == 'U3' or g == 'U':
+    if g in {'U3', 'U'}:
         return 'U3'
 
     if g in Standard_Gate_Name:

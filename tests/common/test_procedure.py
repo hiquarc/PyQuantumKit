@@ -116,3 +116,27 @@ class Test_procedure_paulis(UT.TestCase):
                 result = T_equivalence(self._fm, self._qvm, nqbits, ncbits,
                                     apply_measure, apply_measure_z, [qbits, cbits], [qbits, cbits])
                 self.assertTrue(result)
+
+
+
+class Test_procedure_circuit_io(UT.TestCase):
+    """
+    Test cases for subpackage "procedure/paulis"
+    """
+    def test_CircuitIO_bits(self):
+        cases = {
+            Cir1A : (2, 0),
+            Cir1B : (2, 0),
+            Cir1C : (2, 0),
+            EmptyCir : (4, 0),
+            CancelCir : (4, 0),
+            Empty_bug1 : (4, 1),
+            Cir1A_bug5 : (2, 1),
+        }
+        for input in cases:
+            with self.subTest(input):
+                qc = input('pyquantumkit')
+                self.assertIsInstance(qc, CircuitIO)
+                result = (qc.get_nqbits(), qc.get_ncbits())
+                self.assertEqual(result, cases[input])
+                

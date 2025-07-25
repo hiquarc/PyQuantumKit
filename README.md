@@ -108,7 +108,7 @@ print(quafu_result.counts)    # print running results
 
 ## 三、功能简介
 
-基于v.0.1.1版本
+基于v.0.1.2版本
 
 ### 3.1 当前支持的量子软件栈
 
@@ -196,16 +196,38 @@ def apply_measure(q_circuit, qindex : list[int], cindex : list[int])
 - 参数`qindex`是一个整数列表，指定要测量的量子比特下标。
 - 参数`cindex`是一个整数列表，指定测量结果存放的经典比特下标。`qindex`和`cindex`各分量分别对应，因此`qindex`和`cindex`长度应相同。
 
+### 3.4 CircuitIO类简介
 
-### 3.4 一些尚处于实验阶段的高级功能
+PyQuantumKit提供了一个`CircuitIO`类，用于暂存构建的量子线路以及控制格式化输入输出。
+
+`CircuitIO`类可以像一个量子软件栈的量子线路类一样使用，也可以对其执行`apply_gate`, `apply_measure`等操作。`CircuitIO`对象保存了量子线路的信息，随后可以格式化输出为字符串或插入具体的量子软件栈的量子线路对象中。
+
+```python
+cio = PQK.CircuitIO(2, 2)        # define a CircuitIO object
+PQK.apply_gate(cio, 'H', [0])    # Use generic function <gate_apply>
+cio.apply_gate('CX', [0, 1])     # Use CircuitIO member function <gate_apply>
+```
+
+由于某些量子软件栈不支持自动生成逆线路和量子比特的重映射，可以利用`CircuitIO`类间接完成构造：先在CircuitIO对象上构造线路并生成逆线路或重映射（使用`inverse`和`remap_qbits`、`remap_cbits`成员函数），然后利用`>>`运算符（或等价的，`append_into_actual_circuit`成员函数）将CircuitIO包含的量子线路插入到具体量子软件栈的量子线路中。
+
+```python
+# quafu framework does not support qubits remap and circuit auto-inverse
+# Here we use CircuitIO object to implement indirectly
+cio.inverse()              # inverse the circuit in CircuitIO object cio
+cio.remap_qbits([1, 0])    # remap the circuit in cio
+quafu_circuit = quafu.QuantumCircuit(2, 2)
+cio >> quafu_circuit       # insert the CircuitIO object cio into quafu's circuit
+```
+
+### 一些尚处于实验阶段的功能
+
+这些功能尚处于实验阶段，未经过系统测试，且接口在未来可能改变，请谨慎使用。
 
 #### 模块化量子线路构建
 
-量子线路/程序的构建、复制、拼接： `new_circuit`, `new_program`, `copy_circuit`, `copy_program`, `append_circuit`, `append_program`
+量子线路/程序的新建、复制、串联、并联： `new_circuit`, `new_program`, `copy_circuit`, `copy_program`, `append_circuit`, `append_program`, `parallel_circuits`, `parallel_programs`
 
 获取量子线路的经典比特/量子比特数目： `get_n_qubits`, `get_n_cbits`, `get_qubit_list`, `get_cbit_list`
-
-并置几个量子线路/程序： `juxtapose_circuits`, `juxtapose_programs`
 
 生成量子线路的逆版本或重排量子比特的版本： `derivative`
 
@@ -223,11 +245,11 @@ Pauli测量： `apply_measure_x`, `apply_measure_y`, `apply_measure_z`, `apply_p
 
 根据一个字符串制备状态： `create_state_by_01pm`, `uncompute_state_by_01pm`, `create_state_by_sqgate_str`, `uncompute_state_by_sqgate_str`
 
-计算基态 $\ket{x}$： `create_ket_int_le`, `create_ket_int_be`, `uncompute_ket_int_le`, `uncompute_ket_int_be`
+计算基态 $\ket{x}$ ： `create_ket_int_le`, `create_ket_int_be`, `uncompute_ket_int_le`, `uncompute_ket_int_be`
 
-互补叠加态 $\frac{1}{\sqrt2}(\ket{x}+e^{i\phi}\ket{\bar{x}})$，其中$\bar{x}$是$x$的按位取反，$e^{i\phi}$是相对相位： `create_ket_int_plus_eiphi_neg_le`, `create_ket_int_plus_eiphi_neg_be`, `uncompute_ket_int_plus_eiphi_neg_le`, `uncompute_ket_int_plus_eiphi_neg_be`
+互补叠加态 $\frac{1}{\sqrt2}(\ket{x}+e^{i\phi}\ket{\bar{x}})$ ，其中 $\bar{x}$ 是 $x$ 的按位取反， $e^{i\phi}$ 是相对相位： `create_ket_int_plus_eiphi_neg_le`, `create_ket_int_plus_eiphi_neg_be`, `uncompute_ket_int_plus_eiphi_neg_le`, `uncompute_ket_int_plus_eiphi_neg_be`
 
-二值叠加态 $\frac{1}{\sqrt2}(\ket{x}+e^{i\phi}\ket{y})$： `create_ket_int1_plus_eiphi_ket_int2_le`, `create_ket_int1_plus_eiphi_ket_int2_be`, `uncompute_ket_int1_plus_eiphi_ket_int2_le`, `uncompute_ket_int1_plus_eiphi_ket_int2_be`
+二值叠加态 $\frac{1}{\sqrt2}(\ket{x}+e^{i\phi}\ket{y})$ ： `create_ket_int1_plus_eiphi_ket_int2_le`, `create_ket_int1_plus_eiphi_ket_int2_be`, `uncompute_ket_int1_plus_eiphi_ket_int2_le`, `uncompute_ket_int1_plus_eiphi_ket_int2_be`
 
 Pauli算子的本征态： `create_pauli_eigenstate`, `uncompute_pauli_eigenstate`
 
@@ -255,4 +277,9 @@ longpx@ihep.ac.cn
 
 ## 五、版本历史
 
-2025/7/10 首个预览版本 (v.0.1.1) 发布
+2025/7/25 v.0.1.2
+- 新增CircuitIO类，用于量子线路的格式化操作
+- 修改了应用门的代码的翻译方式，以适应CircuitIO类输出为用户可读代码的功能
+
+2025/7/10 v.0.1.1
+- 首个预览版本 (v.0.1.1) 发布

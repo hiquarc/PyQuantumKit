@@ -3,18 +3,28 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from .code_translate import get_args_assign_str, get_standard_gatename
+from .code_translate import get_standard_gatename
 
 # Whether the reverse of output 0/1 string is required to let the index of characters match corresponding cbits
 REVERSE_OUTPUT_STRING = True
+# Wether support inverse circuit
+SUPPORT_INVERSE = True
+# Wether support remap the index of bits
+SUPPORT_REMAP = True
+# List of supported algorithms
+SUPPORT_ALGORITHMS = []
 
-# Translate the gate applying into the code of calling in qiskit
-def GATE(gate_name : str, nqs : int, nps : int) -> str:
+
+def CODE(cir_name : str, gate_lib_name : str, linebreak : str,
+          gate_name : str, qbits : list[int], paras : list) -> str:
     g = get_standard_gatename(gate_name).lower()
+    execstr = cir_name
+    #glib = '' if gate_lib_name is None else gate_lib_name + "."
+
     if g == 'i':
-        return ''
+        g = 'id'
     if g == 'm':
-        execstr = "qc.measure([" + get_args_assign_str('qbits', nqs) + "],[" + get_args_assign_str('paras', nps) + "])"
+        execstr += ".measure(" + str(qbits) + ", " + str(paras) + ")"
         return execstr
 
     if g == 'sw':
@@ -34,15 +44,18 @@ def GATE(gate_name : str, nqs : int, nps : int) -> str:
     elif g == 'td':
         g = 'tdg'
 
-    execstr = "qc." + g + "("
-    if nps == 0:
-        execstr += get_args_assign_str('qbits', nqs) + ")"
+    execstr += "." + g + "("
+    if not paras:
+        execstr += str(qbits)[1:-1] + ")"
     else:
-        execstr += get_args_assign_str('paras', nps) + "," + get_args_assign_str('qbits', nqs) + ")"
+        execstr += str(paras)[1:-1] + ", " + str(qbits)[1:-1] + ")"
     return execstr
 
 
-# Translate the circuit applying into the code of calling in qiskit
+def GATE(gate_name : str, qbits : list[int], paras : list) -> str:
+    return CODE("qc", "FN('qiskit')", ";", gate_name, qbits, paras)
+
+
 def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
     execstr = "qc_dest.compose(qc_src"
     if is_inv:

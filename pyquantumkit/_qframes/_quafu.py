@@ -3,38 +3,46 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from .code_translate import get_args_assign_str, get_standard_gatename
+from .code_translate import get_standard_gatename
 from pyquantumkit import PyQuantumKitError
 
 # Whether the reverse of output 0/1 string is required to let the index of characters match corresponding cbits
 REVERSE_OUTPUT_STRING = False
+# Wether support inverse circuit
+SUPPORT_INVERSE = False
+# Wether support remap the index of bits
+SUPPORT_REMAP = False
+# List of supported algorithms
+SUPPORT_ALGORITHMS = []
 
-# Translate the gate applying into the code of calling in qiskit
-def GATE(gate_name : str, nqs : int, nps : int) -> str:
+
+def CODE(cir_name : str, gate_lib_name : str, linebreak : str,
+          gate_name : str, qbits : list[int], paras : list) -> str:
     g = get_standard_gatename(gate_name).lower()
+    execstr = cir_name
+    glib = '' if gate_lib_name is None else gate_lib_name + "."
+
     if g == 'i':
-        return ''
+        g = 'id'
     if g == 'm':
-        execstr = "qc.measure([" + get_args_assign_str('qbits', nqs) + "],[" + get_args_assign_str('paras', nps) + "])"
+        execstr += ".measure(" + str(qbits) + ", " + str(paras) + ")"
         return execstr
     
     if g == 'ccz':
-        execstr = "qc.mcx([qbits[0],qbits[1]],qbits[2])"
+        execstr += ".mcx(" + str(qbits[0:2]) + ", " + str(qbits[2]) + ")"
         return execstr
     if g == 'ch':
-        execstr = "qc<<FN('quafu',1).HGate(qbits[1]).ctrl_by(qbits[0])"
+        execstr += " << " + glib + "HGate(" + str(qbits[1]) + ").ctrl_by(" + str(qbits[0]) + ")"
         return execstr
-    
-    execstr = "qc"
 
     if g == 'u3':
-        execstr += "<<FN('quafu',1).U3Gate"
+        execstr += " << " + glib + "U3Gate"
     elif g == 'crx':
-        execstr += "<<FN('quafu',1).CRXGate"
+        execstr += " << " + glib + "CRXGate"
     elif g == 'cry':
-        execstr += "<<FN('quafu',1).CRYGate"
+        execstr += " << " + glib + "CRYGate"
     elif g == 'crz':
-        execstr += "<<FN('quafu',1).CRZGate"
+        execstr += " << " + glib + "CRZGate"
     elif g == 'sw':
         execstr += '.swap'
     elif g == 'isw':
@@ -54,14 +62,17 @@ def GATE(gate_name : str, nqs : int, nps : int) -> str:
     else:
         execstr += '.' + g
 
-    if nps == 0:
-        execstr += "(" + get_args_assign_str('qbits', nqs) + ")"
+    if not paras:
+        execstr += "(" + str(qbits)[1:-1] + ")"
     else:
-        execstr += "(" + get_args_assign_str('qbits', nqs) + "," + get_args_assign_str('paras', nps) + ")"
+        execstr += "(" + str(qbits)[1:-1] + ", " + str(paras)[1:-1] + ")"
     return execstr
 
 
-# Translate the circuit applying into the code of calling in qiskit
+def GATE(gate_name : str, qbits : list[int], paras : list) -> str:
+    return CODE("qc", "FN('quafu',1)", ";", gate_name, qbits, paras)
+
+
 def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
     # unsupport
     raise PyQuantumKitError('Quantum circuit operations are not supported by quafu.')

@@ -3,8 +3,8 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from pyquantumkit.procedure.generic import apply_gate, new_program, append_program, get_n_cbits, get_n_qubits, apply_measure, run_and_get_counts
-from pyquantumkit import get_framework_from_object
+from pyquantumkit import apply_gate, new_program, append_program, get_n_cbits, get_n_qubits, apply_measure,\
+                         run_and_get_counts, get_framework_from_object
 from pyquantumkit._qframes.framework_map import get_reverse_output_str
 from pyquantumkit.classical.run_result import count_last_bits_of_result_dict
 

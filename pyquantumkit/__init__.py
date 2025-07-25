@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 import sys
 import os
@@ -16,8 +16,10 @@ Framework_Namespace = {}
 
 def get_framework_from_type(t : type) -> str:
     modstr = t.__module__
+    if modstr.find('pyquantumkit') != -1:
+        return 'pyquantumkit'
     for fname in Supported_Frameworks:
-        if fname in modstr:
+        if modstr.find(fname) != -1:
             return fname
     return ''
 
@@ -56,3 +58,4 @@ pyquantumkit_init()
 
 # default imported modules
 from .procedure.generic import *
+from .procedure.circuit_io import CircuitIO

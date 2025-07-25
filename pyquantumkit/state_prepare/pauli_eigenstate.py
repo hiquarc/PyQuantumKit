@@ -3,7 +3,8 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from pyquantumkit.procedure.generic import apply_gate, derivative
+from pyquantumkit.procedure.generic import apply_gate
+from pyquantumkit.procedure.derivative import derivative
 
 PauliZ_1    = 0
 PauliZ_Neg1 = 1
