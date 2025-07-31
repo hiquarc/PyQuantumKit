@@ -49,6 +49,7 @@ class Test_program_check_program_relation(UT.TestCase):
             # PASS cases
             EmptyCir : True,
             CancelCir : True,
+            CancelCir2 : True,
             # FAIL cases
             Empty_bug1 : False,
             Empty_bug2 : False,
