@@ -117,6 +117,14 @@ class Test_procedure_paulis(UT.TestCase):
                                     apply_measure, apply_measure_z, [qbits, cbits], [qbits, cbits])
                 self.assertTrue(result)
 
+    def test_apply_exp_paulis(self):
+        cases = {
+            ('I', None),
+            ('X', 'Rx'),
+            ('Y', 'Ry'),
+            ('Z', 'Rz'),
+        }
+
 
 
 class Test_procedure_circuit_io(UT.TestCase):

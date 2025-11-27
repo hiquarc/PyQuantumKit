@@ -6,7 +6,7 @@
 import math
 from pyquantumkit.procedure.generic import apply_gate, apply_reverse, derivative
 from pyquantumkit.procedure.derivative import derivative
-from qiskit.circuit.library import QFT
+#from qiskit.circuit.library import QFT
 
 
 def pqk_qft_bilo(q_circuit, qbitlist : list[int]):
