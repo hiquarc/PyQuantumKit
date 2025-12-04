@@ -111,6 +111,21 @@ def CancelCir(framework : str):
     cio >> qc
     return qc
 
+def CancelCir2(framework : str):
+    origincio = CircuitIO(1)
+    cio = CircuitIO(1)
+    origincio.apply_gate('U1', [0], [-1.9])
+    origincio.apply_gate('U3', [0], [-1.2, -2.4, 3.6])
+
+    origincio.inverse()
+    cio << origincio
+    origincio.inverse()
+    cio << origincio
+
+    qc = new_circuit(framework, 1)
+    cio >> qc
+    return qc
+
 def Cir1A(framework : str):
     qc = new_circuit(framework, 2)
     apply_gate(qc, 'H', [1])

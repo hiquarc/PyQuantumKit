@@ -34,12 +34,12 @@ def derivative(q_circuit, qbitlist : list[int], createfunc : callable, rev_endia
         else:
             append_circuit(q_circuit, tempqc, None, uncomp)
     else:
-        tempqc = CircuitIO(indexlist_length(qbitlist))
-        createfunc(tempqc, *args, **kwargs)
+        cio = CircuitIO(indexlist_length(qbitlist))
+        createfunc(cio, *args, **kwargs)
         if uncomp:
-            tempqc.inverse()
+            cio.inverse()
         if rev_endian:
-            tempqc.remap_qbits(range(0, len(qbitlist))[::-1])
-        tempqc.append_into_actual_circuit(q_circuit)
+            cio.remap_qbits(range(0, len(qbitlist))[::-1])
+        cio >> q_circuit
 
     return q_circuit
