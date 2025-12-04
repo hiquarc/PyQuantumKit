@@ -15,19 +15,37 @@ def normalize_pauli_string(origin_str : str) -> str:
     return paulistr
 
 class PauliHamiltonian:
-    def __init__(self, set_nqbits):
+    def __init__(self, set_nqbits : int):
+        """
+        Construct a PauliHamiltonian object
+
+            set_nqbits : (int) the number of qubits
+        """
         self._nqbits = set_nqbits
         self._paulis = []
         self._factors = []
         self._focuslist = []
 
     def __len__(self):
+        """
+        Return the number of Paulis
+        """
         return len(self._paulis)
     
     def get_nqbits(self) -> int:
+        """
+        Return the number of qubits
+        """
         return self._nqbits
     
     def append_pauli(self, paulistr : str, factor : float, focus : int = 0) -> None:
+        """
+        Append a Pauli term
+            paulistr : 'I'/'X'/'Y'/'Z' string to represent the tensor product of Pauli operators
+                       NOTE: the length of string should be consistent with the number of qubits 
+            factor   : (float) the factor of the Pauli term
+            foucs    : (optional) the index of non-I Paulis which is applied the core rotation, default 0
+        """
         if len(paulistr) != self._nqbits:
             raise PyQuantumKitError('Pauli string \"' + paulistr + '\" does not match nqbits='\
                                     + str(self._nqbits))
@@ -37,6 +55,14 @@ class PauliHamiltonian:
 
     def append_subpauli_on_qubits(self, subpauli : str, qindex : list[int], factor : float,
                                   focus : int = 0) -> None:
+        """
+        Append a Pauli term, by applying some Pauli on some indexes
+            paulistr : 'I'/'X'/'Y'/'Z' string to represent the tensor product of Pauli operators
+                       NOTE: the length of string should not be greater than the number of qubits
+            qindex   : the indexes of applied qubits
+            factor   : (float) the factor of the Pauli term
+            foucs    : (optional) the index of non-I Paulis which is applied the core rotation, default 0
+        """
         if len(subpauli) > self._nqbits:
             raise PyQuantumKitError('Pauli string \"' + subpauli + '\" cannot be applied on nqbits='\
                                     + str(self._nqbits))
@@ -48,6 +74,13 @@ class PauliHamiltonian:
 
     def append_pauli_list(self, paulis : tuple[str], factors : tuple[float],
                           focuses : tuple[int] = None) -> None:
+        """
+        Append a list of Pauli terms
+            paulis  : 'I'/'X'/'Y'/'Z' strings to represent the tensor product of Pauli operators
+                       NOTE: the length of string should be consistent with the number of qubits 
+            factors  : (float) the factors of the Pauli term
+            foucss   : (optional) the indexes of non-I Paulis which is applied the core rotation, default 0
+        """
         l = len(paulis)
         if l != len(factors):
             raise PyQuantumKitError('Inconsistent length of <paulis> and <factors>!')
@@ -56,6 +89,9 @@ class PauliHamiltonian:
             self.append_pauli(paulis[i], factors[i], f)  
 
     def __iadd__(self, other):
+        """
+        Add two PauliHamiltonian object: merge the list of Pauli terms
+        """
         if self.get_nqbits() != other.get_nqbits():
             raise PyQuantumKitError('Inconsistent number of qubits!')
         for i in range(len(other)):
@@ -63,6 +99,9 @@ class PauliHamiltonian:
         return self
 
     def __add__(self, other):
+        """
+        Add two PauliHamiltonian object: merge the list of Pauli terms
+        """
         if self.get_nqbits() != other.get_nqbits():
             raise PyQuantumKitError('Inconsistent number of qubits!')
         ret = copy.deepcopy(self)
@@ -70,25 +109,49 @@ class PauliHamiltonian:
         return ret
 
     def get_pauli_info_by_index(self, index : int) -> tuple:
+        """
+        Add two PauliHamiltonian object: merge the list of Pauli terms
+        """
         return (self._paulis[index], self._factors[index], self._focuslist[index])
     
-    def get_factor_focus_by_pauli(self, pauli : str) -> float:
+    def get_factor_by_pauli(self, paulistr : str) -> float:
+        """
+        Given a pauli string, search the corresponding factor
+
+            paulistr : 'I'/'X'/'Y'/'Z' string to represent the tensor product of Pauli operators
+
+        -> Return : The corresponding factor. If the term does not exsit, return 0.0
+        """
         for i in len(self._paulis):
-            if self._paulis[i] == pauli:
+            if self._paulis[i] == paulistr:
                 return self._factors[i]
         return 0.0
-    def get_factor_focus_by_pauli(self, pauli : str) -> tuple:
+    
+    def get_factor_focus_by_pauli(self, paulistr : str) -> tuple:
+        """
+        Given a pauli string, search the corresponding factor and focus
+
+            paulistr : 'I'/'X'/'Y'/'Z' string to represent the tensor product of Pauli operators
+
+        -> Return : (factor, focus)
+        """
         for i in len(self._paulis):
-            if self._paulis[i] == pauli:
+            if self._paulis[i] == paulistr:
                 return (self._factors[i], self._focuslist[i])
         return (0.0, 0)
     
-    def pop(self, index : int = -1):
+    def pop(self, index : int = -1) -> None:
+        """
+        Given an index, remove the corresponding Pauli term
+        """
         self._paulis.pop(index)
         self._factors.pop(index)
         self._focuslist.pop(index)
 
-    def remove(self, paulistr : str):
+    def remove(self, paulistr : str) -> None:
+        """
+        Given a pauli string, remove the corresponding Pauli term
+        """
         for i in range(len(self._paulis)):
             if self._paulis[i] == paulistr:
                 self._paulis.pop(i)

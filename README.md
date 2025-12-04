@@ -221,19 +221,19 @@ cio >> quafu_circuit       # insert the CircuitIO object cio into quafu's circui
 
 ### 3.5 量子哈密顿量模拟算法简介和例子
 
-PyquantumKit提供了一个量子哈密顿量模拟的算法库，可用于构建量子哈密顿量模拟程序。量子哈密顿量模拟算法即实现变换：$U=e^{-iHt} $，其中 $H$ 为代表量子系统哈密顿量的厄密矩阵， $t$ 为设定的演化时间。
+PyquantumKit提供了一个量子哈密顿量模拟的算法库，可用于构建量子哈密顿量模拟程序。量子哈密顿量模拟算法即实现变换： $U=e^{-iHt}$ ，其中 $H$ 为代表量子系统哈密顿量的厄密矩阵， $t$ 为设定的演化时间。
 
 PyQuantumKit目前支持以Pauli算子的线性组合形式表示哈密顿量：
 
 $$H=\sum_{i_1,i_2,\dots,i_n\in\{0,1,2,3\}} k_{i_1,i_2,\dots i_n} \sigma_{i_1}\otimes\sigma_{i_2}\otimes \dots \otimes\sigma_{i_n}$$
 
-每一项对应一个 $n$ 比特Pauli算子，它是单比特Pauli算子的张量积，$k_{i_1,i_2,\dots i_n} \in \mathbb{R}$ 为该Pauli算子对应的线性组合系数，求和至多 $4^n$ 项。有4个单比特Pauli算子：
+每一项对应一个 $n$ 比特Pauli算子，它是单比特Pauli算子的张量积， $k_{i_1,i_2,\dots i_n} \in \mathbb{R}$ 为该Pauli算子对应的线性组合系数，求和至多 $4^n$ 项。有4个单比特Pauli算子：
 
 $$\sigma_0 = \left[\begin{array}{cc}1&0\\0&1\end{array}\right], \sigma_1 = \left[\begin{array}{cc}0&1\\1&0\end{array}\right], \sigma_2 = \left[\begin{array}{cc}0&-i\\i&0\end{array}\right], \sigma_3 = \left[\begin{array}{cc}1&0\\0&-1\end{array}\right]$$
 
 实际的哈密顿量往往具有稀疏性，即 $4^n$ 个组合系数中只有 $O(n)$ 个不为0，因此对哈密顿量的模拟可以分解为对各Pauli矩阵形式的模拟的组合。
 
-设总哈密顿量可以写成 $m$ 个局部哈密顿量之和 $H=H_1+H_2+\dots+H_m$，若这 $m$ 个局部哈密顿量两两对易（即乘法可交换：$\forall i\neq j, H_iH_j=H_jH_i$），则对总哈密顿量的模拟可以严格分解为对各局部哈密顿量的依次模拟：
+设总哈密顿量可以写成 $m$ 个局部哈密顿量之和 $H=H_1+H_2+\dots+H_m$ ，若这 $m$ 个局部哈密顿量两两对易（即乘法可交换： $\forall i\neq j, H_iH_j=H_jH_i$ ），则对总哈密顿量的模拟可以严格分解为对各局部哈密顿量的依次模拟：
 
 $$ e^{-i(H_1+H_2+\dots+H_m)t} = e^{-iH_1t}e^{-iH_2t} \dots e^{-iH_mt} $$
 
@@ -377,9 +377,9 @@ longpx@ihep.ac.cn
 
 ## 五、版本历史
 
-2025/11/27 v.0.1.3
+2025/12/04 v.0.1.3
 - 新增apply_exp_pauli函数用于支持量子哈密顿模拟算法
-- 新增量子哈密顿模拟算法库 (/library/hamiltonian.py)
+- 新增量子哈密顿模拟算法库（实验性） (/library/hamiltonian.py)
 
 2025/7/25 v.0.1.2
 - 新增CircuitIO类，用于量子线路的格式化操作

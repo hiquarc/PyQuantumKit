@@ -92,7 +92,7 @@ def apply_exp_pauli(q_circuit, paulistr : str, t : float, qindex : list[int], fo
     Append an Exp(-i*P*t) operation, where P is the tensor product of several Pauli operators.
 
         q_circuit : applied quantum circuit
-        paulistr  : 'I'/'X'/'Y'/'Z' strings to represent the tensor product of Pauli operators
+        paulistr  : 'I'/'X'/'Y'/'Z' string to represent the tensor product of Pauli operators
         qindex    : the indexes of applied qubits
         focus     : (optional) the index of non-I Paulis which is applied the core rotation, default 0
 
