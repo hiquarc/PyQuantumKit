@@ -3,11 +3,13 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-import copy
+import copy, sympy
 from pyquantumkit import PyQuantumKitError, apply_gate
 from pyquantumkit._qframes.framework_map import gate_applying_code
 from pyquantumkit.classical.common import indexlist_length
 from pyquantumkit._qframes.code_translate import Standard_Gate_Name, get_standard_gatename
+from pyquantumkit.symbol.gate import symbol_gate_matrix
+from pyquantumkit.symbol.circuit import symbol_apply_gate
 
 class CircuitIO:
     def __inverse_gate(self, item : list):
@@ -231,7 +233,7 @@ class CircuitIO:
     def get_circuit_code(self, language : str, circuit_name : str,
                           gate_lib_name : str = None, linebreak : str = '\n') -> str:
         """
-        Covert the CircuitIO object into string of code
+        Convert the CircuitIO object into string of code
 
             language      : specify the language
             circuit_name  : specify the circuit name will be used in the code
@@ -239,7 +241,7 @@ class CircuitIO:
             NOTE:   If no gate library name will be used, please specify None (rather than empty str '') 
             linebreak     : the characters of linebreaks in the code (default '\n')
 
-        Return -> the code string
+        -> Return : the code string
         """
         ret = ""
         for item in self._gatelist:
@@ -247,4 +249,17 @@ class CircuitIO:
                                         item[0], item[1], item[2])
             ret += linebreak
         return ret
+    
+    def get_circuit_matrix(self) -> sympy.Matrix:
+        """
+        Calculate the matrix representation of this CircuitIO object
 
+        -> Return : the sympy.Matrix object with dimension 2^n x 2^n,
+                    where n is the number of qubits
+        """
+        ret = sympy.Identity(2 ** self._nqbits)
+        for item in self._gatelist:
+            gatemat = symbol_gate_matrix(item[0], item[2])
+            gatemat_total = symbol_apply_gate(gatemat, self._nqbits, item[1])
+            ret = gatemat_total * ret
+        return ret.simplify()

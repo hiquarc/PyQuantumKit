@@ -3,15 +3,16 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-import copy
+import copy, sympy
 from pyquantumkit.procedure.paulis import apply_exp_pauli
 from pyquantumkit import PyQuantumKitError
+from pyquantumkit.symbol.gate import symbol_gate_matrix
 
 def normalize_pauli_string(origin_str : str) -> str:
     paulistr = origin_str.upper()
     for i in range(len(paulistr)):
         if paulistr[i] not in {'I', 'X', 'Y', 'Z'}:
-            paulistr[i] == 'I'
+            paulistr[i] = 'I'
     return paulistr
 
 class PauliHamiltonian:
@@ -157,6 +158,17 @@ class PauliHamiltonian:
                 self._paulis.pop(i)
                 self._factors.pop(i)
                 self._focuslist.pop(i)
+
+    def get_matrix(self) -> sympy.Matrix:
+        """
+        Get the corresponding matrix of this PauliHamiltonian
+
+        -> Return : the sympy.Matrix object with dimension 2^n x 2^n,
+                    where n is the number of qubits
+        """
+        # TODO: Develop
+        for i in len(self._paulis):
+            pass
 
 
 def pqk_hsim_paulis_trotter(q_circuit, hamiltonian : PauliHamiltonian, t : float, n : int, qindex : list[int]):
