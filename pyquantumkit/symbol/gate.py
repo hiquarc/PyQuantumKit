@@ -114,7 +114,18 @@ CH = sympy.Matrix([[1, 0, 0, 0],
                    [0, 1, 0, 0],
                    [0, 0, 1 / sympy.sqrt(2), 1 / sympy.sqrt(2)],
                    [0, 0, 1 / sympy.sqrt(2), -1 / sympy.sqrt(2)]])
-CY = sympy.Matrix([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, -sympy.I], [0, 0, sympy.I, 0]])
+CY = sympy.Matrix([[1, 0, 0, 0],
+                   [0, 1, 0, 0],
+                   [0, 0, 0, -sympy.I],
+                   [0, 0, sympy.I, 0]])
+CS = sympy.Matrix([[1, 0, 0, 0],
+                   [0, 1, 0, 0],
+                   [0, 0, 1, 0],
+                   [0, 0, 0, sympy.I]])
+CSdag = sympy.Matrix([[1, 0, 0, 0],
+                      [0, 1, 0, 0],
+                      [0, 0, 1, 0],
+                      [0, 0, 0, -sympy.I]])
 def CRx(theta_) -> sympy.Matrix:
     return sympy.Matrix([[1, 0, 0, 0],
                          [0, 1, 0, 0],
@@ -137,8 +148,14 @@ def CU1(theta_) -> sympy.Matrix:
                          [0, 0, 0, sympy.exp(sympy.I * theta_)]])
 
 # Other derived gates
-SqrtX = H * S * H
-SqrtXdag = H * Sdag * H
+SqrtX = sympy.Rational(1, 2) * sympy.Matrix([[1 + sympy.I, 1 - sympy.I],
+                                             [1 - sympy.I, 1 + sympy.I]])
+SqrtXdag = sympy.Rational(1, 2) * sympy.Matrix([[1 - sympy.I, 1 + sympy.I],
+                                                [1 + sympy.I, 1 - sympy.I]])
+SqrtY = sympy.Rational(1, 2) * sympy.Matrix([[1 + sympy.I, -1 - sympy.I],
+                                             [1 + sympy.I, 1 + sympy.I]])
+SqrtYdag = sympy.Rational(1, 2) * sympy.Matrix([[1 - sympy.I, 1 - sympy.I],
+                                                [-1 + sympy.I, 1 - sympy.I]])
 
 
 def symbol_gate_matrix(gatestr : str, paras : list = None) -> sympy.Matrix:
@@ -209,6 +226,10 @@ def symbol_gate_matrix(gatestr : str, paras : list = None) -> sympy.Matrix:
         return CH
     if g == 'CY':
         return CY
+    if g == 'CS':
+        return CS
+    if g == 'CSD':
+        return CSdag
     if g == 'CRX':
         return CRx(paras[0])
     if g == 'CRY':
@@ -217,6 +238,11 @@ def symbol_gate_matrix(gatestr : str, paras : list = None) -> sympy.Matrix:
         return CRz(paras[0])
     if g == 'CU1':
         return CU1(paras[0])
+    
+    if g == 'SX':
+        return SqrtX
+    if g == 'SXD':
+        return SqrtXdag
 
 
 def symbol_inverse_gate(mat : sympy.MatrixBase) -> sympy.Matrix:

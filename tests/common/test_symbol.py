@@ -6,7 +6,7 @@
 import unittest as UT
 from pyquantumkit.symbol.gate import *
 from pyquantumkit.symbol.circuit import *
-from .common import is_exception
+from pyquantumkit._qframes.code_translate import Standard_Gate_Name
 
 # Symbols for gate parameters
 theta_ = sympy.Symbol('theta', real = True)
@@ -106,6 +106,14 @@ def str2matrix_test(gatestr : str, paras : list = None) -> sympy.Matrix:
 
 
 class Test_symbol_gate(UT.TestCase):
+    def test_symbol_gate_matrix(self):
+        for input in Standard_Gate_Name:
+            with self.subTest(input):
+                if input == 'M':
+                    self.assertRaises(PyQuantumKitError, symbol_gate_matrix, input)
+                else:
+                    self.assertTrue(isinstance(symbol_gate_matrix(input, (0.5, 0.6, 0.7)), sympy.Matrix))
+
     def test_reverse_matrix_endianness(self):
         cases = {
             'H' : 'h',
