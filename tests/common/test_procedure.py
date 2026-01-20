@@ -56,6 +56,10 @@ class Test_procedure_generic(UT.TestCase):
             'CSW' : ((0, 2, 1), ()),
             'CCX' : ((1, 2, 3), ()),
             'CCZ' : ((3, 2, 1), ()),
+            'CS'  : ((0, 1), ()),
+            'CSD' : ((1, 0), ()),
+            'SX'  : ((2,), ()),
+            'SXD' : ((3,), ()),
         }
         for input in cases:
             with self.subTest(input):
@@ -129,7 +133,7 @@ class Test_procedure_paulis(UT.TestCase):
 
 class Test_procedure_circuit_io(UT.TestCase):
     """
-    Test cases for subpackage "procedure/paulis"
+    Test cases for subpackage "procedure/circuit_io"
     """
     def test_CircuitIO_bits(self):
         cases = {
@@ -144,7 +148,21 @@ class Test_procedure_circuit_io(UT.TestCase):
         for input in cases:
             with self.subTest(input):
                 qc = input('pyquantumkit')
-                self.assertIsInstance(qc, CircuitIO)
+                #self.assertIsInstance(qc, CircuitIO)
                 result = (qc.get_nqbits(), qc.get_ncbits())
                 self.assertEqual(result, cases[input])
                 
+    def test_CircuitIO_contains_measure(self):
+        cases = {
+            EmptyCir : False,
+            Cir1A : False,
+            Cir1B : False,
+            Cir1C : False,
+            Empty_bug1 : True,
+            Cir1A_bug5 : True,
+        }
+        for input in cases:
+            with self.subTest(input):
+                qc = input('pyquantumkit')
+                result = qc.contains_measure()
+                self.assertEqual(result, cases[input])

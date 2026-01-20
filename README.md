@@ -108,7 +108,7 @@ print(quafu_result.counts)    # print running results
 
 ## 三、功能简介
 
-基于v.0.1.2版本
+基于v.0.1.4版本
 
 ### 3.1 当前支持的量子软件栈
 
@@ -143,6 +143,8 @@ def apply_gate(q_circuit, gate_str : str, qbits : list[int], paras : list = None
 - H门：h
 - $S^{\dagger}$ 门：sd, sdg, sdag, sdagger
 - $T^{\dagger}$ 门：td, tdg, tdag, tdagger
+- $\sqrt{X}$ 门：sx, sqrtx
+- $\sqrt{X}^{\dagger}$ 门：sxd, sxdg, sxdag, sxdagger, sqrtxd, sqrtxdg, sqrtxdag, sqrtxdagger
 
 例：在下标为2的量子位上应用一个S门
 `apply_gate(circuit, 'S', [2])`
@@ -153,6 +155,8 @@ def apply_gate(q_circuit, gate_str : str, qbits : list[int], paras : list = None
 - CZ门：cz
 - CY门：cy
 - CH门：ch
+- CS门：cs
+- $CS^{\dagger}$ 门：csd, csdg, csdag, csdagger
 - SWAP门：swap, sw
 - iSWAP门：iswap, isw
 - Toffoli门：toffoli, ccx, ccnot
@@ -166,11 +170,11 @@ def apply_gate(q_circuit, gate_str : str, qbits : list[int], paras : list = None
 - $R_x(\theta)$ 门：rx
 - $R_y(\theta)$ 门：ry
 - $R_z(\theta)$ 门：rz
-- $R_1(\theta)$ 门：u1, r1, p
+- $U_1(\theta)$ 门：u1, r1, p
 - 受控 $R_x(\theta)$ 门：crx
 - 受控 $R_y(\theta)$ 门：cry
 - 受控 $R_z(\theta)$ 门：crz
-- 受控 $R_1(\theta)$ 门：cu1, cr1, cp
+- 受控 $U_1(\theta)$ 门：cu1, cr1, cp
 - $R_{xx}(\theta)$ 门：rxx
 - $R_{yy}(\theta)$ 门：ryy
 - $R_{zz}(\theta)$ 门：rzz
@@ -196,30 +200,8 @@ def apply_measure(q_circuit, qindex : list[int], cindex : list[int])
 - 参数`qindex`是一个整数列表，指定要测量的量子比特下标。
 - 参数`cindex`是一个整数列表，指定测量结果存放的经典比特下标。`qindex`和`cindex`各分量分别对应，因此`qindex`和`cindex`长度应相同。
 
-### 3.4 CircuitIO类简介
 
-PyQuantumKit提供了一个`CircuitIO`类，用于暂存构建的量子线路以及控制格式化输入输出。
-
-`CircuitIO`类可以像一个量子软件栈的量子线路类一样使用，也可以对其执行`apply_gate`, `apply_measure`等操作。`CircuitIO`对象保存了量子线路的信息，随后可以格式化输出为字符串或插入具体的量子软件栈的量子线路对象中。
-
-```python
-cio = PQK.CircuitIO(2, 2)        # define a CircuitIO object
-PQK.apply_gate(cio, 'H', [0])    # Use generic function <gate_apply>
-cio.apply_gate('CX', [0, 1])     # Use CircuitIO member function <gate_apply>
-```
-
-由于某些量子软件栈不支持自动生成逆线路和量子比特的重映射，可以利用`CircuitIO`类间接完成构造：先在CircuitIO对象上构造线路并生成逆线路或重映射（使用`inverse`和`remap_qbits`、`remap_cbits`成员函数），然后利用`>>`运算符（或等价的，`append_into_actual_circuit`成员函数）将CircuitIO包含的量子线路插入到具体量子软件栈的量子线路中。
-
-```python
-# quafu framework does not support qubits remap and circuit auto-inverse
-# Here we use CircuitIO object to implement indirectly
-cio.inverse()              # inverse the circuit in CircuitIO object cio
-cio.remap_qbits([1, 0])    # remap the circuit in cio
-quafu_circuit = quafu.QuantumCircuit(2, 2)
-cio >> quafu_circuit       # insert the CircuitIO object cio into quafu's circuit
-```
-
-### 3.5 量子哈密顿量模拟算法简介和例子
+### 3.4 量子哈密顿量模拟算法简介和例子
 
 PyquantumKit提供了一个量子哈密顿量模拟的算法库，可用于构建量子哈密顿量模拟程序。量子哈密顿量模拟算法即实现变换： $U=e^{-iHt}$ ，其中 $H$ 为代表量子系统哈密顿量的厄密矩阵， $t$ 为设定的演化时间。
 
@@ -278,7 +260,7 @@ $$H=-J\sum_{<i,j>}\sigma_3^{(i)}\sigma_3^{(j)} - B\sum_{i}\sigma_1^{(i)} $$
 
 其中 $\sigma_3^{(i)}\sigma_3^{(j)}$ 表示在第 $i,j$ 个量子比特上的Pauli算子为 $\sigma_3$ ，其余量子比特上为 $\sigma_0$ ； $\sigma_1^{(i)}$ 表示在第 $i$ 个量子比特上的Pauli算子为 $\sigma_1$ ，其余量子比特上为 $\sigma_0$ 。求和下标 <i,j> 表示对近邻粒子求和。
 
-这里我们考虑一个具体的案例。一共 $N=5$ 个粒子，排成环状，在环上相邻的粒子之间有相互作用。设定相互作用强度 $J=1.0$ ，外加磁场的强度 $B=1.0$ ，演化时间 $t=1.0$ 。采用Lie-Trotter分解方案，重复次数设为 $n=4$ 次。利用PyQuantumKit在QPanda3和Qiskit上构建量子线路的代码（详见`./examples/tf_ising.py`）如下：
+这里我们考虑一个具体的案例。一共 $N=5$ 个粒子，排成环状，在环上相邻的粒子之间有相互作用。设定相互作用强度 $J=1.0$ ，外加磁场的强度 $B=1.0$ ，演化时间 $t=1.0$ 。采用Lie-Trotter分解方案，重复次数设为 $n=20$ 次。利用PyQuantumKit在QPanda3和Qiskit上构建量子线路的代码（详见`./examples/tf_ising.py`）如下：
 
 ```python
 import pyqpanda3.core as qpanda
@@ -290,7 +272,7 @@ N = 5           # number of particles
 J = 1.0         # interaction
 B = 1.0         # magnatic field
 t = 1.0         # evolution time
-n = 4           # rounds of decomposition
+n = 20          # rounds of decomposition
 
 # ----- Build the Hamiltonian -----
 # construct a PauliHamiltonian object, the parameter is the number of qubits
@@ -319,9 +301,257 @@ PQKHami.pqk_hsim_paulis_trotter(qiskit_circuit, TFIsing, t, n, range(N))
 print(qiskit_circuit)
 ```
 
+### 3.5 量子线路的矩阵符号表示
+
+PyQuantumKit提供了symbol库 (/symbol) ，此模块基于sympy库实现，用于构造量子线路的矩阵表示。hiquarc仓库中还有另一个基于Mathematica的构造量子线路的矩阵表示库QCirMat（见[https://github.com/hiquarc/QCirMat](https://github.com/hiquarc/QCirMat)），此symbol库可以视为基于Python和sympy版本的QCirMat，方便没有Mathematica的用户使用。
+
+`/symbol/gate.py`模块提供了基本门的矩阵表示（基于`sympy.Matrix`类），`/symbol/qstate.py`模块提供了基本量子态向量表示（包括ket表示、bra表示和密度矩阵表示）。
+`/symbol/circuit.py`模块提供了若干用于构造量子线路的矩阵表示的函数。
+
+**注意：由于Python对于下标的约定是从0开始，symbol库涉及下标的参数均按照Python的约定从0开始，这与Mathematica的从1开始的约定不同。**
+
+#### symbol_apply_gate函数
+
+`symbol_apply_gate`函数在指定下标的量子比特上应用指定的量子门，返回对应的矩阵表示。函数原型为：
+
+```python
+def symbol_apply_gate(gate : sympy.Matrix, nqbits : int, indexlist : list[int]) -> sympy.Matrix:
+```
+
+- 参数`gate`是一个 $2^k\times 2^k$ 矩阵，其中 $k$ 代表了量子门的比特数，例如单比特量子门（ $k=1$ ）是 $2\times 2$ 矩阵，双比特量子门（ $k=2$ ）是 $4\times 4$ 矩阵。
+- 参数`nqbits`是一个正整数，指定总量子比特数 $n$ ，该参数不能小于 $k$ 。
+- 参数`indexlist`是一个列表，按顺序指定要作用量子门的比特的下标，**注意下标从0开始，这与基于Mathematica的QCirMat不同**。列表长度必须为 $k$ ，即与参数`gate`的维数匹配。
+- 该函数的返回值为一个 $2^n\times 2^n$ 维矩阵。
+
+例：设总共有5个量子比特，以下标为3的量子比特为控制位，下标为1的量子比特为目标位应用一个CNOT门。可用如下方式调用：
+
+```python
+from pyquantumkit.symbol.gate import *
+from pyquantumkit.symbol.circuit import *
+
+Mat1 = symbol_apply_gate(CNOT, 5, [3, 1])
+print(Mat1)
+```
+
+返回结果为一个 $32\times 32$（即 $2^5\times 2^5$）维矩阵。
+
+```
+Matrix([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]])
+```
+
+#### symbol_controlled_gate函数
+
+`symbol_controlled_gate`函数返回一个指定量子门的受控形式的矩阵表示。函数原型为：
+
+```python
+def symbol_controlled_gate(gate : sympy.Matrix, nctrlbits : int) -> sympy.BlockDiagMatrix:
+```
+
+- 参数`gate`是一个 $2^k\times 2^k$ 矩阵，其中 $k$ 代表了量子门的比特数。
+- 参数`nctrlbits`是一个正整数，指定控制量子比特个数 $n$ 。
+- 该函数的返回值为一个 $2^{n+k}\times 2^{n+k}$ 维分块对角矩阵（`sympy.BlockDiagMatrix`类对象），其中对应的前 $n$ 个量子比特为控制位， 后 $k$ 个量子比特为目标位。
+
+联合使用`symbol_controlled_gate`和`symbol_apply_gate`函数，可以生成以其中一些量子比特为控制位，其他一些量子比特为目标位的受控门的矩阵表示。
+
+#### symbol_multi_apply_sqgate函数
+
+`symbol_multi_apply_sqgate`函数生成在每个量子比特上分别应用一个单比特量子门的矩阵表示，即给定 $2\times 2$ 矩阵 $U$ 和总量子比特数 $n$ ，函数生成矩阵 $U^{\otimes n}$ 。函数原型为：
+
+```python
+def symbol_multi_apply_sqgate(sqgate : sympy.Matrix, nqbits : int) -> sympy.Matrix:
+```
+
+- 参数`sqgate`是个一个 $2\times 2$ 矩阵，表示单比特量子门。
+- 参数`nqbits`是一个正整数，表示总量子比特数 $n$ 。
+- 函数返回一个 $2^n\times 2^n$ 维矩阵。
+
+`symbol_multi_apply_sqgate(U, 2)`等价于`sympy.KroneckerProduct(U, U)`；
+`symbol_multi_apply_sqgate(U, 3)`等价于`sympy.KroneckerProduct(U, U, U)`。
+
+### 3.6 CircuitIO类简介
+
+PyQuantumKit提供了一个`CircuitIO`类，用于暂存构建的量子线路以及控制格式化输入输出。
+
+`CircuitIO`类可以像一个量子软件栈的量子线路类一样使用，也可以对其执行`apply_gate`, `apply_measure`等操作。`CircuitIO`对象保存了量子线路的信息，随后可以格式化输出为字符串或插入具体的量子软件栈的量子线路对象中。
+
+```python
+cio = PQK.CircuitIO(2, 2)        # define a CircuitIO object
+PQK.apply_gate(cio, 'H', [0])    # Use generic function <gate_apply>
+cio.apply_gate('CX', [0, 1])     # Use CircuitIO member function <gate_apply>
+```
+
+由于某些量子软件栈不支持自动生成逆线路和量子比特的重映射，可以利用`CircuitIO`类间接完成构造：先在`CircuitIO`对象上构造线路并生成逆线路或重映射（使用`inverse`和`remap_qbits`、`remap_cbits`成员函数），然后利用`>>`运算符（或等价的，`append_into_actual_circuit`成员函数）将CircuitIO包含的量子线路插入到具体量子软件栈的量子线路中。
+
+```python
+# quafu framework does not support qubits remap and circuit auto-inverse
+# Here we use CircuitIO object to implement indirectly
+cio.inverse()              # inverse the circuit in CircuitIO object cio
+cio.remap_qbits([1, 0])    # remap the circuit in cio
+quafu_circuit = quafu.QuantumCircuit(2, 2)
+cio >> quafu_circuit       # insert the CircuitIO object cio into quafu's circuit
+```
+
+#### CircuitIO类与符号表示
+
+`CircuitIO`类对象支持以sympy符号作为含参量子门（例如Rx门）的参数，并可根据对象内已包含的量子门序列计算出整个量子线路的矩阵表示。
+
+利用`get_sympy_matrix`成员函数可以计算`CircuitIO`对象的量子线路的矩阵表示，函数原型为：
+
+```python
+def get_sympy_matrix(self, subsdict : dict = None, simplify : bool = True) -> sympy.Matrix:
+```
+
+- 可选参数`subsdict`是一个字典，用于指定sympy符号代入规则。默认为None，即不进行任何符号代换。**注：只有当使用了sympy符号作为量子门参数时才需要指定此参数。**
+- 可选参数`simplify`指定是否在计算矩阵表示的过程中进行化简（即sympy的simplify操作），默认为True。
+- 函数返回量子线路对应的矩阵表示。
+
+在将`CircuitIO`对象的量子线路转换为具体量子软件栈的量子线路对象时，可以将具体的数值代入这些sympy符号中。`append_into_actual_circuit`成员函数有一个额外可选参数`subsdict`，用于指定sympy符号代入规则。**注：当需要在插入到具体的量子软件栈的量子线路的过程中进行符号代入时，不能使用`>>`运算符，必须显式使用`append_into_actual_circuit`成员函数。**
+
+```python
+def append_into_actual_circuit(self, dest_qcir, subsdict : dict = None):
+```
+
+#### CircuitIO符号表示示例
+
+这里我们考虑一个具体的案例，详见`./examples/symbol.py`。考虑来自论文
+
+Simulating ℤ_2 lattice gauge theory on a quantum computer
+https://arxiv.org/abs/2305.02361
+
+的两个量子线路（分别记为Ufh1和Ufh2），到这两个线路包含符号变量 $\epsilon$ 和 $\eta$ 。如下图所示：
+
+![quafu运行结果](./_readme_imgs/Z2_circuits.jpg)
+
+首先我们定义两个sympy符号变量，分别表示 $\epsilon$ 和 $\eta$ 。
+
+```python
+import pyqpanda3.core as qpanda
+import qiskit, qiskit_aer
+import quafu
+import pyquantumkit as PQK
+import sympy
+
+eta_ = sympy.Symbol('eta')
+epsilon_ = sympy.Symbol('epsilon')
+```
+
+接着我们分别编写构造这两个量子线路的函数，其中Rx和Ry门的参数直接赋予符号变量。
+
+```python
+def build_Ufh1(qc):
+    PQK.apply_gate(qc, 'H', [1])
+    PQK.apply_gate(qc, 'CNOT', [1, 0])
+    PQK.apply_gate(qc, 'CNOT', [1, 2])
+    PQK.apply_gate(qc, 'H', [0])
+    PQK.apply_gate(qc, 'Rx', [1], [-epsilon_ * eta_ / 2])
+    PQK.apply_gate(qc, 'H', [2])
+    PQK.apply_gate(qc, 'CNOT', [1, 0])
+    PQK.apply_gate(qc, 'H', [0])
+    PQK.apply_gate(qc, 'Z', [1])
+    PQK.apply_gate(qc, 'S', [0])
+    PQK.apply_gate(qc, 'CNOT', [1, 2])
+    PQK.apply_gate(qc, 'Rx', [1], [-epsilon_ * eta_ / 2])
+    PQK.apply_gate(qc, 'H', [2])
+    PQK.apply_gate(qc, 'S', [2])
+    PQK.apply_gate(qc, 'CNOT', [1, 2])
+    PQK.apply_gate(qc, 'CNOT', [1, 0])
+    PQK.apply_gate(qc, 'Sdag', [0])
+    PQK.apply_gate(qc, 'H', [1])
+    PQK.apply_gate(qc, 'Sdag', [2])
+
+def build_Ufh2(qc):
+    PQK.apply_gate(qc, 'SqrtXdag', [1])
+    PQK.apply_gate(qc, 'S', [1])
+    PQK.apply_gate(qc, 'CNOT', [0, 1])
+    PQK.apply_gate(qc, 'SqrtX', [0])
+    PQK.apply_gate(qc, 'CNOT', [0, 2])
+    PQK.apply_gate(qc, 'Rx', [0], [-epsilon_ * eta_ / 2])
+    PQK.apply_gate(qc, 'Ry', [2], [-epsilon_ * eta_ / 2])
+    PQK.apply_gate(qc, 'CNOT', [0, 2])
+    PQK.apply_gate(qc, 'SqrtXdag', [0])
+    PQK.apply_gate(qc, 'CNOT', [0, 1])
+    PQK.apply_gate(qc, 'Sdag', [1])
+    PQK.apply_gate(qc, 'SqrtX', [1])
+```
+
+然后声明两个CircuitIO对象，并在其上构造这两个量子线路。
+
+```python
+# Declare two CircuitIO objects
+CIO_Ufh1 = PQK.CircuitIO(3)
+CIO_Ufh2 = PQK.CircuitIO(3)
+# Build circuits on CircuitIO objects
+build_Ufh1(CIO_Ufh1)
+build_Ufh2(CIO_Ufh2)
+```
+
+利用`get_sympy_matrix`函数计算两个量子线路的矩阵表示：
+
+```python
+mat1 = CIO_Ufh1.get_sympy_matrix()
+mat2 = CIO_Ufh2.get_sympy_matrix()
+print(mat1)
+print(mat2)
+```
+
+输出为
+
+```
+Matrix([[1, 0, 0, 0, 0, 0, 0, 0], [0, cos(epsilon*eta/2), 0, 0, I*sin(epsilon*eta/2), 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, cos(epsilon*eta/2), 0, 0, -I*sin(epsilon*eta/2), 0], [0, I*sin(epsilon*eta/2), 0, 0, cos(epsilon*eta/2), 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0], [0, 0, 0, -I*sin(epsilon*eta/2), 0, 0, cos(epsilon*eta/2), 0], [0, 0, 0, 0, 0, 0, 0, 1]])
+Matrix([[1, 0, 0, 0, 0, 0, 0, 0], [0, cos(epsilon*eta/2), 0, 0, -I*sin(epsilon*eta/2), 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, cos(epsilon*eta/2), 0, 0, I*sin(epsilon*eta/2), 0], [0, -I*sin(epsilon*eta/2), 0, 0, cos(epsilon*eta/2), 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0], [0, 0, 0, I*sin(epsilon*eta/2), 0, 0, cos(epsilon*eta/2), 0], [0, 0, 0, 0, 0, 0, 0, 1]])
+```
+
+可以对两个矩阵作差，并将差值与零矩阵比较，来比较两个量子线路的等价性：
+
+```python
+diff = sympy.simplify(mat1 - mat2)
+print(diff)
+```
+
+```
+Matrix([[0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 2*I*sin(epsilon*eta/2), 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, -2*I*sin(epsilon*eta/2), 0], [0, 2*I*sin(epsilon*eta/2), 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, -2*I*sin(epsilon*eta/2), 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]])
+```
+
+最后我们将量子线路在qiskit、pyqpanda3和quafu三个量子软件栈中实现，并为符号变量代入不同的数值。这要利用`append_into_actual_circuit`成员函数，并将指定参数`subsdict`为表示代换的字典。例如，如果要将`eta_`代入数值1，`epsilon_`代入数值0.3，则需要将参数指定为`{eta_ : 1, epsilon_ : 0.3}`。
+
+```python
+# ---------- Implement on Qiskit ----------
+qiskit_circuit1 = qiskit.QuantumCircuit(3)
+# Substitute the symbols: eta_ = 1, epsilon_ = 0.3
+CIO_Ufh1.append_into_actual_circuit(qiskit_circuit1, {eta_ : 1, epsilon_ : 0.3})
+print(qiskit_circuit1)
+
+qiskit_circuit2 = qiskit.QuantumCircuit(3)
+# Substitute the symbols: eta_ = 1, epsilon_ = 0.3
+CIO_Ufh2.append_into_actual_circuit(qiskit_circuit2, {eta_ : 1, epsilon_ : 0.3})
+print(qiskit_circuit2)
+
+# ---------- Implement on QPanda3 ----------
+qpanda_circuit1 = qpanda.QCircuit(3)
+# Substitute the symbols: eta_ = 2, epsilon_ = 0.2
+CIO_Ufh1.append_into_actual_circuit(qpanda_circuit1, {eta_ : 2, epsilon_ : 0.2})
+print(qpanda_circuit1)
+
+qpanda_circuit2 = qpanda.QCircuit(3)
+# Substitute the symbols: eta_ = 2, epsilon_ = 0.2
+CIO_Ufh2.append_into_actual_circuit(qpanda_circuit2, {eta_ : 2, epsilon_ : 0.2})
+print(qpanda_circuit2)
+
+# ---------- Implement on Quafu ----------
+quafu_circuit1 = quafu.QuantumCircuit(3)
+# Substitute the symbols: eta_ = 3, epsilon_ = 0.12
+CIO_Ufh1.append_into_actual_circuit(quafu_circuit1, {eta_ : 3, epsilon_ : 0.12})
+quafu_circuit1.draw_circuit()
+
+quafu_circuit2 = quafu.QuantumCircuit(3)
+# Substitute the symbols: eta_ = 3, epsilon_ = 0.12
+CIO_Ufh2.append_into_actual_circuit(quafu_circuit2, {eta_ : 3, epsilon_ : 0.12})
+quafu_circuit2.draw_circuit()
+```
+
 ### 一些尚处于实验阶段的功能
 
-这些功能尚处于实验阶段，未经过系统测试，且接口在未来可能改变，请谨慎使用。
+这些功能尚处于实验阶段，未经过系统性的测试，且接口在未来可能改变，请谨慎使用。
 
 #### 模块化量子线路构建
 
@@ -367,15 +597,19 @@ Pauli算子的本征态： `create_pauli_eigenstate`, `uncompute_pauli_eigenstat
 保持纯态检验： `run_keep_purity_check`
 保持计算基态检验： `run_keep_basis_check`
 
-
 ## 四、联系我们
 
-PyQuantumKit由中国科学院高能物理研究所计算中心研发。
+PyQuantumKit由中国科学院高能物理研究所计算中心研发，得到了国家高能物理科学数据中心的支持。
 
 项目负责人：龙沛洵
 longpx@ihep.ac.cn
 
 ## 五、版本历史
+
+2026/1/20 v.0.1.4
+- 新增符号运算库 (/symbol) ，用于构建量子线路的矩阵表示
+- CircuitIO类现在能支持以sympy符号作为门的参数来构建量子线路
+- 增加支持 CS、$CS^{\dagger}$、 $\sqrt{X}$ 和 $\sqrt{X}^{\dagger}$ 门
 
 2025/12/04 v.0.1.3
 - 新增apply_exp_pauli函数用于支持量子哈密顿模拟算法

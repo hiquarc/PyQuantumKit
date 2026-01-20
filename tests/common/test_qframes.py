@@ -38,6 +38,8 @@ class Test_qframes_code_translate(UT.TestCase):
             'u3' : 'U3',
             'y' : 'Y',
             'Rx' : 'RX',
+            'csdag' : 'CSD',
+            'SqrtX' : 'SX',
             'abc' : PyQuantumKitError,
         }
         for input in cases:

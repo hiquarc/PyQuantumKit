@@ -12,7 +12,7 @@ N = 5           # number of particles
 J = 1.0         # interaction
 B = 1.0         # magnatic field
 t = 1.0         # evolution time
-n = 4           # rounds of decomposition
+n = 20          # rounds of decomposition
 
 # ----- Build the Hamiltonian -----
 # construct a PauliHamiltonian object, the parameter is the number of qubits

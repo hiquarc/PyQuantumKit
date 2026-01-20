@@ -3,11 +3,14 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-import copy
+import copy, sympy, numpy
 from pyquantumkit import PyQuantumKitError, apply_gate
 from pyquantumkit._qframes.framework_map import gate_applying_code
 from pyquantumkit.classical.common import indexlist_length
 from pyquantumkit._qframes.code_translate import Standard_Gate_Name, get_standard_gatename
+from pyquantumkit.symbol.gate import symbol_gate_matrix
+from pyquantumkit.symbol.circuit import symbol_apply_gate
+
 
 class CircuitIO:
     def __inverse_gate(self, item : list):
@@ -25,6 +28,12 @@ class CircuitIO:
             item[2] = [-item[2][0]]
         elif item[0] == 'U3':
             item[2] = [-item[2][0], -item[2][2], -item[2][1]]
+
+    def __expression_subs(self, expression, subsdict : dict):
+        if not hasattr(expression, 'subs'):
+            return expression
+        ret = expression.subs(subsdict)
+        return ret
     
     def __init__(self, nqbits : int = 0, ncbits : int = 0) -> None:
         """
@@ -212,7 +221,7 @@ class CircuitIO:
     def __lshift__(self, cir_io_obj):
         return self.append_circuit_io(cir_io_obj)
 
-    def append_into_actual_circuit(self, dest_qcir):
+    def append_into_actual_circuit(self, dest_qcir, subsdict : dict = None):
         """
         Append the gates of this CircuitIO object to the destination quantum circuit
 
@@ -220,9 +229,18 @@ class CircuitIO:
 
             dest_qcir : the destination object (can be circuit class in concrete
                         quantum software stacks or CircuitIO object)
+            subsdict  : (optional, default None) specify the substituted symbols.
+                   e.g. {t : 3, x : 4} means substitute symbol t with number 3, and symbol x with 4
         """
         for item in self._gatelist:
-            apply_gate(dest_qcir, item[0], item[1], item[2])
+            if subsdict is None:
+                apply_gate(dest_qcir, item[0], item[1], item[2])
+            else:
+                if item[2] is None:
+                    apply_gate(dest_qcir, item[0], item[1])
+                else:
+                    subsitem2 = [self.__expression_subs(x, subsdict) for x in item[2]]
+                    apply_gate(dest_qcir, item[0], item[1], subsitem2)
         return self
     
     def __rshift__(self, dest_qcir):
@@ -231,7 +249,7 @@ class CircuitIO:
     def get_circuit_code(self, language : str, circuit_name : str,
                           gate_lib_name : str = None, linebreak : str = '\n') -> str:
         """
-        Covert the CircuitIO object into string of code
+        Convert the CircuitIO object into string of code
 
             language      : specify the language
             circuit_name  : specify the circuit name will be used in the code
@@ -239,7 +257,7 @@ class CircuitIO:
             NOTE:   If no gate library name will be used, please specify None (rather than empty str '') 
             linebreak     : the characters of linebreaks in the code (default '\n')
 
-        Return -> the code string
+        -> Return : the code string
         """
         ret = ""
         for item in self._gatelist:
@@ -247,4 +265,63 @@ class CircuitIO:
                                         item[0], item[1], item[2])
             ret += linebreak
         return ret
+    
+    def get_sympy_matrix(self, subsdict : dict = None, simplify : bool = True) -> sympy.Matrix:
+        """
+        Calculate the sympy matrix representation of this CircuitIO object
 
+            subsdict : (optional, default None) specify the substituted symbols.
+                   e.g. {t : 3, x : 4} means substitute symbol t with number 3, and symbol x with 4
+            simplify : (optional, default True) specify whether to simplfy the matrix
+
+        -> Return : the sympy.Matrix object with dimension 2^n x 2^n,
+                    where n is the number of qubits
+        """
+        ret = sympy.Identity(2 ** self._nqbits)
+        for item in self._gatelist:
+            gatemat = symbol_gate_matrix(item[0], item[2])
+            gatemat_total = symbol_apply_gate(gatemat, self._nqbits, item[1])
+            ret = gatemat_total * ret
+        if subsdict is None:
+            if simplify:
+                return ret.simplify()
+            return ret
+        if simplify:
+            return ret.subs(subsdict).simplify()
+        return ret.subs(subsdict)
+    
+    def get_numpy_matrix(self, subsdict : dict = None, simplify : bool = True) -> numpy.array:
+        """
+        Calculate the numpy matrix representation of this CircuitIO object
+        
+            NOTE: This function is experimental, so use it with caution.
+
+            subsdict : (optional, default None) specify the substituted symbols.
+                   e.g. {t : 3, x : 4} means substitute symbol t with number 3, and symbol x with 4
+            simplify : (optional, default True) specify whether to simplfy the matrix
+
+        -> Return : the numpy.array object with dimension 2^n x 2^n,
+                    where n is the number of qubits
+        """
+        return numpy.array(self.get_sympy_matrix(subsdict, simplify).evalf())
+    
+    def symbol_subs(self, subsdict : dict):
+        """
+        Subsititute the specified symbols for gates' parameters (inplace)
+
+        subsdict : (dict) specify the substituted symbols.
+                   e.g. {t : 3, x : 4} means substitute symbol t with number 3, and symbol x with 4
+        """
+        for item in self._gatelist:
+            if item[2] is not None:
+                for i in range(len(item[2])):
+                    item[2][i] = self.__expression_subs(item[2][i], subsdict)
+
+    def contains_measure(self) -> bool:
+        """
+        Return whether a measurement operation is in the CircuitIO object
+        """
+        for item in self._gatelist:
+            if item[0] == 'M':
+                return True
+        return False

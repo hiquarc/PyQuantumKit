@@ -34,6 +34,9 @@ def CODE(cir_name : str, gate_lib_name : str, linebreak : str,
     if g == 'ch':
         execstr += " << " + glib + "HGate(" + str(qbits[1]) + ").ctrl_by(" + str(qbits[0]) + ")"
         return execstr
+    if g == 'csd':
+        execstr += " << " + glib + "SdgGate(" + str(qbits[1]) + ").ctrl_by(" + str(qbits[0]) + ")"
+        return execstr
 
     if g == 'u3':
         execstr += " << " + glib + "U3Gate"
@@ -59,6 +62,8 @@ def CODE(cir_name : str, gate_lib_name : str, linebreak : str,
         execstr += '.tdg'
     elif g == 'ccx':
         execstr += '.toffoli'
+    elif g == 'sxd':
+        execstr += '.sxdg'
     else:
         execstr += '.' + g
 

@@ -56,6 +56,91 @@ class Test_classical_common(UT.TestCase):
             with self.subTest(input):
                 self.assertEqual(cases[input], indexlist_length(input))
 
+    def test_dim2nbits(self):
+        cases = {
+            -1 : (0, False),
+            0 : (0, False),
+            1 : (0, True),
+            2 : (1, True),
+            3 : (2, False),
+            4 : (2, True),
+            5 : (3, False),
+            8 : (3, True),
+            63 : (6, False),
+            64 : (6, True),
+            65 : (7, False)
+        }
+        for input in cases:
+            with self.subTest(input):
+                result = dim2nbits(input)
+                self.assertEqual(cases[input], result)
+
+    def test_contain_duplicates(self):
+        cases = {
+            (1, 2, 3, 4) : False,
+            (1, 2, 2, 3) : True,
+            ('a', 7, '1', 1) : False,
+            ('a', 7, '1', '1') : True
+        }
+        for input in cases:
+            with self.subTest(input):
+                result = contain_duplicates(input)
+                self.assertEqual(cases[input], result)
+
+    def test_remap_bits(self):
+        cases = {
+            (0, (0, 2, 4, 10)) : 0,
+            (1, (5,)) : 32,
+            (12, (-1, 0, 1)) : ValueError,
+            (23, ()) : 0,
+            (78, (6, 5, 4, 3, 2, 1, 0)) : 57,
+            (78, (0, 1, 2, 4, 5, 6, 7)) : 150,
+            (78, (0, 2, 4, 6, 8, 10, 12)) : 4180
+        }
+        for input in cases:
+            with self.subTest(input):
+                if is_exception(cases[input]):
+                    self.assertRaises(cases[input], remap_bits, input[0], input[1])
+                else:
+                    result = remap_bits(input[0], input[1])
+                    self.assertEqual(cases[input], result)
+
+    def test_sub_bits(self):
+        cases = {
+            (0, (0, 3, 5, 6)) : 0,
+            (1, (0, 2, 4, 5)) : 1,
+            (1, (1, 2, 4, 5)) : 0,
+            (12, (-1, 0, 1)) : ValueError,
+            (23, ()) : 0,
+            (78, (0, 1, 3)) : 6,
+            (78, (2, 4, 5)) : 1,
+            (78, (0, 2, 4, 6, 8)) : 10
+        }
+        for input in cases:
+            with self.subTest(input):
+                if is_exception(cases[input]):
+                    self.assertRaises(cases[input], sub_bits, input[0], input[1])
+                else:
+                    result = sub_bits(input[0], input[1])
+                    self.assertEqual(cases[input], result)
+
+    def test_reverse_endianness(self):
+        cases = {
+            (23, -1) : 0,
+            (12, 0) : 0,
+            (0, 5) : 0,
+            (1, 5) : 16,
+            (78, 7) : 57,
+            (78, 8) : 114
+        }
+        for input in cases:
+            with self.subTest(input):
+                if is_exception(cases[input]):
+                    self.assertRaises(cases[input], reverse_endianness, input[0], input[1])
+                else:
+                    result = reverse_endianness(input[0], input[1])
+                    self.assertEqual(cases[input], result)
+
 
 # Convert tuple to dict: the even indices are keys, the odd indices are values
 def tuple2dict(t : tuple) -> dict:

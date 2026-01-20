@@ -43,6 +43,10 @@ def CODE(cir_name : str, gate_lib_name : str, linebreak : str,
         g = 'sdg'
     elif g == 'td':
         g = 'tdg'
+    elif g == 'csd':
+        g = 'csdg'
+    elif g == 'sxd':
+        g = 'sxdg'
 
     execstr += "." + g + "("
     if not paras:

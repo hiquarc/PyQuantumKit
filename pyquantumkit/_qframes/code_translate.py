@@ -10,6 +10,8 @@ Standard_Gate_Name = {
     'CX', 'CY', 'CZ', 'CH', 'RX', 'RY', 'RZ', 'SW', 'ISW',
     'CRX', 'CRY', 'CRZ', 'RXX', 'RYY', 'RZZ', 'CSW',
     'CCX', 'CCZ', 'SD', 'TD', 'U1', 'CU1', 'U3',
+    'SX', 'SXD', 'CS', 'CSD',
+    # 'SY', 'SYD', 'GP', 'CCY',    # Reserved gate names
 }
 
 def get_args_assign_str(argname : str, nargs : int) -> str:
@@ -49,6 +51,20 @@ def get_standard_gatename(origin_gate_name : str) -> str:
         return 'CU1'
     if g in {'U3', 'U'}:
         return 'U3'
+    if g in {'SX', 'SQRTX'}:
+        return 'SX'
+    if g in {'SXD', 'SXDG', 'SXDAG', 'SXDAGGER', 'SQRTXDG', 'SQRTXDAG', 'SQRTXDAGGER'}:
+        return 'SXD'
+    if g in {'CSD', 'CSDG', 'CSDAG', 'CSDAGGER'}:
+        return 'CSD'
+    
+    # For reserved gate names: SY, SYD, GP
+    if g in {'SY', 'SQRTY'}:
+        return 'SY'
+    if g in {'SYD', 'SYDG', 'SYDAG', 'SYDAGGER', 'SQRTYDG', 'SQRTYDAG', 'SQRTYDAGGER'}:
+        return 'SYD'
+    if g in {'GP', 'GPHASE', 'GLOBALPHASE'}:
+        return 'GP'
 
     if g in Standard_Gate_Name:
         return g

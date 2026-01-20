@@ -31,19 +31,29 @@ def CODE(cir_name : str, gate_lib_name : str, linebreak : str,
             execstr += " << " + glib + "measure(" + str(qbits[i]) + ", " + str(paras[i]) + ")"
         return execstr
     
+    # pyqpanda3 does not support SqrtX and SqrtXdag gates,
+    #   so translate them into H * S * H and H * Sdag * H
+    if g == 'SX':
+        execstr += " << " + glib + "H(" + str(qbits[0]) + ") << " + glib + "S(" + str(qbits[0]) + \
+                   ") << " + glib + "H(" + str(qbits[0]) + ")"
+        return execstr
+    if g == 'SXD':
+        execstr += " << " + glib + "H(" + str(qbits[0]) + ") << " + glib + "S(" + str(qbits[0]) + \
+                   ").dagger() << " + glib + "H(" + str(qbits[0]) + ")"
+        return execstr
+    
     execstr += " << " + glib
-    if g == 'CH' or g == 'CY':
+    if g in {'CH', 'CY', 'CS'}:
         execstr += g[1] + "(" + str(qbits[1]) + ").control(" + str(qbits[0]) + ")"
         return execstr
     if g == 'CSW':
         execstr += "SWAP(" + str(qbits[1]) + ", " + str(qbits[2]) + ").control(" + str(qbits[0]) + ")"
         return execstr
-    # pyqpanda3 verion 0.3 supports CRX, CRY, CRZ directly
-    #if g == 'CRX' or g == 'CRY' or g == 'CRZ':
-    #    execstr += g[1:3] + "(qbits[1],paras[0]).control(qbits[0])"
-    #    return execstr
-    if g == 'SD' or g == 'TD':
+    if g in {'SD', 'TD'}:
         execstr += g[0] + "(" + str(qbits[0]) + ").dagger()"
+        return execstr
+    if g == 'CSD':
+        execstr += "S(" + str(qbits[1]) + ").dagger().control(" + str(qbits[0]) + ")"
         return execstr
     if g == 'CCZ':
         execstr += "Z(" + str(qbits[2]) + ").control(" + str(qbits[0:2]) + ")"

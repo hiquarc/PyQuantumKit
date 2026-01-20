@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 
 import sys
 import os
@@ -29,7 +29,7 @@ def get_framework_from_object(obj) -> str:
 def FN(fm_name : str, index : int = 0):
     return Framework_Namespace[fm_name][index]
 
-# the error type for unsupported error
+# the error type in PyQuantumKit
 class PyQuantumKitError(Exception):
     pass
 
