@@ -154,15 +154,16 @@ class CircuitIO:
         """
         self.apply_gate('M', qindex, cindex)
 
-    def inverse(self) -> None:
+    def inverse(self):
         """
         Inverse the whole circuit (inplace)
         """
         self._gatelist.reverse()
         for item in self._gatelist:
             self.__inverse_gate(item)
+        return self
     
-    def remap_qbits(self, remap : int|list|range) -> None:
+    def remap_qbits(self, remap : int|list|range):
         """
         Remap the qubits of the whole circuit (inplace)
 
@@ -182,8 +183,9 @@ class CircuitIO:
                     item[1][i] = remap[item[1][i]]
         else:
             raise PyQuantumKitError('Invalid remap: ' + str(remap))
+        return self
 
-    def remap_cbits(self, remap : int|list|range) -> None:
+    def remap_cbits(self, remap : int|list|range):
         """
         Remap the cbits of the whole circuit (inplace)
 
@@ -205,6 +207,7 @@ class CircuitIO:
                         item[2][i] = remap[item[2][i]]
         else:
             raise PyQuantumKitError('Invalid remap: ' + str(remap))
+        return self
 
     def append_circuit_io(self, cir_io_obj):
         """
