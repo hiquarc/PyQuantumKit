@@ -70,5 +70,5 @@ def BraUniformSuperposition(nqbits : int) -> sympy.Matrix:
     ret = 1 / sympy.sqrt(2 ** nqbits) * sympy.ones(1, 2 ** nqbits)
     return ret
 def RhoUniformSuperposition(nqbits : int) -> sympy.Matrix:
-    ret = 1 / (2 ** nqbits) * sympy.ones(2 ** nqbits, 2 ** nqbits)
+    ret = sympy.Rational(1, 2 ** nqbits) * sympy.ones(2 ** nqbits, 2 ** nqbits)
     return ret

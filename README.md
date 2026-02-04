@@ -609,7 +609,7 @@ longpx@ihep.ac.cn
 2026/1/20 v.0.1.4
 - 新增符号运算库 (/symbol) ，用于构建量子线路的矩阵表示
 - CircuitIO类现在能支持以sympy符号作为门的参数来构建量子线路
-- 增加支持 CS、$CS^{\dagger}$、 $\sqrt{X}$ 和 $\sqrt{X}^{\dagger}$ 门
+- 增加支持 $CS$ 、$CS^{\dagger}$ 、 $\sqrt{X}$ 和 $\sqrt{X}^{\dagger}$ 门
 
 2025/12/04 v.0.1.3
 - 新增apply_exp_pauli函数用于支持量子哈密顿模拟算法
