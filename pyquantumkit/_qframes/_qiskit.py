@@ -95,7 +95,7 @@ def BITS(ret_cbit : bool, ret_list : bool) -> str:
 
 def RUN(line : int, **kwargs) -> str:
     if line == 1:
-        return "qvm.run(qc,shots=run_shots)"
+        return "job=qvm.run(qc,shots=run_shots)"
     if line == 2:
-        return "qvm.run(qc,shots=run_shots).result().get_counts()"
+        return "job.result().get_counts()"
     return ""
