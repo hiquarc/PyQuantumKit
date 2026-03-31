@@ -73,9 +73,3 @@ def symbol_multi_apply_sqgate(sqgate : sympy.MatrixBase, nqbits : int) -> sympy.
     for i in range(nqbits):
         ret = sympy.kronecker_product(ret, sqgate)
     return ret
-
-
-# def symbol_check_circuit_equivalence(cirmat1 : sympy.Matrix, cirmat2 : sympy.Matrix) -> sympy.Matrix:
-#     """
-#     """
-#     pass

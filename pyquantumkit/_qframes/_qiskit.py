@@ -15,7 +15,7 @@ SUPPORT_REMAP = True
 SUPPORT_ALGORITHMS = []
 
 
-def CODE(cir_name : str, gate_lib_name : str, linebreak : str,
+def CODE(cir_name : str, gate_lib_name : str,
           gate_name : str, qbits : list[int], paras : list) -> str:
     g = get_standard_gatename(gate_name).lower()
     execstr = cir_name
@@ -57,7 +57,7 @@ def CODE(cir_name : str, gate_lib_name : str, linebreak : str,
 
 
 def GATE(gate_name : str, qbits : list[int], paras : list) -> str:
-    return CODE("qc", "FN('qiskit')", ";", gate_name, qbits, paras)
+    return CODE("qc", "FN('qiskit')", gate_name, qbits, paras)
 
 
 def CIRCUIT(is_remap : bool, is_inv : bool) -> str:

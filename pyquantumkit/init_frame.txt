@@ -5,4 +5,4 @@
 qiskit                qiskit
 pyqpanda3             pyqpanda3.core
 quafu                 quafu            quafu.elements.element_gates
-# cqlib                 cqlib
+cqlib                 cqlib

@@ -15,7 +15,7 @@ SUPPORT_REMAP = True
 SUPPORT_ALGORITHMS = []
 
 
-def CODE(cir_name : str, gate_lib_name : str, linebreak : str,
+def CODE(cir_name : str, gate_lib_name : str,
           gate_name : str, qbits : list[int], paras : list) -> str:
     g = get_standard_gatename(gate_name).upper()
     execstr = cir_name
@@ -79,7 +79,7 @@ def CODE(cir_name : str, gate_lib_name : str, linebreak : str,
 
 # Translate the gate applying into the code of calling in pyqpanda3
 def GATE(gate_name : str, qbits : list[int], paras : list) -> str:
-    return CODE("qc", "FN('pyqpanda3')", ";", gate_name, qbits, paras)
+    return CODE("qc", "FN('pyqpanda3')", gate_name, qbits, paras)
 
 
 # Translate the circuit applying into the code of calling in pyqpanda3
