@@ -3,80 +3,61 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-import sympy, numpy
-from pyquantumkit import PyQuantumKitError
-from pyquantumkit.procedure.circuit_io import CircuitIO
-from pyquantumkit.symbol.circuit import symbol_apply_gate
+import numpy
+import numpy.linalg
 
-# NOTE: this module is in developing!
+# Default epsilon
+DEFAULT_TOLERANCE = 0.001
 
-# def symbol_equivalence_check(circuit1 : sympy.MatrixBase | CircuitIO,
-#                              circuit2 : sympy.MatrixBase | CircuitIO,
-#                              ignore_global_phase : bool = True):
-#     mat1 = None
-#     mat2 = None
-#     if isinstance(circuit1, sympy.MatrixBase):
-#         mat1 = circuit1.simplify()
-#     elif isinstance(circuit1, CircuitIO):
-#         if circuit1.contains_measure():
-#             raise PyQuantumKitError("symbol_equivalence_check function cannot check the equivalence of circuits with measurement!")
-#         mat1 = circuit1.get_sympy_matrix()
-#     if isinstance(circuit2, sympy.MatrixBase):
-#         mat2 = circuit2.simplify()
-#     elif isinstance(circuit2, CircuitIO):
-#         if circuit2.contains_measure():
-#             raise PyQuantumKitError("symbol_equivalence_check function cannot check the equivalence of circuits with measurement!")
-#         mat2 = circuit2.get_sympy_matrix()
-    
-#     if mat1.shape != mat2.shape:
-#         return False
-#     if ignore_global_phase:
-#         ratio = None
-#         for i in mat1.rows:
-#             for j in mat1.cols:
-#                 if (mat1[i, j] == 0 and mat2[i, j] != 0) or (mat1[i, j] != 0 and mat2[i, j] == 0):
-#                     return False
-#                 if mat1[i, j] != 0 and mat2[i, j] != 0:
-#                     if ratio is None:
-#                         ratio = sympy.simplify(mat1[i, j] / mat2[i, j])
-#                     else:
-#                         if sympy.simplify(mat2[i, j] * ratio - mat1[i, j]) != 0:
-#                             return False
-#         return True
-#     else:
-#         diff = sympy.simplify(mat1 - mat2)
-#         return mat1.is_zero_matrix
+# Built-in norms in numpy
+def numpy_frobenius_norm(mat : numpy.array) -> float:
+    return numpy.linalg.norm(mat, 'fro')
+def numpy_1_norm(mat : numpy.array) -> float:
+    return numpy.linalg.norm(mat, 1)
+def numpy_2_norm(mat : numpy.array) -> float:
+    return numpy.linalg.norm(mat, 2)
+def numpy_inf_norm(mat : numpy.array) -> float:
+    return numpy.linalg.norm(mat, numpy.inf)
 
 
-# def symbol_identity_check(circuit : sympy.MatrixBase | CircuitIO,
-#                           ignore_global_phase : bool = True):
-#     mat = None
-#     if isinstance(circuit, sympy.MatrixBase):
-#         mat = circuit.simplify()
-#     elif isinstance(circuit, CircuitIO):
-#         if circuit.contains_measure():
-#             return False
-#         mat = circuit.get_sympy_matrix()
-    
-#     if not mat.is_square:
-#         return False
-#     if ignore_global_phase:
-#         if not mat.is_diagonal():
-#             return False
-#         else:
-#             for i in range(1, mat.cols):
-#                 if sympy.simplify(mat[i, i] - mat[i - 1, i - 1]) != 0:
-#                     return False
-#             return True
-#     else:
-#         return mat.is_Identity
+def numeric_equivalence_check(cirmat1 : numpy.array, cirmat2 : numpy.array, ignore_global_phase : bool = True,
+                              tolerance : float = DEFAULT_TOLERANCE, norm = numpy_2_norm) -> bool:
+    """
+    Equivalence checking based on the norm of matrices difference of two circuits.
 
+        cirmat1   : the numpy matrix first quantum program.
+        cirmat2   : the numpy matrix second quantum program.
+        ignore_global_phase : (bool) whether to ignore the global phase in judgment, default True.
+        tolerance : (float) the judgment threshold.
+        norm      : the norm function (matrix -> float) to be used, default numpy_2_norm.
 
-def numeric_equivalence_check(circuit1 : numpy.matrix | CircuitIO,
-                              circuit2 : numpy.matrix | CircuitIO,
-                              epsilon : float) -> bool:
-    pass
+            Other built-in norms: numpy_1_norm, numpy_frobenius_norm, numpy_inf_norm
 
-def numeric_identity_check(circuit : numpy.matrix | CircuitIO,
-                           epsilon : float) -> bool:
-    pass
+    -> Return : True if cirmat1 is equivalence to cirmat2; otherwise False.
+    """
+    fact_cirmat2 = cirmat2
+    if ignore_global_phase:
+        magnitudes = numpy.abs(cirmat2)
+        max_index = numpy.unravel_index(numpy.argmax(magnitudes), magnitudes.shape)
+        factor = cirmat1[max_index] / cirmat2[max_index]
+        fact_cirmat2 *= factor
+    if norm(cirmat1 - fact_cirmat2) > tolerance:
+        return False
+    return True
+
+def numeric_identity_check(cirmat : numpy.array, ignore_global_phase : bool = True,
+                           tolerance : float = DEFAULT_TOLERANCE, norm = numpy_2_norm) -> bool:
+    """
+    Identity checking based on the norm of matrices difference of target circuit and identity.
+
+        cirmat    : the numpy matrix of target quantum program.
+        ignore_global_phase : (bool) whether to ignore the global phase in judgment, default True.
+        tolerance : (float) the judgment threshold.
+        norm      : the norm function (matrix -> float) to be used, default numpy_2_norm.
+
+            Other built-in norms: numpy_1_norm, numpy_frobenius_norm, numpy_inf_norm
+
+    -> Return : True if cirmat is equivalence to identity; otherwise False.
+    """
+    matid = numpy.eye(cirmat.shape[0], dtype=cirmat.dtype)
+    return numeric_equivalence_check(matid, cirmat, ignore_global_phase, tolerance, norm)

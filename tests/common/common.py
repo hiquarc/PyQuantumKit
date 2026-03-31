@@ -9,6 +9,7 @@ from pyquantumkit.procedure.circuit_io import *
 from pyquantumkit.classical.run_result import *
 from pyquantumkit.classical.common import *
 from pyquantumkit.program_check.program_relation import *
+from pyquantumkit.program_check.matrix_based import *
 
 Repeat_Times_Of_State_Check = 20
 
@@ -84,6 +85,12 @@ def T_equivalence(framework : str, machine, nqbits : int, ncbits : int,
 # Correct programs:
 def EmptyCir(framework : str):
     return new_circuit(framework, 4)
+
+def OnlyGlobalPhase(framework : str):
+    qc = new_circuit(framework, 4)
+    apply_gate(qc, 'Z', [0])
+    apply_gate(qc, 'Rz', [0], [math.pi])
+    return qc
 
 def CancelCir(framework : str):
     cio = CircuitIO(4)
@@ -205,3 +212,166 @@ def Cir1A_bug5(framework : str):
     apply_gate(qc, 'H', [1])
     return qc
 
+
+# ----- Equivalence gate implementations -----
+# Rxx gate
+def Rxx_Normal(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'Rxx', [0, 1], [0.2345])
+    return qc
+def Rxx_Decomposition(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'H', [0])
+    apply_gate(qc, 'H', [1])
+    apply_gate(qc, 'CNOT', [0, 1])
+    apply_gate(qc, 'RZ', [1], [0.2345])
+    apply_gate(qc, 'CNOT', [0, 1])
+    apply_gate(qc, 'H', [0])
+    apply_gate(qc, 'H', [1])
+    return qc
+
+# Ryy gate
+def Ryy_Normal(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'Ryy', [0, 1], [0.2345])
+    return qc
+def Ryy_Decomposition(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'SD', [0])
+    apply_gate(qc, 'SD', [1])
+    apply_gate(qc, 'H', [0])
+    apply_gate(qc, 'H', [1])
+    apply_gate(qc, 'CNOT', [0, 1])
+    apply_gate(qc, 'RZ', [1], [0.2345])
+    apply_gate(qc, 'CNOT', [0, 1])
+    apply_gate(qc, 'H', [0])
+    apply_gate(qc, 'H', [1])
+    apply_gate(qc, 'S', [0])
+    apply_gate(qc, 'S', [1])
+    return qc
+
+# Rzz gate
+def Rzz_Normal(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'Rzz', [0, 1], [0.2345])
+    return qc
+def Rzz_Decomposition(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'CNOT', [0, 1])
+    apply_gate(qc, 'RZ', [1], [0.2345])
+    apply_gate(qc, 'CNOT', [0, 1])
+    return qc
+
+# iSWAP gate
+def iSWAP_Normal(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'iSWAP', [0, 1])
+    return qc
+def iSWAP_Decomposition(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'CZ', [0, 1])
+    apply_gate(qc, 'S', [0])
+    apply_gate(qc, 'S', [1])
+    apply_gate(qc, 'SWAP', [0, 1])
+    return qc
+
+# U1 gate and Rz gate are equivalence ignoring the global phase
+def U1gate(framework : str):
+    qc = new_circuit(framework, 1)
+    apply_gate(qc, 'U1', [0], [1.3456])
+    return qc
+def Rzgate(framework : str):
+    qc = new_circuit(framework, 1)
+    apply_gate(qc, 'Rz', [0], [1.3456])
+    return qc
+
+# CH gate
+def CH_Normal(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'CH', [0, 1])
+    return qc
+def CH_Decomposition(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'Ry', [1], [-math.pi / 4])
+    apply_gate(qc, 'CZ', [0, 1])
+    apply_gate(qc, 'Ry', [1], [math.pi / 4])
+    return qc
+
+# CS gate
+def CS_Normal(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'CS', [0, 1])
+    return qc
+def CS_Decomposition(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'T', [0])
+    apply_gate(qc, 'CRZ', [0, 1], [math.pi / 2])
+    return qc
+
+# CSD gate
+def CSD_Normal(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'CSD', [0, 1])
+    return qc
+def CSD_Decomposition(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'TD', [0])
+    apply_gate(qc, 'CRZ', [0, 1], [-math.pi / 2])
+    return qc
+
+# CU1 gate
+def CU1_Normal(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'CU1', [0, 1], [0.789])
+    return qc
+def CU1_Decomposition(framework : str):
+    qc = new_circuit(framework, 2)
+    apply_gate(qc, 'U1', [0], [0.789 / 2])
+    apply_gate(qc, 'CRZ', [0, 1], [0.789])
+    return qc
+
+# SqrtX and SqrtXdag gate
+def SqrtX_Normal(framework : str):
+    qc = new_circuit(framework, 1)
+    apply_gate(qc, 'SqrtX', [0])
+    return qc
+def SqrtX_Decomposition(framework : str):
+    qc = new_circuit(framework, 1)
+    apply_gate(qc, 'H', [0])
+    apply_gate(qc, 'S', [0])
+    apply_gate(qc, 'H', [0])
+    return qc
+def SqrtXdag_Normal(framework : str):
+    qc = new_circuit(framework, 1)
+    apply_gate(qc, 'SqrtXdag', [0])
+    return qc
+def SqrtXdag_Decomposition(framework : str):
+    qc = new_circuit(framework, 1)
+    apply_gate(qc, 'H', [0])
+    apply_gate(qc, 'Sdag', [0])
+    apply_gate(qc, 'H', [0])
+    return qc
+
+# Fredkin gate
+def Fredkin_Normal(framework : str):
+    qc = new_circuit(framework, 3)
+    apply_gate(qc, 'Fredkin', [0, 1, 2])
+    return qc
+def Fredkin_Decomposition(framework : str):
+    qc = new_circuit(framework, 3)
+    apply_gate(qc, 'CCX', [0, 1, 2])
+    apply_gate(qc, 'CCNOT', [0, 2, 1])
+    apply_gate(qc, 'Toffoli', [0, 1, 2])
+    return qc
+
+# U3 gate
+def U3_Normal(framework : str):
+    qc = new_circuit(framework, 1)
+    apply_gate(qc, 'U3', [0], [1.4, 2.5, 3.6])
+    return qc
+def U3_Decomposition(framework : str):
+    qc = new_circuit(framework, 1)
+    apply_gate(qc, 'U1', [0], [3.6])
+    apply_gate(qc, 'Ry', [0], [1.4])
+    apply_gate(qc, 'U1', [0], [2.5])
+    return qc

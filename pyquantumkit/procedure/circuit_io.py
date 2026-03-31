@@ -236,21 +236,19 @@ class CircuitIO:
                    e.g. {t : 3, x : 4} means substitute symbol t with number 3, and symbol x with 4
         """
         for item in self._gatelist:
-            if subsdict is None:
+            if subsdict is None or item[2] is None:
                 apply_gate(dest_qcir, item[0], item[1], item[2])
             else:
-                if item[2] is None:
-                    apply_gate(dest_qcir, item[0], item[1])
-                else:
-                    subsitem2 = [self.__expression_subs(x, subsdict) for x in item[2]]
-                    apply_gate(dest_qcir, item[0], item[1], subsitem2)
+                subsitem2 = [self.__expression_subs(x, subsdict) for x in item[2]]
+                apply_gate(dest_qcir, item[0], item[1], subsitem2)
         return self
     
     def __rshift__(self, dest_qcir):
         return self.append_into_actual_circuit(dest_qcir)
     
     def get_circuit_code(self, language : str, circuit_name : str,
-                          gate_lib_name : str = None, linebreak : str = '\n') -> str:
+                          gate_lib_name : str = None, linebreak : str = '\n',
+                          subsdict : dict = None) -> str:
         """
         Convert the CircuitIO object into string of code
 
@@ -259,13 +257,20 @@ class CircuitIO:
             gate_lib_name : specify the library name of gates used in the code (default None)
             NOTE:   If no gate library name will be used, please specify None (rather than empty str '') 
             linebreak     : the characters of linebreaks in the code (default '\n')
+            subsdict  : (optional, default None) specify the substituted symbols.
+                   e.g. {t : 3, x : 4} means substitute symbol t with number 3, and symbol x with 4
 
         -> Return : the code string
         """
         ret = ""
         for item in self._gatelist:
-            ret += gate_applying_code(language, circuit_name, gate_lib_name, linebreak,
-                                        item[0], item[1], item[2])
+            if subsdict is None or item[2] is None:
+                ret += gate_applying_code(language, circuit_name, gate_lib_name,
+                                            item[0], item[1], item[2])
+            else:
+                subsitem2 = [self.__expression_subs(x, subsdict) for x in item[2]]
+                ret += gate_applying_code(language, circuit_name, gate_lib_name,
+                                            item[0], item[1], subsitem2)
             ret += linebreak
         return ret
     
@@ -293,7 +298,7 @@ class CircuitIO:
             return ret.subs(subsdict).simplify()
         return ret.subs(subsdict)
     
-    def get_numpy_matrix(self, subsdict : dict = None, simplify : bool = True) -> numpy.array:
+    def get_numpy_matrix(self, subsdict : dict = None) -> numpy.array:
         """
         Calculate the numpy matrix representation of this CircuitIO object
         
@@ -306,7 +311,15 @@ class CircuitIO:
         -> Return : the numpy.array object with dimension 2^n x 2^n,
                     where n is the number of qubits
         """
-        return numpy.array(self.get_sympy_matrix(subsdict, simplify).evalf())
+        ret = numpy.eye(2 ** self._nqbits, dtype=complex)
+        for item in self._gatelist:
+            gatemat_sp = symbol_gate_matrix(item[0], item[2])
+            gatemat_total_sp = symbol_apply_gate(gatemat_sp, self._nqbits, item[1])
+            if subsdict is not None:
+                gatemat_total_sp = gatemat_total_sp.subs(subsdict)
+            gatemat_total = numpy.array(gatemat_total_sp, dtype=complex)
+            ret = gatemat_total @ ret
+        return ret
     
     def symbol_subs(self, subsdict : dict):
         """

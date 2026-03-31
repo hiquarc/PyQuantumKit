@@ -8,7 +8,7 @@ import importlib
 from pyquantumkit import PyQuantumKitError
 from pyquantumkit import Supported_Frameworks, FN, get_framework_from_object
 from pyquantumkit.classical.common import indexlist_length
-from pyquantumkit._qframes.__extra_lang import Extra_Languages
+from pyquantumkit._qframes.__extra_lang import Extra_Languages_CODE
 
 Translate_Namespace = {}
 for fname in Supported_Frameworks:
@@ -38,15 +38,15 @@ class Action(Enum):
     BITS    = auto()
     RUN     = auto()
 
-def gate_applying_code(language : str, cir_name : str, gate_lib_name : str, linebreak : str,
+def gate_applying_code(language : str, cir_name : str, gate_lib_name : str,
                        gate_name : str, qbits : list[int], paras : list) -> str:
     if language in Translate_Namespace:
-        return Translate_Namespace[language].CODE(cir_name, gate_lib_name, linebreak,
+        return Translate_Namespace[language].CODE(cir_name, gate_lib_name,
                                                   gate_name, qbits, paras)
-    if language in Extra_Languages:
-        return Extra_Languages[language](cir_name, gate_lib_name, linebreak,
+    if language in Extra_Languages_CODE:
+        return Extra_Languages_CODE[language](cir_name, gate_lib_name,
                                           gate_name, qbits, paras)
-    raise PyQuantumKitError('Language ' + language + ' is not supported.')
+    raise PyQuantumKitError('Language "' + language + '" is not supported.')
 
 
 def get_apply_function(action : Action, framework : str) -> callable:
