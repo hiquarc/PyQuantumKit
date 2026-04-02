@@ -7,14 +7,13 @@ name = "pyquantumkit"
 version = "0.1.5"
 description = "A middleware for translating a quantum program into different quantum software stacks."
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Peixun Long", email = "longpx@ihep.ac.cn"}
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -31,8 +30,11 @@ dependencies = [
 ]
 requires-python = ">=3.8"
 
-[tool.setuptools]
-license-files = []
+[project.optional-dependencies]
+qiskit = ["qiskit","qiskit-aer"]
+pyqpanda3 = ["pyqpanda3"]
+quafu = ["pyquafu"]
+cqlib = ["cqlib"]
 
 [project.urls]
 Homepage = "https://quantum.ihep.ac.cn/"
@@ -41,3 +43,6 @@ Documentation = "https://github.com/hiquarc/PyQuantumKit"
 
 [tool.setuptools.packages.find]
 include = ["pyquantumkit*"]
+
+[tool.setuptools.package-data]
+"pyquantumkit" = ["init_frame.txt"]

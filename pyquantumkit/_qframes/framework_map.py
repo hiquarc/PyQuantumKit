@@ -80,8 +80,15 @@ def get_apply_function(action : Action, framework : str) -> callable:
     if action == Action.RUN:
         def ret(qvm, qc, run_shots : int, **kwargs):
             try:
-                exec(Translate_Namespace[framework].RUN(1, **kwargs))
-                return eval(Translate_Namespace[framework].RUN(2, **kwargs))
+                # Use an explicit locals dict so exec-created variables are visible to eval
+                local_env = {
+                    "qvm": qvm,
+                    "qc": qc,
+                    "run_shots": run_shots,
+                    "kwargs": kwargs,
+                }
+                exec(Translate_Namespace[framework].RUN(1, **kwargs), globals(), local_env)
+                return eval(Translate_Namespace[framework].RUN(2, **kwargs), globals(), local_env)
             except Exception:
                 #import sys
                 #sys.stderr.write('PyQuantumKit: some errors are occurred in RUN action.\n')
