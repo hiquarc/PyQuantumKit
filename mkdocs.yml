@@ -5,18 +5,18 @@ site_url: https://github.com/hiquarc/PyQuantumKit/
 
 plugins:
   - search
-  - i18n:
+  # - i18n:
       #default_language: en
-      languages:
-        - locale: en
-          name: English
-          link: /en/
-          build: true
-        - locale: zh
-          name: 中文
-          link: /zh/
-          build: true
-          default: true
+      # languages:
+      #   - locale: en
+      #     name: English
+      #     link: /en/
+      #     build: true
+      #   - locale: zh
+      #     name: 中文
+      #     link: /zh/
+      #     build: true
+      #     default: true
 
 theme:
   name: readthedocs
