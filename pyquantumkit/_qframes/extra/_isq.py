@@ -141,6 +141,4 @@ def CODE(cir_name : str, gate_lib_name : str,
         execstr += "S(" + cir_name + "[" + str(qbits[0]) + "]); "
         execstr += "S(" + cir_name + "[" + str(qbits[1]) + "]);"
         return execstr
-
-    print(g)
     
