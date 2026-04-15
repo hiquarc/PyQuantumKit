@@ -6,6 +6,33 @@ PyQuantumKit是一个基于Python的量子软件开发辅助工具，设计目�
 - 提供常用的量子算法和开发辅助功能，提升量子软件开发效率和正确性；
 - 软件架构具有扩展性，未来可方便地添加更多的功能和量子开发框架的支持。
 
+# 安装和使用
+
+使用`pip install`命令可安装PyQuantumKit
+
+```sh
+pip install pyquantumkit
+```
+
+PyQuantumKit要求Python版本>=3.8，且依赖如下Python包：
+
+- sympy >= 1.8
+- numpy >= 1.22.0
+
+通常，PyQuantumKit需要与受支持的基于Python的量子开发框架（例如qiskit或pyqpanda3等）联合使用。可以在安装PyQuantumKit的同时安装受支持的量子开发框架，例如，使用如下命令在安装PyQuantumKit的同时安装qiskit：
+
+```sh
+pip install pyquantumkit[qiskit]
+```
+
+使用`git clone`命令将PyQuantumKit仓库复制到本地：
+
+```sh
+git clone https://github.com/hiquarc/PyQuantumKit.git
+```
+
+用户文档参见：[https://pyquantumkit.readthedocs.io/](https://pyquantumkit.readthedocs.io/)
+
 # 联系我们
 
 PyQuantumKit由中国科学院高能物理研究所计算中心研发，得到了国家高能物理科学数据中心的支持。
@@ -14,6 +41,9 @@ PyQuantumKit由中国科学院高能物理研究所计算中心研发，得到�
 longpx@ihep.ac.cn
 
 # 版本历史
+
+2026/4/15 v.0.1.6
+- 为项目添加说明文档
 
 2026/3/27 v.0.1.5
 - 新增一个支持的量子开发框架：cqlib

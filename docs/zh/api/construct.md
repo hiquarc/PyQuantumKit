@@ -18,7 +18,11 @@ def apply_gate(q_circuit, gate_str : str, qbits : list[int], paras : list = None
 - 参数`qbits`是一个整数列表，指定门要应用的量子比特下标列表。注意无论量子门是单比特还是多比特，都需要**以列表的方式指派此参数**。
 - 参数`paras`是一个列表，用于为含参数门指派参数；对于无参数门，不用指派此参数。
 
-`apply_gate`函数将根据传入的`q_circuit`参数所属的量子开发框架，将对量子门的应用翻译为对应量子开发框架的代码。代码翻译过程中已考虑不同量子开发框架的API名称和实现方式的差别。此外，若目标量子开发框架不原生支持某个量子门，函数则会将其翻译为支持的量子门的组合。例如，一些量子开发框架不支持 $\sqrt{X}$ 门，函数会根据恒等式 $\sqrt{X}=HSH$ 将其翻译为 $H$, $S$, $H$ 门的依次应用。
+apply_gate函数将根据传入的`q_circuit`参数所属的量子开发框架，将对量子门的应用翻译为对应量子开发框架的代码。代码翻译过程中已考虑不同量子开发框架的API名称和实现方式的差别。下图展示了apply_gate函数实现代码翻译的流程：
+
+![apply_gate函数工作流程](../../imgs/translate_cn.jpg)
+
+此外，若目标量子开发框架不原生支持某个量子门，函数则会将其翻译为支持的量子门的组合。例如，一些量子开发框架不支持 $\sqrt{X}$ 门，函数会根据恒等式 $\sqrt{X}=HSH$ 将其翻译为 $H$, $S$, $H$ 门的依次应用。
 
 ### apply_measure
 `apply_measure`函数以统一的方式实现测量目标量子比特，函数原型为：
@@ -32,7 +36,7 @@ def apply_measure(q_circuit, qindex : list[int], cindex : list[int])
 - 参数`cindex`是一个整数列表，指定测量结果存放的经典比特下标。`qindex`和`cindex`各分量分别对应，因此`qindex`和`cindex`长度应相同。
 
 ### multi_apply_sqgate
-`multi_apply_sqgate`函数对一组量子比特的每一个应用同一个单比特量子门。
+`multi_apply_sqgate`函数对一组量子比特中的每一个量子比特应用同一个单比特量子门。
 
 ```python
 def multi_apply_sqgate(q_circuit, gate_str : str, qbitlist : list[int], paras : list = None)
@@ -53,3 +57,6 @@ def apply_reverse(q_circuit, qbitlist : list[int])
 - 参数`q_circuit`指定目标量子线路。
 - 参数`qindex`是一个整数列表，指定要测量的量子比特下标。
 - 参数`cindex`是一个整数列表，指定测量结果存放的经典比特下标。`qindex`和`cindex`各分量分别对应，因此`qindex`和`cindex`长度应相同。
+
+## 二、模块化构建
+[点此查看](../experimental/construct.md)
