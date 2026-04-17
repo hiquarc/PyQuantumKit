@@ -1,87 +1,38 @@
 # 量子线路矩阵的符号表示
 
-PyQuantumKit提供了symbol库 (pyquantumkit.symbol) ，此模块基于sympy库实现，用于构造量子线路的矩阵表示。hiquarc仓库中还有另一个基于Mathematica的构造量子线路的矩阵表示库QCirMat（见[https://github.com/hiquarc/QCirMat](https://github.com/hiquarc/QCirMat)），此symbol库可以视为基于Python和sympy版本的QCirMat，方便没有Mathematica的用户使用。
+PyQuantumKit提供了symbol库 (pyquantumkit.symbol) ，此模块基于sympy库实现，用于构造量子线路的矩阵表示。
 
-- `pyquantumkit.symbol.gate`模块提供了基本门的矩阵表示（基于`sympy.Matrix`类），[点此查看](../api/supported-gates.md)各量子门对应的矩阵对象名称；
-- `pyquantumkit.symbol.qstate`模块提供了基本量子态向量表示（包括ket表示、bra表示和密度矩阵表示）。
-- `pyquantumkit.symbol.circuit`模块提供了若干用于构造量子线路的矩阵表示的函数。
+<!--*hiquarc仓库中还有另一个基于Mathematica的构造量子线路的矩阵表示库QCirMat（见[https://github.com/hiquarc/QCirMat](https://github.com/hiquarc/QCirMat)），此symbol库可以视为基于Python和sympy版本的QCirMat，方便没有Mathematica的用户使用。*-->
 
-**注意：由于Python对于下标的约定是从0开始，symbol库涉及下标的参数均按照Python的约定从0开始，这与Mathematica的从1开始的约定不同。**
+- `pyquantumkit.symbol.gate`模块提供了基本门的矩阵表示（基于`sympy.Matrix`类）
+- `pyquantumkit.symbol.qstate`模块提供了基本量子态向量表示（包括ket表示、bra表示和密度矩阵表示）
+- `pyquantumkit.symbol.circuit`模块提供了若干用于构造量子线路的矩阵表示的函数
 
-## symbol_apply_gate函数
+**注意：由于Python对于下标的约定是从0开始，pyquantumkit.symbol库涉及下标的参数均按照Python的约定从0开始，这与Mathematica的从1开始的约定不同。**
 
-`symbol_apply_gate`函数在指定下标的量子比特上应用指定的量子门，返回对应的矩阵表示。函数原型为：
-
-```python
-def symbol_apply_gate(gate : sympy.Matrix, nqbits : int, indexlist : list[int]) -> sympy.Matrix:
-```
-
-- 参数`gate`是一个 $2^k\times 2^k$ 矩阵，其中 $k$ 代表了量子门的比特数，例如单比特量子门（ $k=1$ ）是 $2\times 2$ 矩阵，双比特量子门（ $k=2$ ）是 $4\times 4$ 矩阵。
-- 参数`nqbits`是一个正整数，指定总量子比特数 $n$ ，该参数不能小于 $k$ 。
-- 参数`indexlist`是一个列表，按顺序指定要作用量子门的比特的下标，**注意下标从0开始，这与基于Mathematica的QCirMat不同**。列表长度必须为 $k$ ，即与参数`gate`的维数匹配。
-- 该函数的返回值为一个 $2^n\times 2^n$ 维矩阵。
-
-例：设总共有5个量子比特，以下标为3的量子比特为控制位，下标为1的量子比特为目标位应用一个CNOT门。可用如下方式调用：
+## 使用量子门的矩阵
+`pyquantumkit.symbol.gate`模块中预置了受支持量子门对应的SymPy矩阵对象或生成矩阵对象的函数（对于带参数量子门）。可以直接使用具体的对象名（[查看详情](../api/supported-gates.md)）来引用：
 
 ```python
-from pyquantumkit.symbol.gate import *
-from pyquantumkit.symbol.circuit import *
+import pyquantumkit.symbol.gate as PQK_S_GATE
 
-Mat1 = symbol_apply_gate(CNOT, 5, [3, 1])
-print(Mat1)
+print(PQK_S_GATE.Y)
+print(PQK_S_GATE.SqrtXdag)
+print(PQK_S_GATE.Rxx(0.5))
+```
+输出为
+```
+Matrix([[0, -I], [I, 0]])
+Matrix([[1/2 - I/2, 1/2 + I/2], [1/2 + I/2, 1/2 - I/2]])
+Matrix([[0.968912421710645, 0, 0, -0.247403959254523*I], [0, 0.968912421710645, -0.247403959254523*I, 0], [0, -0.247403959254523*I, 0.968912421710645, 0], [-0.247403959254523*I, 0, 0, 0.968912421710645]])
 ```
 
-返回结果为一个 $32\times 32$（即 $2^5\times 2^5$）维矩阵。
-
-```
-Matrix([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]])
-```
-
-## symbol_controlled_gate函数
-
-`symbol_controlled_gate`函数返回一个指定量子门的受控形式的矩阵表示。函数原型为：
+也可以使用`symbol_gate_matrix`函数，传入一个指示门的字符串来引用，该字符串与`apply_gate`函数中的相同（[查看详情](../api/supported-gates.md)）。上述示例中的代码还可以等价地写为：
 
 ```python
-def symbol_controlled_gate(gate : sympy.Matrix, nctrlbits : int) -> sympy.BlockDiagMatrix:
-```
+import pyquantumkit.symbol.gate as PQK_S_GATE
 
-- 参数`gate`是一个 $2^k\times 2^k$ 矩阵，其中 $k$ 代表了量子门的比特数。
-- 参数`nctrlbits`是一个正整数，指定控制量子比特个数 $n$ 。
-- 该函数的返回值为一个 $2^{n+k}\times 2^{n+k}$ 维分块对角矩阵（`sympy.BlockDiagMatrix`类对象），其中对应的前 $n$ 个量子比特为控制位， 后 $k$ 个量子比特为目标位。
-
-联合使用`symbol_controlled_gate`和`symbol_apply_gate`函数，可以生成以其中一些量子比特为控制位，其他一些量子比特为目标位的受控门的矩阵表示。
-
-## symbol_multi_apply_sqgate函数
-
-`symbol_multi_apply_sqgate`函数生成在每个量子比特上分别应用一个单比特量子门的矩阵表示，即给定 $2\times 2$ 矩阵 $U$ 和总量子比特数 $n$ ，函数生成矩阵 $U^{\otimes n}$ 。函数原型为：
-
-```python
-def symbol_multi_apply_sqgate(sqgate : sympy.Matrix, nqbits : int) -> sympy.Matrix:
-```
-
-- 参数`sqgate`是个一个 $2\times 2$ 矩阵，表示单比特量子门。
-- 参数`nqbits`是一个正整数，表示总量子比特数 $n$ 。
-- 函数返回一个 $2^n\times 2^n$ 维矩阵。
-
-`symbol_multi_apply_sqgate(U, 2)`等价于`sympy.KroneckerProduct(U, U)`；
-`symbol_multi_apply_sqgate(U, 3)`等价于`sympy.KroneckerProduct(U, U, U)`。
-
-## CircuitIO类与符号表示
-
-CircuitIO类对象支持以sympy符号作为含参量子门（例如Rx门）的参数，并可根据对象内已包含的量子门序列计算出整个量子线路的矩阵表示。
-
-利用`get_sympy_matrix`成员函数可以计算CircuitIO对象的量子线路的矩阵表示，函数原型为：
-
-```python
-def get_sympy_matrix(self, subsdict : dict = None, simplify : bool = True) -> sympy.Matrix:
-```
-
-- 可选参数`subsdict`是一个字典，用于指定sympy符号代入规则。默认为None，即不进行任何符号代换。**注：只有当使用了sympy符号作为量子门参数时才需要指定此参数。**
-- 可选参数`simplify`指定是否在计算矩阵表示的过程中进行化简（即sympy的simplify操作），默认为True。
-- 函数返回量子线路对应的矩阵表示。
-
-在将CircuitIO对象的量子线路转换为具体量子开发框架的量子线路对象时，可以将具体的数值代入这些sympy符号中。`append_into_actual_circuit`成员函数有一个额外可选参数`subsdict`，用于指定sympy符号代入规则。**注：当需要在插入到具体的量子开发框架的量子线路的过程中进行符号代入时，不能使用`>>`运算符，必须显式使用`append_into_actual_circuit`成员函数。**
-
-```python
-def append_into_actual_circuit(self, dest_qcir, subsdict : dict = None):
+print(PQK_S_GATE.symbol_gate_matrix('y'))
+print(PQK_S_GATE.symbol_gate_matrix('sxdg'))
+print(PQK_S_GATE.symbol_gate_matrix('rxx', [0.5]))
 ```

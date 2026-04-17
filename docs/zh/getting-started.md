@@ -15,7 +15,7 @@ PyQuantumKit要求Python版本>=3.8，且依赖如下Python包：
 通常，PyQuantumKit需要与受支持的基于Python的量子开发框架（例如qiskit或pyqpanda3等）联合使用。可以在安装PyQuantumKit的同时安装受支持的量子开发框架，例如，使用如下命令在安装PyQuantumKit的同时安装qiskit：
 
 ```sh
-pip install pyquantumkit[qiskit]
+pip install "pyquantumkit[qiskit]"
 ```
 
 ## GitHub
