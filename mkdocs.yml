@@ -66,7 +66,7 @@ nav:
       - 量子门速查: zh/api/supported-gates.md
       - 量子线路构建API: zh/api/construct.md
       - CircuitIO类: zh/api/circuitio.md
-      - 基于SymPy的符号表示: zh/api/symbol.md
+      - pyquantumkit.symbol模块: zh/api/symbol.md
     - 示例:
       - 带参数量子线路的符号表示及检验: zh/examples/z2.md
     - 实验性功能:
