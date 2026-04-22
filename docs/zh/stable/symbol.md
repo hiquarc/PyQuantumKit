@@ -37,11 +37,30 @@ print(PQK_S_GATE.symbol_gate_matrix('sxdg'))
 print(PQK_S_GATE.symbol_gate_matrix('rxx', [0.5]))
 ```
 
-## 二、量子态向量
+## 二、使用量子态向量
+`pyquantumkit.symbol.qstate`模块中预置了常见量子态的态向量或矩阵表示，例如ket表示 $\ket{0}$ 、bra表示 $\bra{+}$ 、贝尔态的密度矩阵表示 $\ket{\beta_{00}}\bra{\beta_{00}}$ 等。可以直接使用具体的对象名（[查看详情](../api/symbol.md#pyquantumkitsymbolqstate)）来引用：
+
+```python
+import pyquantumkit.symbol.qstate as PQK_S_STATE
+
+print(PQK_S_STATE.Ket0)
+print(PQK_S_STATE.BraPlus)
+print(PQK_S_STATE.RhoBell)
+```
+
+输出为
+```
+Matrix([[1], [0]])
+Matrix([[sqrt(2)/2, sqrt(2)/2]])
+Matrix([[1/2, 0, 0, 1/2], [0, 0, 0, 0], [0, 0, 0, 0], [1/2, 0, 0, 1/2]])
+```
 
 ## 三、构造量子线路对应的矩阵
+利用量子门的矩阵构造量子线路对应的矩阵，一种方法是直接使用SymPy提供的矩阵运算：量子门的顺序应用对应矩阵连乘，量子门的并行应用对应矩阵
 
-## CircuitIO类与符号表示
+`pyquantumkit.symbol.circuit`模块提供了若干用于构造量子线路的矩阵表示的函数
+
+## 四、CircuitIO类与符号表示
 
 CircuitIO类对象支持以sympy符号作为含参量子门（例如Rx门）的参数，并可根据对象内已包含的量子门序列计算出整个量子线路的矩阵表示。
 
@@ -58,5 +77,5 @@ def get_sympy_matrix(self, subsdict : dict = None, simplify : bool = True) -> sy
 在将CircuitIO对象的量子线路转换为具体量子开发框架的量子线路对象时，可以将具体的数值代入这些sympy符号中。`append_into_actual_circuit`成员函数有一个额外可选参数`subsdict`，用于指定sympy符号代入规则。**注：当需要在插入到具体的量子开发框架的量子线路的过程中进行符号代入时，不能使用`>>`运算符，必须显式使用`append_into_actual_circuit`成员函数。**
 
 ```python
-def append_into_actual_circuit(self, dest_qcir, subsdict : dict = None):
+def append_into_actual_circuit(self, dest_qcir, subsdict : dict = None)
 ```

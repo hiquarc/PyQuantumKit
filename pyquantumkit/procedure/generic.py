@@ -182,7 +182,7 @@ def copy_program(src_qp, qbits_remap = None, cbits_remap = None):
 
 
 
-def new_circuit(framework, nqbits : int):
+def new_circuit(framework : str, nqbits : int):
     """
     Generate an empty quantum circuit
 
@@ -194,7 +194,7 @@ def new_circuit(framework, nqbits : int):
     return quantum_action(Action.NEW, framework, False, nqbits, 0)
 
 
-def new_program(framework, nqbits : int, ncbits : int = 0):
+def new_program(framework : str, nqbits : int, ncbits : int = 0):
     """
     Generate an empty quantum program (which contains classical bits)
 

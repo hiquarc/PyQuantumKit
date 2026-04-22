@@ -1,6 +1,6 @@
 # 量子线路的构建
 ## 一、基本构建
-### 1.应用量子门
+### 1. 应用量子门
 
 在PyquantumKit中，以统一的方式构建量子线路的关键是`apply_gate`函数，下面用几个例子来说明函数的用法。
 
@@ -57,7 +57,9 @@ apply_measure(circuit, range(5), range(5))
 
 **注2：此功能为实验性功能，未经过系统性的测试，且接口在未来可能改变，请谨慎使用。**
 
-[点此查看](../experimental/construct.md)
+**注3：当前若需要使用模块化构建，推荐使用CircuitIO类（见下文）**
+
+[点此查看](../experimental/construct.md)量子线路的模块化构建具体内容。
 
 ## 三、CircuitIO类
 PyQuantumKit提供了一个CircuitIO类，用于暂存构建的量子线路。CircuitIO类可以像一个量子开发框架的量子线路类一样使用，也可以对其执行`apply_gate`, `apply_measure`等操作。CircuitIO对象保存了量子线路的信息，随后可以格式化输出为代码字符串或插入具体的量子开发框架的量子线路对象中。
