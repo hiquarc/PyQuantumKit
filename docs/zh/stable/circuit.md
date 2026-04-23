@@ -31,7 +31,7 @@ apply_gate(circuit, 'Rx', [1], [0.1])
 apply_gate(circuit, 'U3', [0], [0.2, 0.3, 0.4])
 ```
 
-以上给出了`apply_gate`函数的4个使用例子，对于该函数更详细说明，请[点此查看](../api/construct.md#apply_gate)。
+以上给出了`apply_gate`函数的4个使用例子，**对于该函数更详细说明，请[点此查看](../api/construct.md#apply_gate)。**
 
 ### 2. 应用测量
 
@@ -53,11 +53,9 @@ apply_measure(circuit, range(5), range(5))
 
 ## 二、量子线路的模块化构建（实验性）
 
-**注1：此节内容可能只适用于部分量子开发框架**，[点此查看详情](../api/supported-platforms.md)。
-
-**注2：此功能为实验性功能，未经过系统性的测试，且接口在未来可能改变，请谨慎使用。**
-
-**注3：当前若需要使用模块化构建，推荐使用CircuitIO类（见下文）**
+- **注1：此节内容可能只适用于部分量子开发框架**，[点此查看详情](../api/supported-platforms.md)。
+- **注2：此功能为实验性功能，未经过系统性的测试，且接口在未来可能改变，请谨慎使用。**
+- **注3：当前若需要使用模块化构建，推荐使用CircuitIO类（见下文）**
 
 [点此查看](../experimental/construct.md)量子线路的模块化构建具体内容。
 

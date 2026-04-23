@@ -33,7 +33,7 @@ def new_program(framework : str, nqbits : int, ncbits : int = 0)
 `copy_circuit`函数复制源量子比特，返回它的一个额外的独立副本，复制过程中可进行反转和比特重映射操作。
 
 ```python
-def copy_circuit(src_qcir, remap = None, inverse : bool = False)
+def copy_circuit(src_qcir, remap : int|list|range = None, inverse : bool = False)
 ```
 - 参数`src_qcir`指派源量子线路。
 - 参数`qbits_remap`指派量子比特的重映射方式，传入类型可以为`int`或`list[int]`，默认为`None`，表示不进行重映射。当传入`int`类型时，源量子线路的每个量子比特的下标在串联时会增加此整数值；当传入`list[int]`类型时，串联时按照此数组的指示进行重映射。
@@ -45,7 +45,7 @@ def copy_circuit(src_qcir, remap = None, inverse : bool = False)
 `copy_program`函数复制源量子比特，返回它的一个额外的独立副本，复制过程中可进行反转和比特重映射操作。
 
 ```python
-def copy_program(src_qp, qbits_remap = None, cbits_remap = None)
+def copy_program(src_qp, qbits_remap : int|list|range = None, cbits_remap : int|list|range = None)
 ```
 - 参数`src_qcir`指派源量子线路。
 - 参数`qbits_remap`指派量子比特的重映射方式，传入类型可以为`int`或`list[int]`，默认为`None`，表示不进行重映射。当传入`int`类型时，源量子线路的每个量子比特的下标在串联时会增加此整数值；当传入`list[int]`类型时，串联时按照此数组的指示进行重映射。
@@ -57,7 +57,7 @@ def copy_program(src_qp, qbits_remap = None, cbits_remap = None)
 `append_circuit`函数将一个源量子线路串联到目标量子线路末尾，串联过程中可进行反转和比特重映射操作。
 
 ```python
-def append_circuit(dest_qcir, src_qcir, remap = None, inverse : bool = False)
+def append_circuit(dest_qcir, src_qcir, remap : int|list|range = None, inverse : bool = False)
 ```
 - 参数`dest_qcir`指派目标量子线路。
 - 参数`src_qcir`指派源量子线路。
@@ -70,7 +70,7 @@ def append_circuit(dest_qcir, src_qcir, remap = None, inverse : bool = False)
 `append_program`函数将一个源量子线路串联到目标量子线路末尾，串联过程中可进行反转和比特重映射操作。
 
 ```python
-def append_program(dest_qp, src_qp, qbits_remap = None, cbits_remap = None)
+def append_program(dest_qp, src_qp, qbits_remap : int|list|range = None, cbits_remap : int|list|range = None)
 ```
 - 参数`dest_qcir`指派目标量子线路。
 - 参数`src_qcir`指派源量子线路。
@@ -80,7 +80,7 @@ def append_program(dest_qp, src_qp, qbits_remap = None, cbits_remap = None)
 函数返回`dest_qcir`。
 
 ### parallel_circuits
-`parallel_circuits`函数并联若干个源量子线路，并联过程中将按顺序对源量子线路进行比特重映射。
+`parallel_circuits`函数并联若干个源量子线路，并联过程中将按顺序对源量子线路进行量子比特重映射。
 
 ```python
 def parallel_circuits(*args)
@@ -97,7 +97,7 @@ parallel_qc = pyquantumkit.parallel_circuits(qc1, qc2, qc3)
 返回的`parallel_qc`将包含2+5+3=10个量子比特，其中`qc1`作用于下标为0, 1的量子比特，`qc2`作用于下标为2, 3, 4, 5, 6的量子比特，`qc3`作用于下标为7, 8, 9的量子比特。
 
 ### parallel_programs
-`parallel_programs`函数并联若干个源量子线路，并联过程中将按顺序对源量子线路进行比特重映射。
+`parallel_programs`函数并联若干个源量子线路，并联过程中将按顺序对源量子线路进行量子比特和经典比特重映射。
 
 ```python
 def parallel_programs(*args)
@@ -105,25 +105,25 @@ def parallel_programs(*args)
 
 ## 二、获取比特数目
 ### get_n_qubits
+`get_n_qubits`函数返回量子线路的量子比特数。
 ```python
 def get_n_qubits(q_prog) -> int
 ```
-`get_n_qubits`函数返回量子线路的量子比特数。
 
 ### get_qubit_list
+`get_qubit_list`函数返回量子线路使用的量子比特下标数组。
 ```python
 def get_qubit_list(q_prog) -> list[int]
 ```
-`get_qubit_list`函数返回量子线路使用的量子比特下标数组。
 
-### 
+### get_n_cbits
+`get_n_cbits`函数返回量子线路的经典比特数。
 ```python
 def get_n_cbits(q_prog) -> int
 ```
-`get_n_cbits`函数返回量子线路的经典比特数。
 
 ### get_cbit_list
+`get_cbit_list`函数返回量子线路使用的经典比特下标数组。
 ```python
 def get_cbit_list(q_prog) -> list[int]
 ```
-`get_cbit_list`函数返回量子线路使用的经典比特下标数组。

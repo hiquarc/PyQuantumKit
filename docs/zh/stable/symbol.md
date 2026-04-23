@@ -1,12 +1,14 @@
 # 量子线路矩阵的符号表示
 
-PyQuantumKit提供了symbol库 (pyquantumkit.symbol) ，此模块基于sympy库实现，用于构造量子线路的矩阵表示。
+PyQuantumKit提供了symbol模块 (`pyquantumkit.symbol`) ，此模块基于SymPy库实现，用于构造量子线路的矩阵表示。
 
 <!--*hiquarc仓库中还有另一个基于Mathematica的构造量子线路的矩阵表示库QCirMat（见[https://github.com/hiquarc/QCirMat](https://github.com/hiquarc/QCirMat)），此symbol库可以视为基于Python和sympy版本的QCirMat，方便没有Mathematica的用户使用。*-->
 
-- `pyquantumkit.symbol.gate`模块提供了基本门的矩阵表示（基于`sympy.Matrix`类）
-- `pyquantumkit.symbol.qstate`模块提供了基本量子态向量表示（包括ket表示、bra表示和密度矩阵表示）
-- `pyquantumkit.symbol.circuit`模块提供了若干用于构造量子线路的矩阵表示的函数
+- `pyquantumkit.symbol.gate`模块提供了基本门的矩阵表示（基于`sympy.Matrix`类）。
+- `pyquantumkit.symbol.qstate`模块提供了基本量子态向量表示（包括ket表示、bra表示和密度矩阵表示）。
+- `pyquantumkit.symbol.circuit`模块提供了若干用于构造量子线路的矩阵表示的函数。
+
+**pyquantumkit.symbol模块的详细内容请[点此查看](../api/symbol.md)。**
 
 **注意：由于Python对于下标的约定是从0开始，pyquantumkit.symbol库涉及下标的参数均按照Python的约定从0开始，这与Mathematica的从1开始的约定不同。**
 
@@ -32,9 +34,9 @@ Matrix([[0.968912421710645, 0, 0, -0.247403959254523*I], [0, 0.968912421710645, 
 ```python
 import pyquantumkit.symbol.gate as PQK_S_GATE
 
-print(PQK_S_GATE.symbol_gate_matrix('y'))
-print(PQK_S_GATE.symbol_gate_matrix('sxdg'))
-print(PQK_S_GATE.symbol_gate_matrix('rxx', [0.5]))
+print(PQK_S_GATE.symbol_gate_matrix('Y'))           # Y gate
+print(PQK_S_GATE.symbol_gate_matrix('sxdg'))        # √X gate
+print(PQK_S_GATE.symbol_gate_matrix('Rxx', [0.5]))  # Rxx gate with theta=0.5
 ```
 
 ## 二、使用量子态向量
@@ -56,26 +58,49 @@ Matrix([[1/2, 0, 0, 1/2], [0, 0, 0, 0], [0, 0, 0, 0], [1/2, 0, 0, 1/2]])
 ```
 
 ## 三、构造量子线路对应的矩阵
-利用量子门的矩阵构造量子线路对应的矩阵，一种方法是直接使用SymPy提供的矩阵运算：量子门的顺序应用对应矩阵连乘，量子门的并行应用对应矩阵
+### 方法1：直接利用SymPy矩阵运算
+利用量子门的矩阵构造量子线路对应的矩阵，一种方法是直接使用SymPy提供的矩阵运算：量子门的顺序应用对应矩阵连乘，量子门的并行应用对应矩阵。
 
-`pyquantumkit.symbol.circuit`模块提供了若干用于构造量子线路的矩阵表示的函数
+**例1**. 考虑如下制备Bell态的量子线路：
+<div align="left">
+<img src=../../../imgs/bell.jpg width=50% />
+</div>
 
-## 四、CircuitIO类与符号表示
+它包含一个作用于第一个量子比特的H门和一个作用于两个量子比特的CNOT门。第一个量子比特作用H门可用张量积（Kronecker积）形式表示为 $H\otimes I$ ，而总的矩阵表示为两个量子门的矩阵表示的乘积：
 
-CircuitIO类对象支持以sympy符号作为含参量子门（例如Rx门）的参数，并可根据对象内已包含的量子门序列计算出整个量子线路的矩阵表示。
+$$CNOT \cdot (H\otimes I) = \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0 \end{bmatrix} \cdot \left( \frac{1}{\sqrt 2}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix} \otimes \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} \right) = \frac{1}{\sqrt 2}\begin{bmatrix} 1 & 0 & 1 & 0 \\ 0 & 1 & 0 & 1 \\ 0 & 1 & 0 & -1 \\ 1 & 0 & -1 & 0 \end{bmatrix}$$
 
-利用`get_sympy_matrix`成员函数可以计算CircuitIO对象的量子线路的矩阵表示，函数原型为：
+**注意：矩阵乘法的顺序与量子门作用的顺序相反！**
 
+以下代码基于`pyquantumkit.symbol.gate`中预置的量子门矩阵，利用SymPy库提供的矩阵乘法和Kronecker积，计算上述量子线路的矩阵表示：
 ```python
-def get_sympy_matrix(self, subsdict : dict = None, simplify : bool = True) -> sympy.Matrix:
+import sympy
+import pyquantumkit.symbol.gate as PQK_S_GATE
+
+Circuit_Matrix =  PQK_S_GATE.CNOT * \
+                  sympy.KroneckerProduct(PQK_S_GATE.H, PQK_S_GATE.Id)
+print(Circuit_Matrix)
+```
+运行结果为：
+```
+Matrix([[sqrt(2)/2, 0, sqrt(2)/2, 0], [0, sqrt(2)/2, 0, sqrt(2)/2], [0, sqrt(2)/2, 0, -sqrt(2)/2], [sqrt(2)/2, 0, -sqrt(2)/2, 0]])
 ```
 
-- 可选参数`subsdict`是一个字典，用于指定sympy符号代入规则。默认为None，即不进行任何符号代换。**注：只有当使用了sympy符号作为量子门参数时才需要指定此参数。**
-- 可选参数`simplify`指定是否在计算矩阵表示的过程中进行化简（即sympy的simplify操作），默认为True。
-- 函数返回量子线路对应的矩阵表示。
+### 方法2：利用CircuitIO类导出量子线路的矩阵
+CircuitIO类对象支持以SymPy符号作为含参量子门（例如Rx门）的参数，并可根据对象内已包含的量子门序列计算出整个量子线路的矩阵表示。CircuitIO类对象导出量子线路的矩阵表示的函数为`get_sympy_matrix`（返回SymPy矩阵）和`get_numpy_matrix`（返回NumPy矩阵），函数的具体细节请[点此查看](../api/circuitio.md#get_sympy_matrix)。
 
-在将CircuitIO对象的量子线路转换为具体量子开发框架的量子线路对象时，可以将具体的数值代入这些sympy符号中。`append_into_actual_circuit`成员函数有一个额外可选参数`subsdict`，用于指定sympy符号代入规则。**注：当需要在插入到具体的量子开发框架的量子线路的过程中进行符号代入时，不能使用`>>`运算符，必须显式使用`append_into_actual_circuit`成员函数。**
+**例1'**. 利用CircuitIO类计算例1中量子线路的矩阵表示
 
 ```python
-def append_into_actual_circuit(self, dest_qcir, subsdict : dict = None)
+import pyquantumkit
+
+cio = pyquantumkit.CircuitIO(2)
+cio.apply_gate('H', [0])
+cio.apply_gate('CNOT', [0, 1])
+Circuit_Matrix = cio.get_sympy_matrix()     # calculate the matrix of whole circuit
+print(Circuit_Matrix)
+```
+运行结果与例1相同：
+```
+Matrix([[sqrt(2)/2, 0, sqrt(2)/2, 0], [0, sqrt(2)/2, 0, sqrt(2)/2], [0, sqrt(2)/2, 0, -sqrt(2)/2], [sqrt(2)/2, 0, -sqrt(2)/2, 0]])
 ```

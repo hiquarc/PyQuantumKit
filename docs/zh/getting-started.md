@@ -86,7 +86,9 @@ print(qiskit_result)        # print running results
 ```
 
 运行结果为：
-![qiskit运行结果](../imgs/ghz_qiskit.jpg)
+<div align="left">
+<img src=../../imgs/ghz_qiskit.jpg width=50% />
+</div>
 
 ### 5. 在pyqpanda3上运行
 
@@ -104,7 +106,9 @@ print(qpanda_result)        # print running results
 ```
 
 运行结果为：
-![qpanda运行结果](../imgs/ghz_qpanda.jpg)
+<div align="left">
+<img src=../../imgs/ghz_qpanda.jpg width=50% />
+</div>
 
 ### 6. 在quafu上运行
 
@@ -120,5 +124,7 @@ print(quafu_result.counts)    # print running results
 ```
 
 运行结果为：
-![quafu运行结果](../imgs/ghz_quafu.jpg)
+<div align="left">
+<img src=../../imgs/ghz_quafu.jpg width=50% />
+</div>
 

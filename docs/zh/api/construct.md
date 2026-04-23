@@ -5,7 +5,7 @@ import pyquantumkit
 ```
 即可使用。
 
-## 一、基本构建函数
+## 基本构建函数
 ### apply_gate
 
 `apply_gate`函数提供了应用一个量子门的接口，函数原型为：
@@ -35,6 +35,12 @@ def apply_measure(q_circuit, qindex : list[int], cindex : list[int])
 - 参数`qindex`是一个整数列表，指定要测量的量子比特下标。
 - 参数`cindex`是一个整数列表，指定测量结果存放的经典比特下标。`qindex`和`cindex`各分量分别对应，因此`qindex`和`cindex`长度应相同。
 
+例如：
+```python
+apply_measure(qc, [2, 4, 6], [0, 1, 2])
+```
+测量`qc`中下标为2、4和6的量子比特，并将测量结果分别存入下标为0、1、2的经典比特中。
+
 ### multi_apply_sqgate
 `multi_apply_sqgate`函数对一组量子比特中的每一个量子比特应用同一个单比特量子门。
 
@@ -47,16 +53,23 @@ def multi_apply_sqgate(q_circuit, gate_str : str, qbitlist : list[int], paras : 
 - 参数`qbitlist`是一个整数列表，函数将列表元素视为下标，对相应的每一个量子比特应用`gate_str`代表的量子门。
 - 参数`paras`是一个列表，用于为含参数门指派参数；对于无参数门，不用指派此参数。
 
+例如：
+```python
+multi_apply_sqgate(qc, 'H', range(7))
+```
+对`qc`的下标为0~6的量子比特（共7个）的每一个分别应用一个H门。
+
 ### apply_reverse
-`apply_reverse`函数
+`apply_reverse`函数应用一些列SWAP操作，反转量子比特顺序。
 
 ```python
 def apply_reverse(q_circuit, qbitlist : list[int])
 ```
 
 - 参数`q_circuit`指定目标量子线路。
-- 参数`qindex`是一个整数列表，指定要测量的量子比特下标。
-- 参数`cindex`是一个整数列表，指定测量结果存放的经典比特下标。`qindex`和`cindex`各分量分别对应，因此`qindex`和`cindex`长度应相同。
+- 参数`qbitlist`是一个整数列表，指定门要应用的量子比特下标列表。
 
-## 二、模块化构建
+具体而言，该函数对下标数组`qbitlist`对应的首个量子比特和最后一个量子比特应用SWAP门，对第二个和倒数第二个应用SWAP门，以此类推。
+
+## 模块化构建
 [点此查看](../experimental/construct.md)
