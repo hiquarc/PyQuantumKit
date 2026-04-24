@@ -20,7 +20,7 @@ def apply_gate(q_circuit, gate_str : str, qbits : list[int], paras : list = None
 
 apply_gate函数将根据传入的`q_circuit`参数所属的量子开发框架，将对量子门的应用翻译为对应量子开发框架的代码。代码翻译过程中已考虑不同量子开发框架的API名称和实现方式的差别。下图展示了apply_gate函数实现代码翻译的流程：
 
-![apply_gate函数工作流程](../../imgs/translate_cn.jpg)
+![apply_gate函数工作流程](../../imgs/translate_zh.jpg)
 
 此外，若目标量子开发框架不原生支持某个量子门，函数则会将其翻译为支持的量子门的组合。例如，一些量子开发框架不支持 $\sqrt{X}$ 门，函数会根据恒等式 $\sqrt{X}=HSH$ 将其翻译为 $H$, $S$, $H$ 门的依次应用。
 

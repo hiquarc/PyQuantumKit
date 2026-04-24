@@ -31,4 +31,4 @@ PyQuantumKit v.0.1.6目前支持如下量子开发框架：
 ## 联系我们
 PyQuantumKit由中国科学院高能物理研究所计算中心研发，得到了国家高能物理科学数据中心的支持。
 
-项目负责人：龙沛洵 [longpx@ihep.ac.cn](longpx@ihep.ac.cn)
+项目负责人：龙沛洵 [longpx@ihep.ac.cn](mailto:longpx@ihep.ac.cn)
