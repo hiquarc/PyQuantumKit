@@ -68,7 +68,7 @@ def apply_reverse(q_circuit, qbitlist : list[int]):
     return q_circuit
 
 
-def append_circuit(dest_qcir, src_qcir, remap = None, inverse : bool = False):
+def append_circuit(dest_qcir, src_qcir, remap : int|list|range = None, inverse : bool = False):
     """
     Apply a quantum circuit on a qubit array.
 
@@ -97,7 +97,7 @@ def append_circuit(dest_qcir, src_qcir, remap = None, inverse : bool = False):
     return dest_qcir
 
 
-def copy_circuit(src_qcir, remap = None, inverse : bool = False):
+def copy_circuit(src_qcir, remap : int|list|range = None, inverse : bool = False):
     """
     Copy a quantum circuit
 
@@ -118,7 +118,7 @@ def copy_circuit(src_qcir, remap = None, inverse : bool = False):
 
 
 
-def append_program(dest_qp, src_qp, qbits_remap = None, cbits_remap = None):
+def append_program(dest_qp, src_qp, qbits_remap : int|list|range = None, cbits_remap : int|list|range = None):
     """
     Apply a quantum program on a qubit array.
 
@@ -157,7 +157,7 @@ def append_program(dest_qp, src_qp, qbits_remap = None, cbits_remap = None):
     return dest_qp
 
 
-def copy_program(src_qp, qbits_remap = None, cbits_remap = None):
+def copy_program(src_qp, qbits_remap : int|list|range = None, cbits_remap : int|list|range = None):
     """
     Copy a quantum program
 
@@ -182,7 +182,7 @@ def copy_program(src_qp, qbits_remap = None, cbits_remap = None):
 
 
 
-def new_circuit(framework, nqbits : int):
+def new_circuit(framework : str, nqbits : int):
     """
     Generate an empty quantum circuit
 
@@ -194,7 +194,7 @@ def new_circuit(framework, nqbits : int):
     return quantum_action(Action.NEW, framework, False, nqbits, 0)
 
 
-def new_program(framework, nqbits : int, ncbits : int = 0):
+def new_program(framework : str, nqbits : int, ncbits : int = 0):
     """
     Generate an empty quantum program (which contains classical bits)
 

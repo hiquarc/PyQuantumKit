@@ -158,16 +158,18 @@ SqrtYdag = sympy.Rational(1, 2) * sympy.Matrix([[1 - sympy.I, 1 - sympy.I],
                                                 [-1 + sympy.I, 1 - sympy.I]])
 
 
-def symbol_gate_matrix(gatestr : str, paras : list = None) -> sympy.Matrix:
+def symbol_gate_matrix(gate_str : str, paras : list = None) -> sympy.Matrix:
     """
     Given the supported gate string, return the gate matrix
 
-    e.g. CNOT = [[1, 0, 0, 0]   <-- 00    0
+    e.g. symbol_gate_matrix('CNOT') returns:
+         CNOT = [[1, 0, 0, 0]   <-- 00    0
                  [0, 1, 0, 0]   <-- 01    1
                  [0, 0, 0, 1]   <-- 10    2
                  [0, 0, 1, 0]]  <-- 11    3
+         symbol_gate_matrix('Rx', [0.5])
     """
-    g = get_standard_gatename(gatestr)
+    g = get_standard_gatename(gate_str)
     if g == 'M':
         raise PyQuantumKitError("Measurement cannot be represented as a gate matrix!")
 

@@ -1,0 +1,15 @@
+/* 移除最大宽度限制 */
+.md-grid {
+    max-width: none !important;
+}
+
+/* 可选：调整内容容器的内边距 */
+.md-main__inner {
+    padding: 0 1rem;
+}
+
+/* 可选：让代码块也占满宽度 */
+.highlight {
+    margin: 0 -1rem;
+    padding: 0 1rem;
+}

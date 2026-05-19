@@ -16,10 +16,10 @@ Bra1 = sympy.Matrix([[0, 1]])
 BraPlus = 1 / sympy.sqrt(2) * sympy.Matrix([[1, 1]])
 BraMinus = 1 / sympy.sqrt(2) * sympy.Matrix([[1, -1]])
 # Density matrix representation: |0><0|, |1><1|, |+><+|, |-><-|
-Rho0 = Ket0 * Bra0
-Rho1 = Ket1 * Bra1
-RhoPlus = KetPlus * BraPlus
-RhoMinus = KetMinus * BraMinus
+Rho0 = sympy.Matrix([[1, 0], [0, 0]])
+Rho1 = sympy.Matrix([[0, 0], [0, 1]])
+RhoPlus = sympy.Rational(1, 2) * sympy.Matrix([[1, 1], [1, 1]])
+RhoMinus = sympy.Rational(1, 2) * sympy.Matrix([[1, -1], [-1, 1]])
 
 # State vectors for Bell states
 # Ket
@@ -33,10 +33,22 @@ BraBell01 = 1 / sympy.sqrt(2) * sympy.Matrix([[0, 1, 1, 0]])
 BraBell10 = 1 / sympy.sqrt(2) * sympy.Matrix([[1, 0, 0, -1]])
 BraBell11 = 1 / sympy.sqrt(2) * sympy.Matrix([[0, 1, -1, 0]])
 # Density Matrix
-RhoBell = KetBell * BraBell
-RhoBell01 = KetBell01 * BraBell01
-RhoBell10 = KetBell10 * BraBell10
-RhoBell11 = KetBell11 * BraBell11
+RhoBell = sympy.Rational(1, 2) * sympy.Matrix([[1, 0, 0, 1],
+                                               [0, 0, 0, 0],
+                                               [0, 0, 0, 0],
+                                               [1, 0, 0, 1]])
+RhoBell01 = sympy.Rational(1, 2) * sympy.Matrix([[0, 0, 0, 0],
+                                                 [0, 1, 1, 0],
+                                                 [0, 1, 1, 0],
+                                                 [0, 0, 0, 0]])
+RhoBell10 = sympy.Rational(1, 2) * sympy.Matrix([[1, 0, 0, -1],
+                                                 [0, 0, 0, 0],
+                                                 [0, 0, 0, 0],
+                                                 [-1, 0, 0, 1]])
+RhoBell11 = sympy.Rational(1, 2) * sympy.Matrix([[0, 0, 0, 0],
+                                                 [0, 1, -1, 0],
+                                                 [0, -1, 1, 0],
+                                                 [0, 0, 0, 0]])
 
 # State vectors for state on Bloch sphere
 def KetBloch(theta_, phi_, gamma_) -> sympy.Matrix:
@@ -46,7 +58,8 @@ def BraBloch(theta_, phi_, gamma_) -> sympy.Matrix:
     return sympy.exp(-sympy.I * gamma_) * sympy.Matrix([[sympy.cos(theta_ / 2),
                                                         sympy.exp(-sympy.I * phi_) * sympy.sin(theta_ / 2)]])
 def RhoBloch(theta_, phi_, gamma_) -> sympy.Matrix:
-    return KetBloch(theta_, phi_, gamma_) * BraBloch(theta_, phi_, gamma_)
+    return sympy.Matrix([[sympy.cos(theta_ / 2) ** 2, sympy.exp(-sympy.I * phi_) * sympy.cos(theta_ / 2) * sympy.sin(theta_ / 2)],
+                         [sympy.exp(sympy.I * phi_) * sympy.cos(theta_ / 2) * sympy.sin(theta_ / 2), sympy.sin(theta_ / 2) ** 2]])
 
 # State vectors for all-zero state
 def KetAllZero(nqbits : int) -> sympy.Matrix:

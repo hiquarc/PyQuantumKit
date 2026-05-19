@@ -1,0 +1,97 @@
+site_name: PyQuantumKit
+site_description: A python-based development kit for cross-platform quantum programs.
+site_author: Peixun Long
+site_url: https://github.com/hiquarc/PyQuantumKit/
+
+plugins:
+  - search
+  # - i18n:
+      #default_language: en
+      # languages:
+      #   - locale: en
+      #     name: English
+      #     link: /en/
+      #     build: true
+      #   - locale: zh
+      #     name: 中文
+      #     link: /zh/
+      #     build: true
+      #     default: true
+
+theme:
+  name: readthedocs
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+# extra_css:
+#   - css/extra.css
+
+# Activate the LateX formula
+markdown_extensions:
+  # - pymdownx.superfences
+  # - pymdownx.betterem:
+  #     smart_enable: all
+  # - pymdownx.caret
+  # - pymdownx.critic
+  # - pymdownx.details
+  # - pymdownx.highlight
+  # - pymdownx.inlinehilite
+  # - pymdownx.keys
+  # - pymdownx.mark
+  # - pymdownx.smartsymbols
+  # - pymdownx.superfences
+  # - pymdownx.tasklist
+  # - pymdownx.tilde
+  - pymdownx.arithmatex:
+      generic: true
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - 中文:
+    - 首页: zh/index.md
+    - 安装与使用: zh/getting-started.md
+    - 稳定功能:
+      - 跨平台量子线路构建: zh/stable/circuit.md
+      - 量子线路矩阵的符号表示: zh/stable/symbol.md
+    - API速查:
+      - 量子开发框架速查: zh/api/supported-platforms.md
+      - 量子门速查: zh/api/supported-gates.md
+      - 量子线路构建API: zh/api/construct.md
+      - CircuitIO类: zh/api/circuitio.md
+      - symbol模块: zh/api/symbol.md
+      - program_check模块: zh/api/program-check.md
+    - 示例:
+      - 带参数量子线路的符号表示及检验: zh/examples/z2.md
+    - 实验性功能:
+      - 实验性功能总览: zh/experimental/overall.md
+      - 量子线路模块化构建: zh/experimental/construct.md
+      - 量子哈密顿量模拟: zh/experimental/hsim.md
+    - 更新历史: zh/changelog.md
+  - English:
+    - Home: en/index.md
+    - Getting Started: en/getting-started.md
+    - Stable Features:
+      - Construction of Quantum Circuits: en/stable/circuit.md
+      - Symbolic Representation of Quantum Circuit Matrices: en/stable/symbol.md
+    - API Quick reference:
+      - Quick Reference of Quantum Development Framework: en/api/supported-platforms.md
+      - Quick Reference of Supported Quantum Gates: en/api/supported-gates.md
+      - Quantum Circuit Construction API: en/api/construct.md
+      - CircuitIO Class: en/api/circuitio.md
+      - symbol Module: en/api/symbol.md
+      - program_check Module: en/api/program-check.md
+    - Examples:
+      - Symbolic Representation and Verification of Parametric Quantum Circuits: en/examples/z2.md
+    - Experimental Features:
+      - Overview and Explanation: en/experimental/overall.md
+      - Modular Construction of Quantum Circuits: en/experimental/construct.md
+      - Quantum Hamiltonian Simulation: en/experimental/hsim.md
+    - Changelog: en/changelog.md
