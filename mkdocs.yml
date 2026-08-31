@@ -58,17 +58,20 @@ nav:
   - 中文:
     - 首页: zh/index.md
     - 安装与使用: zh/getting-started.md
-    - 稳定功能:
-      - 跨平台量子线路构建: zh/stable/circuit.md
-      - 量子线路矩阵的符号表示: zh/stable/symbol.md
-    - API速查:
-      - 量子开发框架速查: zh/api/supported-platforms.md
-      - 量子门速查: zh/api/supported-gates.md
-      - 量子线路构建API: zh/api/construct.md
-      - CircuitIO类: zh/api/circuitio.md
-      - symbol模块: zh/api/symbol.md
-      - program_check模块: zh/api/program-check.md
-    - 示例:
+    - 量子线路级开发:
+      - 跨平台量子线路构建: zh/circuit-level/circuit.md
+      - 量子线路矩阵的符号表示: zh/circuit-level/symbol.md
+      - API速查:
+        - 量子开发框架速查: zh/circuit-level/api/supported-platforms.md
+        - 量子门速查: zh/circuit-level/api/supported-gates.md
+        - 量子线路构建API: zh/circuit-level/api/construct.md
+        - CircuitIO类: zh/circuit-level/api/circuitio.md
+        - symbol模块: zh/circuit-level/api/symbol.md
+        - program_check模块: zh/circuit-level/api/program-check.md
+    - （新功能）高级语言级量子程序开发:
+      - 高级语言级量子程序开发概览: zh/program-level/introduction.md
+      - PyQuantumKit高级量子编程例子: zh/program-level/example-program.md
+    - 实际应用案例:
       - 带参数量子线路的符号表示及检验: zh/examples/z2.md
     - 实验性功能:
       - 实验性功能总览: zh/experimental/overall.md
@@ -78,17 +81,17 @@ nav:
   - English:
     - Home: en/index.md
     - Getting Started: en/getting-started.md
-    - Stable Features:
-      - Construction of Quantum Circuits: en/stable/circuit.md
-      - Symbolic Representation of Quantum Circuit Matrices: en/stable/symbol.md
-    - API Quick reference:
-      - Quick Reference of Quantum Development Framework: en/api/supported-platforms.md
-      - Quick Reference of Supported Quantum Gates: en/api/supported-gates.md
-      - Quantum Circuit Construction API: en/api/construct.md
-      - CircuitIO Class: en/api/circuitio.md
-      - symbol Module: en/api/symbol.md
-      - program_check Module: en/api/program-check.md
-    - Examples:
+    - Circuit-level Development:
+      - Construction of Quantum Circuits: en/circuit-level/circuit.md
+      - Symbolic Representation of Quantum Circuit Matrices: en/circuit-level/symbol.md
+      - API Quick reference:
+        - Quick Reference of Quantum Development Framework: en/circuit-level/api/supported-platforms.md
+        - Quick Reference of Supported Quantum Gates: en/circuit-level/api/supported-gates.md
+        - Quantum Circuit Construction API: en/circuit-level/api/construct.md
+        - CircuitIO Class: en/circuit-level/api/circuitio.md
+        - symbol Module: en/circuit-level/api/symbol.md
+        - program_check Module: en/circuit-level/api/program-check.md
+    - Practical Examples:
       - Symbolic Representation and Verification of Parametric Quantum Circuits: en/examples/z2.md
     - Experimental Features:
       - Overview and Explanation: en/experimental/overall.md

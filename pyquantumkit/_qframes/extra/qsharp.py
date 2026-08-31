@@ -1,4 +1,4 @@
-# _qframes/extra/_qsharp.py
+# _qframes/extra/qsharp.py
 #    2026/3/24
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS

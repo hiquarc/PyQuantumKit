@@ -1,10 +1,9 @@
-# _qframes/_cqlib.py
+# _qframes/translate_scripts/cqlib.py
 #    2026/3/25
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from .code_translate import get_standard_gatename
-from pyquantumkit import PyQuantumKitError
+from ..code_translate import get_standard_gatename, FrameworkMapError
 import math
 
 # Whether the reverse of output 0/1 string is required to let the index of characters match corresponding cbits
@@ -120,30 +119,30 @@ def CODE(cir_name : str, gate_lib_name : str,
 
 
 def GATE(gate_name : str, qbits : list[int], paras : list) -> str:
-    return CODE("qc", "FN('cqlib')", gate_name, qbits, paras)
+    return CODE("qc", "framework_modules('cqlib')", gate_name, qbits, paras)
 
 
 def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
     # unsupport
-    raise PyQuantumKitError('Quantum circuit operations are not supported by cqlib.')
+    raise FrameworkMapError('Quantum circuit operations are not supported by cqlib.')
 
 
-def PROGRAM(remap_q : bool, remap_c : bool) -> str:
+def MIXED_CIRCUIT(remap_q : bool, remap_c : bool) -> str:
     # unsupport
-    raise PyQuantumKitError('Quantum program operations are not supported by cqlib.')
+    raise FrameworkMapError('Quantum-classical-mixed circuit operations are not supported by cqlib.')
 
 
-def NEW(is_qprog : bool) -> str:
-    return "FN('cqlib').Circuit(nqbits)"
+def NEW(contains_cbits : bool) -> str:
+    return "framework_modules('cqlib').Circuit(nqbits)"
 
 
 def BITS(ret_cbit : bool, ret_list : bool) -> str:
     if ret_cbit:
-        raise PyQuantumKitError('Getting the number of cbits is not supported by cqlib.')
+        raise FrameworkMapError('Getting the number of cbits is not supported by cqlib.')
     return "list(range(qc.num_qubits()))" if ret_list else "qc.num_qubits()"
 
 
 def RUN(line : int, **kwargs) -> str:
     # unsupport
-    raise PyQuantumKitError('Running are not supported by cqlib.')
+    raise FrameworkMapError('Running are not supported by cqlib.')
 

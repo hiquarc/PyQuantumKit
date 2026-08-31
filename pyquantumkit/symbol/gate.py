@@ -8,6 +8,10 @@ from pyquantumkit import PyQuantumKitError
 from pyquantumkit._qframes.code_translate import get_standard_gatename
 from pyquantumkit.classical.common import reverse_endianness, dim2nbits
 
+# the error type for symbol calculation
+class SymbolCalculationError(PyQuantumKitError):
+    pass
+
 # Matrices for basic single-qubit gates
 Id = sympy.Matrix([[1, 0],
                    [0, 1]])
@@ -171,7 +175,7 @@ def symbol_gate_matrix(gate_str : str, paras : list = None) -> sympy.Matrix:
     """
     g = get_standard_gatename(gate_str)
     if g == 'M':
-        raise PyQuantumKitError("Measurement cannot be represented as a gate matrix!")
+        raise SymbolCalculationError("Measurement cannot be represented as a gate matrix!")
 
     if g == 'I':
         return Id

@@ -1,10 +1,10 @@
-# _qframes/_pyquafu.py
+# _qframes/translate_scripts/pyquafu.py
 #    2025/7/4
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from .code_translate import get_standard_gatename
-from pyquantumkit import PyQuantumKitError
+from ..code_translate import get_standard_gatename, FrameworkMapError
+import packaging.version
 
 # Whether the reverse of output 0/1 string is required to let the index of characters match corresponding cbits
 REVERSE_OUTPUT_STRING = False
@@ -75,23 +75,23 @@ def CODE(cir_name : str, gate_lib_name : str,
 
 
 def GATE(gate_name : str, qbits : list[int], paras : list) -> str:
-    return CODE("qc", "FN('quafu',1)", gate_name, qbits, paras)
+    return CODE("qc", "framework_modules('quafu',1)", gate_name, qbits, paras)
 
 
 def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
     # unsupport
-    raise PyQuantumKitError('Quantum circuit operations are not supported by quafu.')
+    raise FrameworkMapError('Quantum circuit operations are not supported by quafu.')
 
 
-def PROGRAM(remap_q : bool, remap_c : bool) -> str:
+def MIXED_CIRCUIT(remap_q : bool, remap_c : bool) -> str:
     # unsupport
-    raise PyQuantumKitError('Quantum program operations are not supported by quafu.')
+    raise FrameworkMapError('Quantum-classical-mixed circuit operations are not supported by quafu.')
 
 
-def NEW(is_qprog : bool) -> str:
-    if is_qprog:
-        return "FN('quafu').QuantumCircuit(nqbits, ncbits)"
-    return "FN('quafu').QuantumCircuit(nqbits)"
+def NEW(contains_cbits : bool) -> str:
+    if contains_cbits:
+        return "framework_modules('quafu').QuantumCircuit(nqbits, ncbits)"
+    return "framework_modules('quafu').QuantumCircuit(nqbits)"
 
 
 def BITS(ret_cbit : bool, ret_list : bool) -> str:
@@ -103,7 +103,7 @@ def BITS(ret_cbit : bool, ret_list : bool) -> str:
 
 def RUN(line : int, **kwargs) -> str:
     if line == 1:
-        return "res = qvm(qc,shots=run_shots) if qvm == FN('quafu').simulate else None"
+        return "res = qvm(qc,shots=run_shots) if qvm == framework_modules('quafu').simulate else None"
     if line == 2:
         return "res.counts"
     return ""

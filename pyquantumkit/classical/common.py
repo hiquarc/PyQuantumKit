@@ -31,6 +31,25 @@ def get_int_from_binstr_be(binstr : str) -> int:
     """
     return int(binstr, 2)
 
+def get_binstr_from_int_be(num : int, length : int) -> str:
+    """
+    int to '0'/'1' string (big-endian mode)
+    """
+    if length == 0:
+        return ''
+    bits = format(num, 'b')
+    if len(bits) < length:
+        return '0' * (length - len(bits)) + bits
+    if len(bits) > length:
+        return bits[-length:]
+    return bits
+
+def get_binstr_from_int_le(num : int, length : int) -> str:
+    """
+    int to '0'/'1' string (little-endian mode)
+    """
+    return get_binstr_from_int_be(num, length)[::-1]
+
 
 def indexlist_length(indexlist : list) -> int:
     """

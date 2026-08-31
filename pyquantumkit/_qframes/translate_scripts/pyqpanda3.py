@@ -1,9 +1,10 @@
-# _qframes/_pyqpanda3.py
+# _qframes/translate_scripts/pyqpanda3.py
 #    2025/6/10
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from .code_translate import get_standard_gatename
+from ..code_translate import get_standard_gatename
+import packaging.version
 
 # Whether the reverse of output 0/1 string is required to let the index of characters match corresponding cbits
 REVERSE_OUTPUT_STRING = True
@@ -25,7 +26,7 @@ def CODE(cir_name : str, gate_lib_name : str,
     #    return ''
     if g == 'M':
         # NOTE: there are some bugs in measure(list, list) in pyqpanda3 (ver 0.3.1)
-        #execstr = " << FN('pyqpanda3').measure(" + str(qbits) + ", " + str(paras) + ")"
+        #execstr = " << framework_modules('pyqpanda3').measure(" + str(qbits) + ", " + str(paras) + ")"
         # Temporarily use bit-by-bit operation to avoid the bugs in pyqpanda3
         for i in range(len(qbits)):
             execstr += " << " + glib + "measure(" + str(qbits[i]) + ", " + str(paras[i]) + ")"
@@ -79,12 +80,12 @@ def CODE(cir_name : str, gate_lib_name : str,
 
 # Translate the gate applying into the code of calling in pyqpanda3
 def GATE(gate_name : str, qbits : list[int], paras : list) -> str:
-    return CODE("qc", "FN('pyqpanda3')", gate_name, qbits, paras)
+    return CODE("qc", "framework_modules('pyqpanda3')", gate_name, qbits, paras)
 
 
 # Translate the circuit applying into the code of calling in pyqpanda3
 def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
-    execstr = "tempqc=FN('pyqpanda3').QCircuit(qc_src);qc_dest<<tempqc"
+    execstr = "tempqc=framework_modules('pyqpanda3').QCircuit(qc_src);qc_dest<<tempqc"
     if is_inv:
         execstr += ".dagger()"
     if is_remap:
@@ -92,21 +93,21 @@ def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
     return execstr
 
 
-def PROGRAM(remap_q : bool, remap_c : bool) -> str:
-    execstr = "tempqp=FN('pyqpanda3').QProg(qp_src);qp_dest<<tempqp"
+def MIXED_CIRCUIT(remap_q : bool, remap_c : bool) -> str:
+    execstr = "tempqp=framework_modules('pyqpanda3').QProg(qp_src);qp_dest<<tempqp"
     if remap_q or remap_c:
         execstr += ".remap(qbits_remap,cbits_remap)"
     return execstr
 
 
-def NEW(is_qprog : bool) -> str:
-    if is_qprog:
-        return "FN('pyqpanda3').QProg(nqbits)"
-    return "FN('pyqpanda3').QCircuit(nqbits)"
+def NEW(contains_cbits : bool) -> str:
+    if contains_cbits:
+        return "framework_modules('pyqpanda3').QProg(nqbits)"
+    return "framework_modules('pyqpanda3').QCircuit(nqbits)"
 
 
 def BITS(ret_cbit : bool, ret_list : bool) -> str:
-    execstr = "0 if isinstance(qc, FN('pyqpanda3').QCircuit) else indexlist_length(qc.cbits())" \
+    execstr = "0 if isinstance(qc, framework_modules('pyqpanda3').QCircuit) else indexlist_length(qc.cbits())" \
               if ret_cbit else "indexlist_length(qc.qubits())"
     if ret_list:
         return "list(range(" + execstr + "))"

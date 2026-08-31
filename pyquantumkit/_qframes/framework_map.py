@@ -5,14 +5,14 @@
 
 from enum import Enum, auto
 import importlib
-from pyquantumkit import PyQuantumKitError
-from pyquantumkit import Supported_Frameworks, FN, get_framework_from_object
+from .code_translate import FrameworkMapError
+from pyquantumkit import Supported_Frameworks, framework_modules, get_framework_from_object
 from pyquantumkit.classical.common import indexlist_length
-from pyquantumkit._qframes.__extra_lang import Extra_Languages_CODE
+from pyquantumkit._qframes.extra_languages import Extra_Languages_CODE
 
 Translate_Namespace = {}
 for fname in Supported_Frameworks:
-    Translate_Namespace[fname] = importlib.import_module('pyquantumkit._qframes._' + fname)
+    Translate_Namespace[fname] = importlib.import_module('pyquantumkit._qframes.translate_scripts.' + fname)
 
 def get_reverse_output_str(framework : str) -> bool:
     if framework == 'pyquantumkit':
@@ -34,7 +34,7 @@ class Action(Enum):
     NEW     = auto()
     GATE    = auto()
     CIRCUIT = auto()
-    PROGRAM = auto()
+    MIXED_CIRCUIT = auto()
     BITS    = auto()
     RUN     = auto()
 
@@ -46,7 +46,7 @@ def gate_applying_code(language : str, cir_name : str, gate_lib_name : str,
     if language in Extra_Languages_CODE:
         return Extra_Languages_CODE[language](cir_name, gate_lib_name,
                                           gate_name, qbits, paras)
-    raise PyQuantumKitError('Language "' + language + '" is not supported.')
+    raise FrameworkMapError('Language "' + language + '" is not supported.')
 
 
 def get_apply_function(action : Action, framework : str) -> callable:
@@ -62,14 +62,14 @@ def get_apply_function(action : Action, framework : str) -> callable:
             exec(Translate_Namespace[framework].CIRCUIT(bool(rmlist), inv))
         return ret
 
-    if action == Action.PROGRAM:
+    if action == Action.MIXED_CIRCUIT:
         def ret(qp_dest, qp_src, qbits_remap, cbits_remap) -> None:
-            exec(Translate_Namespace[framework].PROGRAM(bool(qbits_remap), bool(cbits_remap)))
+            exec(Translate_Namespace[framework].MIXED_CIRCUIT(bool(qbits_remap), bool(cbits_remap)))
         return ret
 
     if action == Action.NEW:
-        def ret(is_qprog : bool, nqbits : int, ncbits : int):
-            return eval(Translate_Namespace[framework].NEW(is_qprog))
+        def ret(contains_cbits : bool, nqbits : int, ncbits : int):
+            return eval(Translate_Namespace[framework].NEW(contains_cbits))
         return ret
 
     if action == Action.BITS:
@@ -114,7 +114,7 @@ def get_apply_function_CircuitIO(action : Action) -> callable:
             qc_dest.append_circuit_io(tempcio)
         return ret
 
-    if action == Action.PROGRAM:
+    if action == Action.MIXED_CIRCUIT:
         def ret(qp_dest : CircuitIO, qp_src : CircuitIO, qbits_remap, cbits_remap) -> None:
             tempcio = CircuitIO()
             tempcio.append_circuit_io(qp_src)
@@ -124,7 +124,7 @@ def get_apply_function_CircuitIO(action : Action) -> callable:
         return ret
 
     if action == Action.NEW:
-        def ret(is_qprog : bool, nqbits : int, ncbits : int):
+        def ret(contains_cbits : bool, nqbits : int, ncbits : int):
             return CircuitIO(nqbits, ncbits)
         return ret
 
@@ -136,7 +136,7 @@ def get_apply_function_CircuitIO(action : Action) -> callable:
 
     if action == Action.RUN:
         def ret(qvm, qc : CircuitIO, run_shots : int, **kwargs):
-            raise PyQuantumKitError('CircuitIO object does not support RUN action!')
+            raise FrameworkMapError('CircuitIO object does not support RUN action!')
             #try:
                 # framework = get_framework_from_object(qvm)
                 # print(type(qvm).__module__)
@@ -165,7 +165,7 @@ def quantum_action(action : Action, framework_indicator : str|int, *args, **kwar
     elif isinstance(framework_indicator, str):
         framework = framework_indicator
     else:
-        raise PyQuantumKitError('Invalid framework indicator: ' + str(framework_indicator))
+        raise FrameworkMapError('Invalid framework indicator: ' + str(framework_indicator))
     
     if framework.find('pyquantumkit') != -1:
         is_circuit_io = True

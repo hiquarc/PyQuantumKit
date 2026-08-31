@@ -23,7 +23,7 @@ def is_exception(thing) -> bool:
 
 def T_run(framework : str, machine, nbits : int,
           Proc : callable, *args, **kwargs) -> None:
-    qc = new_program(framework, nbits, nbits)
+    qc = new_mixed_circuit(framework, nbits, nbits)
     Proc(qc, *args, **kwargs)
     run_and_get_counts(machine, qc, Repeat_Times_Of_State_Check)
 
@@ -31,7 +31,7 @@ def T_run(framework : str, machine, nbits : int,
 def T_measure_result_mp(framework : str, machine, nbits : int,
                         Procs : list[callable], ProcArgs : list[list]) -> set[str]:
     fw_req_reverse = get_reverse_output_str(framework)
-    qc = new_program(framework, nbits, nbits)
+    qc = new_mixed_circuit(framework, nbits, nbits)
 
     for i in range(len(Procs)):
         Procs[i](qc, *ProcArgs[i])
@@ -44,7 +44,7 @@ def T_measure_result_mp(framework : str, machine, nbits : int,
 def T_measure_result(framework : str, machine, nbits : int,
                      Proc : callable, *args, **kwargs) -> set[str]:
     fw_req_reverse = get_reverse_output_str(framework)
-    qc = new_program(framework, nbits, nbits)
+    qc = new_mixed_circuit(framework, nbits, nbits)
 
     Proc(qc, *args, **kwargs)
 
@@ -56,7 +56,7 @@ def T_measure_result(framework : str, machine, nbits : int,
 
 def T_identity_mp(framework : str, machine, nbits : int,
                   Procs : list[callable], ProcArgs : list[list]) -> bool:
-    qc = new_program(framework, nbits, nbits)
+    qc = new_mixed_circuit(framework, nbits, nbits)
 
     for i in range(len(Procs)):
         Procs[i](qc, *ProcArgs[i])
@@ -70,8 +70,8 @@ def T_create_uncompute(framework : str, machine, nbits : int, C_proc : callable,
 
 def T_equivalence(framework : str, machine, nqbits : int, ncbits : int,
                   Proc1 : callable, Proc2 : callable, ProcArgs1 : list, ProcArgs2 : list) -> bool:
-    qc1 = new_program(framework, nqbits, ncbits)
-    qc2 = new_program(framework, nqbits, ncbits)
+    qc1 = new_mixed_circuit(framework, nqbits, ncbits)
+    qc2 = new_mixed_circuit(framework, nqbits, ncbits)
 
     Proc1(qc1, *ProcArgs1)
     Proc2(qc2, *ProcArgs2)
@@ -160,7 +160,7 @@ def Cir1C(framework : str):
 
 # Buggy programs:
 def Empty_bug1(framework : str):
-    qc = new_program(framework, 4, 1)
+    qc = new_mixed_circuit(framework, 4, 1)
     apply_measure(qc, [0], [0])
     return qc
 def Empty_bug2(framework : str):
@@ -203,7 +203,7 @@ def Cir1A_bug4(framework : str):
     apply_gate(qc, 'H', [1])
     return qc
 def Cir1A_bug5(framework : str):
-    qc = new_program(framework, 2, 1)
+    qc = new_mixed_circuit(framework, 2, 1)
     apply_gate(qc, 'H', [1])
     apply_gate(qc, 'CX', [0, 1])
     multi_apply_sqgate(qc, 'Z', [0, 1])

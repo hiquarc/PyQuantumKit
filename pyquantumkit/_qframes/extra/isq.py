@@ -1,4 +1,4 @@
-# _qframes/extra/_isq.py
+# _qframes/extra/isq.py
 #    2026/3/25
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS

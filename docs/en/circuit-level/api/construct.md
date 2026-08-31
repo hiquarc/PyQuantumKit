@@ -19,7 +19,7 @@ def apply_gate(q_circuit, gate_str : str, qbits : list[int], paras : list = None
 
 The apply_gate function translates the application of the quantum gate into code corresponding to the quantum development framework according to the framework to which the incoming `q_circuit` parameter belongs. During the code translation process, the differences in API names and implementation methods of different quantum development frameworks have been considered. The figure below shows the process of code translation implemented by the apply_gate function:
 
-![apply_gate work flow](../../imgs/translate_en.jpg)
+![apply_gate work flow](../../../imgs/translate_en.jpg)
 
 In addition, if the target quantum development framework does not natively support a certain quantum gate, the function will translate it into a combination of supported quantum gates. For example, some quantum development frameworks do not support the $\sqrt{X}$ gate, and the function will translate it into the sequential application of $H$, $S$, and $H$ gates according to the identity $\sqrt{X}=HSH$.
 
