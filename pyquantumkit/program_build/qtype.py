@@ -34,9 +34,9 @@ class QVar(abc.ABC):
     def _measure(self, m_address : int) -> None:
         self._m_address = m_address
 
-    def get_pointer_toq(self):
-        #TODO: finish
-        pass
+    # def get_pointer_toq(self):
+    #     #TODO: finish
+    #     pass
 
     @abc.abstractmethod
     def n_qubits(self) -> int|None:
@@ -96,8 +96,6 @@ class QStruct(QVar, abc.ABC):
 
     def __len__(self) -> int:
         return len(self._items)
-    # def __getitem__(self, index : int):
-    #     return self._items[index]
 
     def _interpret_output_str(self, output : str):
         ret = {}
@@ -159,8 +157,6 @@ class QUnion(QVar, abc.ABC):
 
     def __len__(self) -> int:
         return len(self._items)
-    # def __getitem__(self, index : int):
-    #     return self._items[index]
 
     def set_activity_item(self, act_item : QVar) -> None:
         if act_item not in self._items:
@@ -243,3 +239,4 @@ class QArray(QVar, abc.ABC):
         for item in self._items:
             ret.append(item._interpret_output_str(output))
         return ret
+

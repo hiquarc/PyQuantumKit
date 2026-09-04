@@ -61,16 +61,23 @@ nav:
     - 量子线路级开发:
       - 跨平台量子线路构建: zh/circuit-level/circuit.md
       - 量子线路矩阵的符号表示: zh/circuit-level/symbol.md
-      - API速查:
-        - 量子开发框架速查: zh/circuit-level/api/supported-platforms.md
-        - 量子门速查: zh/circuit-level/api/supported-gates.md
+      - API参考:
+        - 量子开发框架参考: zh/circuit-level/api/supported-platforms.md
+        - 量子门参考: zh/circuit-level/api/supported-gates.md
         - 量子线路构建API: zh/circuit-level/api/construct.md
         - CircuitIO类: zh/circuit-level/api/circuitio.md
         - symbol模块: zh/circuit-level/api/symbol.md
         - program_check模块: zh/circuit-level/api/program-check.md
     - （新功能）高级语言级量子程序开发:
-      - 高级语言级量子程序开发概览: zh/program-level/introduction.md
-      - PyQuantumKit高级量子编程例子: zh/program-level/example-program.md
+      - 高级语言级量子编程概览: zh/program-level/introduction.md
+      - 演示示例: zh/program-level/example-program.md
+      - 高级语言级量子编程指南:
+        - 开始编写量子程序: zh/program-level/guide/start.md
+        # - 量子变量的声明: 
+        - 量子类型系统: zh/program-level/guide/type.md
+        - 量子变量内存布局和量子比特分配: zh/program-level/guide/memory.md
+        - 自定义量子数据类型: zh/program-level/guide/user-define.md 
+        # - 经典-量子混合编程: 
     - 实际应用案例:
       - 带参数量子线路的符号表示及检验: zh/examples/z2.md
     - 实验性功能:
