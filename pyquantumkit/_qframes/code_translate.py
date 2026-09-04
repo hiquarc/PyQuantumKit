@@ -5,6 +5,10 @@
 
 from pyquantumkit import PyQuantumKitError
 
+# the error type for mapping code into frameworks
+class FrameworkMapError(PyQuantumKitError):
+    pass
+
 Standard_Gate_Name = {
     'I', 'X', 'Y', 'Z', 'S', 'T', 'H', 'M',
     'CX', 'CY', 'CZ', 'CH', 'RX', 'RY', 'RZ', 'SW', 'ISW',
@@ -68,4 +72,4 @@ def get_standard_gatename(origin_gate_name : str) -> str:
 
     if g in Standard_Gate_Name:
         return g
-    raise PyQuantumKitError("Gate is not supported: " + g)
+    raise FrameworkMapError("Gate is not supported: " + g)

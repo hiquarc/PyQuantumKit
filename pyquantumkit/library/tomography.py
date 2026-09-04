@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from pyquantumkit import new_program, append_program, get_n_cbits, get_n_qubits, run_and_get_counts
+from pyquantumkit import new_mixed_circuit, append_mixed_circuit, get_n_cbits, get_n_qubits, run_and_get_counts
 from pyquantumkit.procedure.paulis import apply_measure_x, apply_measure_y, apply_measure_z
 from pyquantumkit import get_framework_from_object
 from pyquantumkit._qframes.framework_map import get_reverse_output_str
@@ -26,12 +26,12 @@ def run_qubit_tomography(qvm, GenProc, qbitindex : int, Ntimes : int) -> tuple[c
     Nqs = get_n_qubits(GenProc)
     Ncs = get_n_cbits(GenProc)
 
-    px = new_program(framework, Nqs, Ncs + 1)
-    py = new_program(framework, Nqs, Ncs + 1)
-    pz = new_program(framework, Nqs, Ncs + 1)
-    append_program(px, GenProc)
-    append_program(py, GenProc)
-    append_program(pz, GenProc)
+    px = new_mixed_circuit(framework, Nqs, Ncs + 1)
+    py = new_mixed_circuit(framework, Nqs, Ncs + 1)
+    pz = new_mixed_circuit(framework, Nqs, Ncs + 1)
+    append_mixed_circuit(px, GenProc)
+    append_mixed_circuit(py, GenProc)
+    append_mixed_circuit(pz, GenProc)
 
     apply_measure_x(px, [qbitindex], [Ncs])
     apply_measure_y(py, [qbitindex], [Ncs])

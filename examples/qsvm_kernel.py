@@ -48,7 +48,7 @@ def K_Q(qvm, x, y, measure_time : int):
     # 由传入的qvm获取所使用的框架名称
     qframe = pqk.get_framework_from_object(qvm)
     # 新建相应框架的量子线路对象
-    prog = pqk.new_program(qframe, n_feature, n_feature)
+    prog = pqk.new_mixed_circuit(qframe, n_feature, n_feature)
     # 在其上构造所需量子线路：K_Q_circuit
     K_Q_circuit(x, y, prog)
     # 调用run_and_get_counts执行并取得测量结果（实验性功能）

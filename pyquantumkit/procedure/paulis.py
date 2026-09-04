@@ -3,8 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from pyquantumkit.procedure.generic import apply_gate, apply_measure
-from pyquantumkit import PyQuantumKitError
+from pyquantumkit.procedure.generic import apply_gate, apply_measure, OperationError
 
 Pauli_Strings = ['I', 'X', 'Y', 'Z']
 
@@ -76,7 +75,7 @@ def apply_pauli_measure(q_circuit, paulistr : str, qindex : list[int], cindex : 
     s = paulistr.upper()
     for i in range(qindex):
         if s[i] not in Pauli_Strings:
-            raise PyQuantumKitError("Error Pauli character: " + s[i])
+            raise OperationError("Error Pauli character: " + s[i])
         if s == 'X':
             apply_gate(q_circuit, 'H', [qindex[i]])
         elif s == 'Y':
@@ -104,7 +103,7 @@ def apply_exp_pauli(q_circuit, paulistr : str, t : float, qindex : list[int], fo
     for i in range(0, len(paulistr)):
         p = paulistr[i].upper()
         if p not in Pauli_Strings:
-            raise PyQuantumKitError("Error Pauli character: " + p)
+            raise OperationError("Error Pauli character: " + p)
         if p in {'X', 'Y', 'Z'}:
             ps += p
             qi.append(qindex[i])

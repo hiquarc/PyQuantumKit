@@ -1,9 +1,10 @@
-# _qframes/_qiskit.py
+# _qframes/translate_scripts/qiskit.py
 #    2025/6/10
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from .code_translate import get_standard_gatename
+from ..code_translate import get_standard_gatename
+import packaging.version
 
 # Whether the reverse of output 0/1 string is required to let the index of characters match corresponding cbits
 REVERSE_OUTPUT_STRING = True
@@ -57,7 +58,7 @@ def CODE(cir_name : str, gate_lib_name : str,
 
 
 def GATE(gate_name : str, qbits : list[int], paras : list) -> str:
-    return CODE("qc", "FN('qiskit')", gate_name, qbits, paras)
+    return CODE("qc", "framework_modules('qiskit')", gate_name, qbits, paras)
 
 
 def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
@@ -70,7 +71,7 @@ def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
     return execstr
 
 
-def PROGRAM(remap_q : bool, remap_c : bool) -> str:
+def MIXED_CIRCUIT(remap_q : bool, remap_c : bool) -> str:
     execstr = "qp_dest.compose(qp_src"
     if remap_q:
         execstr += ",qbits_remap"
@@ -80,10 +81,10 @@ def PROGRAM(remap_q : bool, remap_c : bool) -> str:
     return execstr
 
 
-def NEW(is_qprog : bool) -> str:
-    if is_qprog:
-        return "FN('qiskit').QuantumCircuit(nqbits, ncbits)"
-    return "FN('qiskit').QuantumCircuit(nqbits)"
+def NEW(contains_cbits : bool) -> str:
+    if contains_cbits:
+        return "framework_modules('qiskit').QuantumCircuit(nqbits, ncbits)"
+    return "framework_modules('qiskit').QuantumCircuit(nqbits)"
 
 
 def BITS(ret_cbit : bool, ret_list : bool) -> str:

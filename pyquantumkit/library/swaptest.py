@@ -3,8 +3,8 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from pyquantumkit import apply_gate, new_program, append_program, get_n_cbits, get_n_qubits, apply_measure,\
-                         run_and_get_counts, get_framework_from_object
+from pyquantumkit import apply_gate, new_mixed_circuit, append_mixed_circuit, get_n_cbits, get_n_qubits,\
+                         run_and_get_counts, get_framework_from_object, apply_measure
 from pyquantumkit._qframes.framework_map import get_reverse_output_str
 from pyquantumkit.classical.run_result import count_last_bits_of_result_dict
 
@@ -33,7 +33,7 @@ def append_swaptest_circuit(q_circuit, qctrlindex : int, s1indexlist : list[int]
 
 def run_swaptest(qvm, GenProc, state1qlist : list[int], state2qlist : list[int], Ntimes : int) -> int:
     """
-    Run SWAP test for given quantum circuit or program, return the number of result 1
+    Run SWAP test for given quantum circuit, return the number of result 1
 
         qvm         : run on which quantum machine
         GenProc     : the procedure to generate target quantum state
@@ -48,8 +48,8 @@ def run_swaptest(qvm, GenProc, state1qlist : list[int], state2qlist : list[int],
     Nqs = get_n_qubits(GenProc)
     Ncs = get_n_cbits(GenProc)
 
-    ptest = new_program(framework, Nqs + 1, Ncs + 1)
-    append_program(ptest, GenProc)
+    ptest = new_mixed_circuit(framework, Nqs + 1, Ncs + 1)
+    append_mixed_circuit(ptest, GenProc)
     append_swaptest_circuit(ptest, Nqs, state1qlist, state2qlist)
     apply_measure(ptest, [Nqs], [Ncs])
 
@@ -61,7 +61,7 @@ def run_swaptest(qvm, GenProc, state1qlist : list[int], state2qlist : list[int],
 
 def check_tr_rho1_rho2_equals_1(qvm, GenProc, state1qlist : list[int], state2qlist : list[int], Ntimes : int) -> bool:
     """
-    Run SWAP test for given quantum circuit or program to check tr(rho_A rho_B)
+    Run SWAP test for given quantum circuit to check tr(rho_A rho_B)
 
         qvm         : run on which quantum machine
         GenProc     : the procedure to generate target quantum state
@@ -76,8 +76,8 @@ def check_tr_rho1_rho2_equals_1(qvm, GenProc, state1qlist : list[int], state2qli
     Nqs = get_n_qubits(GenProc)
     Ncs = get_n_cbits(GenProc)
 
-    ptest = new_program(framework, Nqs + 1, Ncs + 1)
-    append_program(ptest, GenProc)
+    ptest = new_mixed_circuit(framework, Nqs + 1, Ncs + 1)
+    append_mixed_circuit(ptest, GenProc)
     append_swaptest_circuit(ptest, Nqs, state1qlist, state2qlist)
     apply_measure(ptest, [Nqs], [Ncs])
 

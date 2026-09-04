@@ -25,8 +25,8 @@ def numeric_equivalence_check(cirmat1 : numpy.array, cirmat2 : numpy.array, igno
     """
     Equivalence checking based on the norm of matrices difference of two circuits.
 
-        cirmat1   : the numpy matrix first quantum program.
-        cirmat2   : the numpy matrix second quantum program.
+        cirmat1   : the numpy matrix first quantum circuit.
+        cirmat2   : the numpy matrix second quantum circuit.
         ignore_global_phase : (bool) whether to ignore the global phase in judgment, default True.
         tolerance : (float) the judgment threshold.
         norm      : the norm function (matrix -> float) to be used, default numpy_2_norm.
@@ -50,7 +50,7 @@ def numeric_identity_check(cirmat : numpy.array, ignore_global_phase : bool = Tr
     """
     Identity checking based on the norm of matrices difference of target circuit and identity.
 
-        cirmat    : the numpy matrix of target quantum program.
+        cirmat    : the numpy matrix of target quantum circuit.
         ignore_global_phase : (bool) whether to ignore the global phase in judgment, default True.
         tolerance : (float) the judgment threshold.
         norm      : the norm function (matrix -> float) to be used, default numpy_2_norm.

@@ -4,18 +4,17 @@
 #    Computing Center, Institute of High Energy Physics, CAS
 
 import copy, sympy, numpy
-from pyquantumkit import PyQuantumKitError, apply_gate
+from pyquantumkit import apply_gate, OperationError
 from pyquantumkit._qframes.framework_map import gate_applying_code
 from pyquantumkit.classical.common import indexlist_length
 from pyquantumkit._qframes.code_translate import Standard_Gate_Name, get_standard_gatename
 from pyquantumkit.symbol.gate import symbol_gate_matrix
 from pyquantumkit.symbol.circuit import symbol_apply_gate
 
-
 class CircuitIO:
     def __inverse_gate(self, item : list):
         if item[0] == 'M':
-            raise PyQuantumKitError("Measurement cannot be inversed!")
+            raise OperationError("Measurement cannot be inversed!")
         if item[0] == 'S':
             item[0] = 'SD'
         elif item[0] == 'T':
@@ -39,33 +38,33 @@ class CircuitIO:
         """
         Construct a CircuitIO object
         """
-        self._gatelist = []
-        self._nqbits = nqbits
-        self._ncbits = ncbits
+        self.__gatelist = []
+        self.__nqbits = nqbits
+        self.__ncbits = ncbits
 
     def clear(self):
         """
         Clear all gates in the object
         """
-        self._gatelist.clear()
+        self.__gatelist.clear()
 
     def set_nqbits(self, nqbits) -> None:
         """
         Set the number of qubits PLAN to be used
 
-        NOTE: nqbits is a tip for generic copy_circuit, copy_programs, get_n_qubits,
-             get_qubits_list, parallel_circuits, parallel_programs functions
+        NOTE: nqbits is a tip for generic copy_circuit, copy_mixed_circuit, get_n_qubits,
+             get_qubits_list, parallel_circuits, parallel_mixed_circuit functions
         """
-        self._nqbits = nqbits
+        self.__nqbits = nqbits
     
     def get_nqbits(self) -> int:
         """
         Set the number of qubits PLAN to be used
 
-        NOTE: nqbits is a tip for generic copy_circuit, copy_programs, get_n_qubits,
-             get_qubits_list, parallel_circuits, parallel_programs functions
+        NOTE: nqbits is a tip for generic copy_circuit, copy_mixed_circuit, get_n_qubits,
+             get_qubits_list, parallel_circuits, parallel_mixed_circuit functions
         """
-        return self._nqbits
+        return self.__nqbits
     
     def check_nqbits(self, adjust : bool = False) -> bool:
         """
@@ -77,13 +76,13 @@ class CircuitIO:
         -> Return : True if nqbits is sufficient; otherwise False
         """
         maxindex = -1
-        for item in self._gatelist:
+        for item in self.__gatelist:
             for idx in item[1]:
                 if idx > maxindex:
                     maxindex = idx
-        if self._nqbits <= maxindex:
+        if self.__nqbits <= maxindex:
             if adjust:
-                self._nqbits = maxindex + 1
+                self.__nqbits = maxindex + 1
             return False
         return True
 
@@ -91,17 +90,17 @@ class CircuitIO:
         """
         Set the number of cbits PLAN to be used
 
-        NOTE: nqbits is a tip for generic copy_programs, get_n_cbits, get_cbits_list, parallel_programs functions
+        NOTE: nqbits is a tip for generic copy_mixed_circuit, get_n_cbits, get_cbits_list, parallel_mixed_circuit functions
         """
-        self._ncbits = ncbits
+        self.__ncbits = ncbits
     
     def get_ncbits(self) -> int:
         """
         Get the number of cbits PLAN to be used
 
-        NOTE: nqbits is a tip for generic copy_programs, get_n_cbits, get_cbits_list, parallel_programs functions
+        NOTE: nqbits is a tip for generic copy_mixed_circuit, get_n_cbits, get_cbits_list, parallel_mixed_circuit functions
         """
-        return self._ncbits
+        return self.__ncbits
     
     def check_ncbits(self, adjust : bool = False) -> bool:
         """
@@ -113,14 +112,14 @@ class CircuitIO:
         -> Return : True if ncbits is sufficient; otherwise False
         """
         maxindex = -1
-        for item in self._gatelist:
+        for item in self.__gatelist:
             if item[0] == 'M':
                 for idx in item[2]:
                     if idx > maxindex:
                         maxindex = idx
-        if self._ncbits <= maxindex:
+        if self.__ncbits <= maxindex:
             if adjust:
-                self._ncbits = maxindex + 1
+                self.__ncbits = maxindex + 1
             return False
         return True
 
@@ -138,7 +137,7 @@ class CircuitIO:
         -> Return : q_circuit
         """
         g = get_standard_gatename(gatestr)
-        self._gatelist.append([g, qbits, paras])
+        self.__gatelist.append([g, qbits, paras])
 
     def apply_measure(self, qindex : list[int], cindex : list[int]) -> None:
         """
@@ -158,8 +157,8 @@ class CircuitIO:
         """
         Inverse the whole circuit (inplace)
         """
-        self._gatelist.reverse()
-        for item in self._gatelist:
+        self.__gatelist.reverse()
+        for item in self.__gatelist:
             self.__inverse_gate(item)
         return self
     
@@ -174,15 +173,15 @@ class CircuitIO:
         if remap is None:
             return
         if isinstance(remap, int):
-            for item in self._gatelist:
+            for item in self.__gatelist:
                 for i in range(len(item[1])):
                     item[1][i] += remap
         elif isinstance(remap, (list, range)):
-            for item in self._gatelist:
+            for item in self.__gatelist:
                 for i in range(len(item[1])):
                     item[1][i] = remap[item[1][i]]
         else:
-            raise PyQuantumKitError('Invalid remap: ' + str(remap))
+            raise OperationError('Invalid remap: ' + str(remap))
         return self
 
     def remap_cbits(self, remap : int|list|range):
@@ -196,17 +195,17 @@ class CircuitIO:
         if remap is None:
             return
         if isinstance(remap, int):
-            for item in self._gatelist:
+            for item in self.__gatelist:
                 if item[0] == 'M':
                     for i in range(len(item[2])):
                         item[2][i] += remap
         elif isinstance(remap, (list, range)):
-            for item in self._gatelist:
+            for item in self.__gatelist:
                 if item[0] == 'M':
                     for i in range(len(item[2])):
                         item[2][i] = remap[item[2][i]]
         else:
-            raise PyQuantumKitError('Invalid remap: ' + str(remap))
+            raise OperationError('Invalid remap: ' + str(remap))
         return self
 
     def append_circuit_io(self, cir_io_obj):
@@ -218,7 +217,7 @@ class CircuitIO:
             cir_io_obj : the target object (only support CircuitIO object)
         """
         # Must use deepcopy
-        self._gatelist.extend(copy.deepcopy(cir_io_obj._gatelist))
+        self.__gatelist.extend(copy.deepcopy(cir_io_obj.__gatelist))
         return self
 
     def __lshift__(self, cir_io_obj):
@@ -235,7 +234,7 @@ class CircuitIO:
             subsdict  : (optional, default None) specify the substituted symbols.
                    e.g. {t : 3, x : 4} means substitute symbol t with number 3, and symbol x with 4
         """
-        for item in self._gatelist:
+        for item in self.__gatelist:
             if subsdict is None or item[2] is None:
                 apply_gate(dest_qcir, item[0], item[1], item[2])
             else:
@@ -263,7 +262,7 @@ class CircuitIO:
         -> Return : the code string
         """
         ret = ""
-        for item in self._gatelist:
+        for item in self.__gatelist:
             if subsdict is None or item[2] is None:
                 ret += gate_applying_code(language, circuit_name, gate_lib_name,
                                             item[0], item[1], item[2])
@@ -285,10 +284,10 @@ class CircuitIO:
         -> Return : the sympy.Matrix object with dimension 2^n x 2^n,
                     where n is the number of qubits
         """
-        ret = sympy.Identity(2 ** self._nqbits)
-        for item in self._gatelist:
+        ret = sympy.Identity(2 ** self.__nqbits)
+        for item in self.__gatelist:
             gatemat = symbol_gate_matrix(item[0], item[2])
-            gatemat_total = symbol_apply_gate(gatemat, self._nqbits, item[1])
+            gatemat_total = symbol_apply_gate(gatemat, self.__nqbits, item[1])
             ret = gatemat_total * ret
         if subsdict is None:
             if simplify:
@@ -311,10 +310,10 @@ class CircuitIO:
         -> Return : the numpy.array object with dimension 2^n x 2^n,
                     where n is the number of qubits
         """
-        ret = numpy.eye(2 ** self._nqbits, dtype=complex)
-        for item in self._gatelist:
+        ret = numpy.eye(2 ** self.__nqbits, dtype=complex)
+        for item in self.__gatelist:
             gatemat_sp = symbol_gate_matrix(item[0], item[2])
-            gatemat_total_sp = symbol_apply_gate(gatemat_sp, self._nqbits, item[1])
+            gatemat_total_sp = symbol_apply_gate(gatemat_sp, self.__nqbits, item[1])
             if subsdict is not None:
                 gatemat_total_sp = gatemat_total_sp.subs(subsdict)
             gatemat_total = numpy.array(gatemat_total_sp, dtype=complex)
@@ -328,7 +327,7 @@ class CircuitIO:
         subsdict : (dict) specify the substituted symbols.
                    e.g. {t : 3, x : 4} means substitute symbol t with number 3, and symbol x with 4
         """
-        for item in self._gatelist:
+        for item in self.__gatelist:
             if item[2] is not None:
                 for i in range(len(item[2])):
                     item[2][i] = self.__expression_subs(item[2][i], subsdict)
@@ -337,7 +336,7 @@ class CircuitIO:
         """
         Return whether a measurement operation is in the CircuitIO object
         """
-        for item in self._gatelist:
+        for item in self.__gatelist:
             if item[0] == 'M':
                 return True
         return False

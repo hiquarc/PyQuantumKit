@@ -7,6 +7,9 @@ from pyquantumkit import get_framework_from_object, PyQuantumKitError
 from pyquantumkit._qframes.framework_map import quantum_action, Action
 from pyquantumkit.classical.common import indexlist_length
 
+# the error type for operations
+class OperationError(PyQuantumKitError):
+    pass
 
 def apply_gate(q_circuit, gate_str : str, qbits : list[int], paras : list = None):
     """
@@ -73,7 +76,7 @@ def append_circuit(dest_qcir, src_qcir, remap : int|list|range = None, inverse :
     Apply a quantum circuit on a qubit array.
 
         dest_qcir  : destination quantum circuit to be appended
-            NOTE: <dest_qcir> can be quantum circuit or quantum program
+            NOTE: <dest_qcir> can be quantum circuit or mixed circuit
         src_qcir   : source quantum circuit
         remap      : (None or int or list[int], default None)
                      if <remap> is None, no remap will be applied
@@ -91,7 +94,7 @@ def append_circuit(dest_qcir, src_qcir, remap : int|list|range = None, inverse :
     elif isinstance(remap, (list, range)):
         remaplist = remap
     else:
-        raise PyQuantumKitError('Invalid remap: ' + str(remap))
+        raise OperationError('Invalid remap: ' + str(remap))
     
     quantum_action(Action.CIRCUIT, 1, dest_qcir, src_qcir, remaplist, inverse)
     return dest_qcir
@@ -118,12 +121,12 @@ def copy_circuit(src_qcir, remap : int|list|range = None, inverse : bool = False
 
 
 
-def append_program(dest_qp, src_qp, qbits_remap : int|list|range = None, cbits_remap : int|list|range = None):
+def append_mixed_circuit(dest_qp, src_qp, qbits_remap : int|list|range = None, cbits_remap : int|list|range = None):
     """
-    Apply a quantum program on a qubit array.
+    Apply a QC-mixed circuit on a qubit array.
 
-        destqp      : destination quantum program to be appended
-        src_qp      : source quantum program
+        destqp      : destination QCM circuit to be appended
+        src_qp      : source QCM circuit
         qbits_remap : (None or int or list[int], default None)
                      if the type of <qbits_remap> is int, give the offset of each qubit index
                      if the type of <qbits_remap> is list[int], give the remap list of the qubit indices
@@ -135,7 +138,7 @@ def append_program(dest_qp, src_qp, qbits_remap : int|list|range = None, cbits_r
     -> Return : dest_qp
     """
     if qbits_remap is None or cbits_remap is None:
-        quantum_action(Action.PROGRAM, 1, dest_qp, src_qp, None, None)
+        quantum_action(Action.MIXED_CIRCUIT, 1, dest_qp, src_qp, None, None)
         return dest_qp
     
     qrlist = None
@@ -145,23 +148,23 @@ def append_program(dest_qp, src_qp, qbits_remap : int|list|range = None, cbits_r
     elif isinstance(qbits_remap, (list, range)):
         qrlist = qbits_remap
     else:
-        raise PyQuantumKitError('Invalid qbits_remap: ' + str(qbits_remap))
+        raise OperationError('Invalid qbits_remap: ' + str(qbits_remap))
     if isinstance(cbits_remap, int):
         crlist = [x + cbits_remap for x in get_cbit_list(src_qp)]
     elif isinstance(cbits_remap, (list, range)):
         crlist = cbits_remap
     else:
-        raise PyQuantumKitError('Invalid cbits_remap: ' + str(cbits_remap))
+        raise OperationError('Invalid cbits_remap: ' + str(cbits_remap))
 
-    quantum_action(Action.PROGRAM, 1, dest_qp, src_qp, qrlist, crlist)
+    quantum_action(Action.MIXED_CIRCUIT, 1, dest_qp, src_qp, qrlist, crlist)
     return dest_qp
 
 
-def copy_program(src_qp, qbits_remap : int|list|range = None, cbits_remap : int|list|range = None):
+def copy_mixed_circuit(src_qp, qbits_remap : int|list|range = None, cbits_remap : int|list|range = None):
     """
-    Copy a quantum program
+    Copy a QC-mixed circuit
 
-        src_qp      : source quantum program
+        src_qp      : source QC-mixed circuit
             NOTE: <src_qp> can be a quantum circuit. But if so, please remain <qbits_remap> and <cbits_remap> are None.
         qbits_remap : (None or int or list[int], default None)
                      if the type of <qbits_remap> is int, give the offset of each qubit index
@@ -171,13 +174,13 @@ def copy_program(src_qp, qbits_remap : int|list|range = None, cbits_remap : int|
                      if the type of <cbits_remap> is list[int], give the remap list of the classical bit indices
             NOTE: if one of <qbits_remap> or <cbits_remap> is None, no remap will be applied.
 
-    -> Return : a replica quantum program of src_qp
+    -> Return : a replica QC-mixed circuit of src_qp
     """
     framework = get_framework_from_object(src_qp)
     nqbits = get_n_qubits(src_qp)
     ncbits = get_n_cbits(src_qp)
-    retqp = new_program(framework, nqbits, ncbits)
-    append_program(retqp, src_qp, qbits_remap, cbits_remap)
+    retqp = new_mixed_circuit(framework, nqbits, ncbits)
+    append_mixed_circuit(retqp, src_qp, qbits_remap, cbits_remap)
     return retqp
 
 
@@ -194,24 +197,24 @@ def new_circuit(framework : str, nqbits : int):
     return quantum_action(Action.NEW, framework, False, nqbits, 0)
 
 
-def new_program(framework : str, nqbits : int, ncbits : int = 0):
+def new_mixed_circuit(framework : str, nqbits : int, ncbits : int = 0):
     """
-    Generate an empty quantum program (which contains classical bits)
+    Generate an empty QC-mixed (which contains classical bits)
 
         framework : the string to identify the target framework
-        nqbits    : the number of qubits of the program
-        ncbits    : the number of classicl bits of the program
+        nqbits    : the number of qubits of the circuit
+        ncbits    : the number of classicl bits of the circuit
 
-    -> Return : an empty quantum program with type of target framework
+    -> Return : an empty QC-mixed circuit with type of target framework
     """
     return quantum_action(Action.NEW, framework, True, nqbits, ncbits)
 
 
 def get_n_qubits(q_prog) -> int:
     """
-    Get the number of qubits of a quantum circuit or program
+    Get the number of qubits of a quantum circuit
 
-        q_prog : target quantum circuit/program
+        q_prog : target quantum circuit
 
     -> Return : the number of qubits
     """
@@ -219,9 +222,9 @@ def get_n_qubits(q_prog) -> int:
 
 def get_qubit_list(q_prog) -> list[int]:
     """
-    Get the qubit list a quantum circuit or program
+    Get the qubit list a quantum circuit
 
-        q_prog : target quantum circuit/program
+        q_prog : target quantum circuit
 
     -> Return : list of the qubits
     """
@@ -229,33 +232,33 @@ def get_qubit_list(q_prog) -> list[int]:
 
 def get_n_cbits(q_prog) -> int:
     """
-    Get the number of classical bits of a quantum program
+    Get the number of classical bits of a QC-mixed circuit
 
-        q_prog : target quantum program
+        q_prog : target circuit
 
-    -> Return : the number of classical bits
-                0 if q_prog is a quantum circuit
+    -> Return : the number of classical bits;
+                0, if q_prog is not a QC-mixed circuit
     """
     return quantum_action(Action.BITS, 0, q_prog, True, False)
 
 def get_cbit_list(q_prog) -> list[int]:
     """
-    Get the classical bit list of a quantum program
+    Get the classical bit list of a QC-mixed circuit
 
-        q_prog : target quantum program
+        q_prog : target QC-mixed circuit
 
-    -> Return : list of the classical bits
-                [] if q_prog is a quantum circuit
+    -> Return : list of the classical bits;
+                [], if q_prog is a quantum circuit
     """
     return quantum_action(Action.BITS, 0, q_prog, True, True)
 
 
 def run_and_get_counts(q_machine, q_prog, shots : int = 1, **kwargs):
     """
-    Run quantum programs on quantum machine and get the result dict
+    Run quantum circuits on quantum machine and get the result dict (Experimental)
 
         q_machine : target quantum machine
-        q_prog    : target quantum program
+        q_prog    : target quantum circuit or QC-mixed circuit
         shots     : running shots (repeat times)
         kwargs    : (optional) Other parameters
 
@@ -264,14 +267,14 @@ def run_and_get_counts(q_machine, q_prog, shots : int = 1, **kwargs):
     return quantum_action(Action.RUN, 1, q_machine, q_prog, shots, **kwargs)
 
 
-def parallel_programs(*args):
+def parallel_mixed_circuits(*args):
     """
-    Generate a quantum program to parallel several subprograms
+    Generate a QC-mixed circuit to parallel several subcircuits
 
         Variable parameters:
-            e.g., parallel_programs(qp1, qp2, qp3)
+            e.g., parallel_mixed_circuits(qp1, qp2, qp3)
 
-    -> Return : result quantum program
+    -> Return : result QC-mixed circuit
     """
     qofflist = []
     cofflist = []
@@ -287,9 +290,9 @@ def parallel_programs(*args):
         ntotalqs += nqs
         ntotalcs += ncs
 
-    retqp = new_program(f, ntotalqs, ntotalcs)
+    retqp = new_mixed_circuit(f, ntotalqs, ntotalcs)
     for i in range(len(args)):
-        append_program(retqp, args[i], qofflist[i], cofflist[i])
+        append_mixed_circuit(retqp, args[i], qofflist[i], cofflist[i])
     return retqp
 
 
