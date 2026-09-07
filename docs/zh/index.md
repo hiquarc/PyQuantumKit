@@ -18,7 +18,7 @@
 - 为量子软件新技术的研究提供实验平台。
 
 ## 目前支持的框架
-PyQuantumKit v.0.1.6和v.0.2.0alpha目前支持如下量子开发框架：
+PyQuantumKit v.0.1.6和v.0.2.0beta目前支持如下量子开发框架：
 
 - **IBM Qiskit**
 - **本源量子QPanda3**

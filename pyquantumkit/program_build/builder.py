@@ -49,27 +49,30 @@ class QProgramBuilder:
             if name is None:
                 raise QuantumProgramBuildError("Anonymous variables cannot be directly declared in QProgramBuilder.")
             if name in self._qvars:
-                raise QuantumProgramBuildError("Variable name '" + str(name) + "' has been declared.")
+                raise QuantumProgramBuildError(f"Variable name '{name}' has been declared.")
             self._qvars[name] = [variable, type(variable), current_address, None]
             variable._locate(self, current_address)
+            variable._initialize_()
             current_address += variable.n_qubits()
         self.__n_variable_qubits = current_address
 
     def measure(self, *args) -> None:
         if self.__measured:
             raise QuantumProgramBuildError("Measurement can only be executed once.")
-        self.__measured = True
         current_m_address = 0
         for variable in args:
             if not isinstance(variable, QVar):
                 raise QuantumProgramBuildError(str(variable) + " is not a quantum variable.")
             if variable.get_varname() not in self._qvars:
-                raise QuantumProgramBuildError("Cannot measure the undeclared quantum variable " + str(variable))
+                raise QuantumProgramBuildError(f"Cannot measure the undeclared quantum variable {variable}")
+            variable._premeasure_()
             variable._measure(current_m_address)
             self._qvars[variable.get_varname()][3] = current_m_address
             self._measure_qvars.append(variable)
             current_m_address += variable.n_measure_cbits()
         self.__n_measure_cbits = current_m_address
+        self.__measured = True
+
     def measure_all(self) -> None:
         measure_list = []
         for varname in self._qvars:
@@ -89,7 +92,7 @@ class QProgramBuilder:
         correct_str = output_str[::-1] if reverse else output_str
         ret = {}
         for variable in self._measure_qvars:
-            ret[variable.get_varname()] = variable._interpret_output_str(correct_str)
+            ret[variable.get_varname()] = variable._interpret_(correct_str)
         return ret
 
     def interpret_result_dict(self, output_dict : dict, framework : str = None) -> list:

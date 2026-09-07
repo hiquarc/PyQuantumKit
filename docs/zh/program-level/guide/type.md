@@ -2,7 +2,7 @@
 
 PyQuantumKit提供了基于Python的语法来自定义量子数据类型的功能。类型系统的设计参考了C语言，提供基本量子数据类型以及数组、结构体、联合体等复合数据类型构建。
 
-## 基本量子数据类型：Qubit
+## 一、基本量子数据类型：Qubit
 
 大多数编程语言提供了一些基本数据类型，例如整型（`int`）、浮点型（`float`/`double`）、字符型（`char`）、布尔型（`bool`）等，更复杂的数据类型往往可以通过这些基本数据类型组合而来。
 
@@ -33,7 +33,7 @@ print(qpbuilder.interpret_output_str('10', 'qiskit'))    # 输出：{'q1': '0', 
 print(qpbuilder.interpret_output_str('11', 'qiskit'))    # 输出：{'q1': '1', 'q2': '1'}
 ```
 
-### 量子变量的基类型QVar
+### 量子变量的基类型`QVar`
 在PyQuantumKit中，所有包含量子比特的数据类型的基类型都是`QVar`，包括量子比特`Qubit`以及后文将要涉及的数组、结构体、联合体等。因此在后文中，“量子变量”这个术语指代的是`QVar`类的子类的对象。
 
 ### 匿名变量
@@ -60,10 +60,10 @@ def qmain(builder : QProgramBuilder):
 
 PyQuantumKit要求凡是在`declare_qvars()`中直接声明的量子变量都需要命名。
 
-## 数组（QArray）
+## 二、数组（QArray）
 量子数组由若干个相同类型的量子变量组成，可用下标运算符`[]`访问其中的元素。
 
-### 定义数组：make_qarray()函数
+### 定义数组：`make_qarray()`函数
 
 可以使用`pyquantumkit.program.std`提供的`make_qarray()`函数由基类型定义相应的数组，该函数的原型为：
 ```python
@@ -105,7 +105,7 @@ gate('CZ', [two_dim[1][2], two_dim[1][4]])
 print(len(my_array))
 ```
 
-PyQuantumKit目前暂时只支持定长数组。
+PyQuantumKit目前暂时只支持定长数组，下标访问运算符`[]`目前暂时只支持以单个整数作为下标，暂时不支持范围下标。
 
 量子数组类型的变量的测量结果将被解读为由其各元素的测量结果组成的列表。
 
@@ -143,7 +143,7 @@ def qmain(builder : QProgramBuilder):
 [({'two_dim': [['1', '0', '0', '0', '0', '1'], ['0', '0', '1', '0', '1', '0']]}, 1000)]
 ```
 
-### 量子比特数组的单独类型：QubitArray
+### 量子比特数组的单独类型：`QubitArray`
 由量子比特组成的数组是量子程序开发中非常常用的一种数据类型，因此PyQuantumKit单独提供了`QubitArray`类型，可代替`make_qarray(Qubit, ...)`。上述`my_array`和`two_dim`变量的定义可改写为：
 ```python
 def qmain(builder : QProgramBuilder):
@@ -185,7 +185,7 @@ def qmain(builder : QProgramBuilder):
 因此，**当需要表达“量子比特数组”的语义时，建议直接使用`QubitArray`类型**，避免使用`make_qarray(Qubit, ...)`。
 
 
-## 结构体（QStruct）和元组（QTuple）
+## 三、结构体（QStruct）和元组（QTuple）
 量子结构体由若干个量子变量字段组成，每个字段有自己的变量名，各个字段可以有不同的类型，可以使用成员访问运算符`.`来访问其中的某个字段。
 
 ### 定义结构体
@@ -205,7 +205,7 @@ class MyStruct(QStruct):
         # 这一行也是必须的，初始化结构体
         self.init_qstruct(self.x, self.y, self.z)
 ```
-上述代码定义了一个结构体类型`MyStruct`，其中包含三个字段：字段`x`是一个包含3个量子比特的量子比特数组；字段`y`是一个2×2的二维量子比特数组；字段`z`是单个量子比特。
+上述代码定义了一个结构体类型`MyStruct`，其中包含三个字段：字段`self.x`是一个包含3个量子比特的量子比特数组；字段`self.y`是一个2×2的二维量子比特数组；字段`self.z`是单个量子比特。
 
 自定义结构体的派生类的`__init__`需要先调用`super()`的`__init__`，因而开头通常写为：
 ```python
@@ -283,7 +283,7 @@ def qmain(builder : QProgramBuilder):
 [({'mytuple': ['101', ['10', '11'], '0']}, 497), ({'mytuple': ['101', ['10', '11'], '1']}, 503)]
 ```
 
-## 联合体（QUnion）
+## 四、联合体（QUnion）
 与结构体类似，量子联合体也是若干个量子变量字段组成，每个字段有自己的变量名，各个字段可以有不同的类型，可以使用成员访问运算符`.`来访问其中的某个字段。与结构体不同的是，联合体中所有字段共用同一段量子内存地址，PyQuantumKit保证联合体内的所有字段的起始地址都等于联合体本身的地址。联合体可用于需要通过共用来节约量子比特的情形，或者需要对量子比特进行重解释的情形。
 
 定义联合体的方式与定义结构体类似，只是需要从`QUnion`类派生，并且初始化函数为`self.init_qunion(...)`。

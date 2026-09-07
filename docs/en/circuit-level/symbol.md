@@ -8,12 +8,12 @@ PyQuantumKit provides the `symbol` module (`pyquantumkit.symbol`), which is impl
 - The `pyquantumkit.symbol.qstate` module provides basic quantum state vector representations (including ket representation, bra representation, and density matrix representation).
 - The `pyquantumkit.symbol.circuit` module provides several functions for constructing matrix representations of quantum circuits.
 
-**For detailed content of the pyquantumkit.symbol module, please [click here](../api/symbol.md).**
+**For detailed content of the pyquantumkit.symbol module, please [click here](./api/symbol.md).**
 
 **Note: Since Python's convention for subscripts starts from 0, all parameters involving subscripts in the pyquantumkit.symbol library follow Python's convention (starting from 0), which is different from Mathematica's convention (starting from 1).**
 
 ## 1. Using Matrices Corresponding to Quantum Gates
-The `pyquantumkit.symbol.gate` module predefines SymPy matrix objects or functions that generate matrix objects (for parameterized quantum gates) corresponding to supported quantum gates. You can directly reference them using specific object names (see [details](../api/supported-gates.md)):
+The `pyquantumkit.symbol.gate` module predefines SymPy matrix objects or functions that generate matrix objects (for parameterized quantum gates) corresponding to supported quantum gates. You can directly reference them using specific object names (see [details](./api/supported-gates.md)):
 
 ```python
 import pyquantumkit.symbol.gate as PQK_S_GATE
@@ -29,7 +29,7 @@ Matrix([[1/2 - I/2, 1/2 + I/2], [1/2 + I/2, 1/2 - I/2]])
 Matrix([[0.968912421710645, 0, 0, -0.247403959254523*I], [0, 0.968912421710645, -0.247403959254523*I, 0], [0, -0.247403959254523*I, 0.968912421710645, 0], [-0.247403959254523*I, 0, 0, 0.968912421710645]])
 ```
 
-You can also use the `symbol_gate_matrix` function and pass a string indicating the gate (the same as in the `apply_gate` function, see [details](../api/supported-gates.md)). The code in the above example can also be written equivalently as:
+You can also use the `symbol_gate_matrix` function and pass a string indicating the gate (the same as in the `apply_gate` function, see [details](./api/supported-gates.md)). The code in the above example can also be written equivalently as:
 
 ```python
 import pyquantumkit.symbol.gate as PQK_S_GATE
@@ -40,7 +40,7 @@ print(PQK_S_GATE.symbol_gate_matrix('Rxx', [0.5]))  # Rxx gate with theta=0.5
 ```
 
 ## 2. Using Quantum State Vectors
-The `pyquantumkit.symbol.qstate` module predefines state vector or matrix representations of common quantum states, such as the ket representation $\ket{0}$, the bra representation $\bra{+}$, and the density matrix representation of the Bell state $\ket{\beta_{00}}\bra{\beta_{00}}$, etc. You can directly reference them using specific object names (see [details](../api/symbol.md#3-pyquantumkitsymbolqstate-module)):
+The `pyquantumkit.symbol.qstate` module predefines state vector or matrix representations of common quantum states, such as the ket representation $\ket{0}$, the bra representation $\bra{+}$, and the density matrix representation of the Bell state $\ket{\beta_{00}}\bra{\beta_{00}}$, etc. You can directly reference them using specific object names (see [details](./api/symbol.md#3-pyquantumkitsymbolqstate-module)):
 
 ```python
 import pyquantumkit.symbol.qstate as PQK_S_STATE
@@ -87,7 +87,7 @@ Matrix([[sqrt(2)/2, 0, sqrt(2)/2, 0], [0, sqrt(2)/2, 0, sqrt(2)/2], [0, sqrt(2)/
 ```
 
 ### Method 2: Using the CircuitIO Class to Export the Matrix of a Quantum Circuit
-CircuitIO class objects support using SymPy symbols as parameters for parameterized quantum gates (e.g., Rx gates), and can calculate the matrix representation of the entire quantum circuit based on the sequence of quantum gates contained in the object. The functions for exporting the matrix representation of a quantum circuit by a CircuitIO class object are `get_sympy_matrix` (returns a SymPy matrix) and `get_numpy_matrix` (returns a NumPy matrix). For specific details of the functions, please [click here](../api/circuitio.md#get_sympy_matrix).
+CircuitIO class objects support using SymPy symbols as parameters for parameterized quantum gates (e.g., Rx gates), and can calculate the matrix representation of the entire quantum circuit based on the sequence of quantum gates contained in the object. The functions for exporting the matrix representation of a quantum circuit by a CircuitIO class object are `get_sympy_matrix` (returns a SymPy matrix) and `get_numpy_matrix` (returns a NumPy matrix). For specific details of the functions, please [click here](./api/circuitio.md#get_sympy_matrix).
 
 **Example 1'**. Using the CircuitIO class to calculate the matrix representation of the quantum circuit in Example 1
 

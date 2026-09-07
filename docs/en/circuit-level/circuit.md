@@ -11,7 +11,7 @@ apply_gate(circuit, 'S', [2])
 **Detailed Explanation**
 
 - `circuit` is an object of the quantum circuit class in a supported quantum development framework (e.g., `QuantumCircuit` of qiskit, `QCircuit` or `QProg` of pyqpanda3, `QuantumCircuit` of quafu, or `Circuit` of cqlib).
-- The string `'S'` indicates that an S gate is to be applied. [Click here](../api/supported-gates.md) to view the strings corresponding to specific quantum gates.
+- The string `'S'` indicates that an S gate is to be applied. [Click here](./api/supported-gates.md) to view the strings corresponding to specific quantum gates.
 - The array `[2]` indicates the indices of the qubits to which the quantum gate is applied. The number of elements in the array should be the same as the number of bits of the gate. Note that whether the quantum gate is single-bit or multi-bit, this parameter must be assigned **in the form of a list**.
 
 **Example 2**. Apply a Toffoli gate to the qubits with indices 0, 2, and 3:
@@ -31,7 +31,7 @@ apply_gate(circuit, 'Rx', [1], [0.1])
 apply_gate(circuit, 'U3', [0], [0.2, 0.3, 0.4])
 ```
 
-The above gives 4 usage examples of the `apply_gate` function. **For a more detailed explanation of this function, please [click here](../api/construct.md#apply_gate).**
+The above gives 4 usage examples of the `apply_gate` function. **For a more detailed explanation of this function, please [click here](./api/construct.md#apply_gate).**
 
 ### 2. Applying Measurements
 
@@ -53,7 +53,7 @@ apply_measure(circuit, range(5), range(5))
 
 ## II. Modular Construction of Quantum Circuits (Experimental)
 
-- **Note 1: The content of this section may only apply to some quantum development frameworks**, [click here for details](../api/supported-platforms.md).
+- **Note 1: The content of this section may only apply to some quantum development frameworks**, [click here for details](./api/supported-platforms.md).
 - **Note 2: This feature is experimental, has not undergone systematic testing, and the interface may change in the future. Please use it with caution.**
 - **Note 3: If modular construction is required currently, it is recommended to use the CircuitIO class (see below)**
 
@@ -74,7 +74,7 @@ cio.apply_gate('CX', [0, 1])              # Use CircuitIO member function <gate_
 
 To apply a quantum gate on a CircuitIO object, you can directly use the general `apply_gate` function, passing the CircuitIO object as the quantum circuit object; or you can use the homonymous member function `CircuitIO.apply_gate` provided by the CircuitIO class.
 
-**For a detailed explanation of the member functions included in the CircuitIO class, please [click here](../api/circuitio.md).** The following gives three typical usages of the CircuitIO class.
+**For a detailed explanation of the member functions included in the CircuitIO class, please [click here](./api/circuitio.md).** The following gives three typical usages of the CircuitIO class.
 
 ### 1. Using the CircuitIO Class for Modular Construction of Quantum Circuits on Unsupported Quantum Development Platforms
 
@@ -99,7 +99,7 @@ cio >> quafu_circuit       # insert the CircuitIO object cio into quafu's circui
 
 ### 2. Exporting Code Using the CircuitIO Class
 
-The `get_circuit_code` function of the CircuitIO class can be used to convert a quantum circuit into code for supported frameworks or languages ([click here](../api/supported-platforms.md) for supported frameworks and languages). The output of the function is a string that can be copied into the source code file.
+The `get_circuit_code` function of the CircuitIO class can be used to convert a quantum circuit into code for supported frameworks or languages ([click here](./api/supported-platforms.md) for supported frameworks and languages). The output of the function is a string that can be copied into the source code file.
 
 **Example 9**. Construct a GHZ state using the CircuitIO class and export it as qiskit code and Microsoft Q# code.
 

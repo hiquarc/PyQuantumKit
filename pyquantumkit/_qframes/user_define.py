@@ -21,12 +21,11 @@ def add_extra_framework(framework_name : str, import_packages : list[str],
     if framework_name in Supported_Frameworks:
         return
     
-    if framework_name in sys.modules:
-        namespace_items = []
-        for fn_item in import_packages[framework_name]:
-            if fn_item in sys.modules:
-                namespace_items.append(importlib.import_module(fn_item))
-        Framework_Namespace[framework_name] = namespace_items
-        Framework_Version[framework_name] = importlib.metadata.version(framework_name)
+    namespace_items = []
+    for fn_item in import_packages:
+        if fn_item in sys.modules:
+            namespace_items.append(importlib.import_module(fn_item))
+    Framework_Namespace[framework_name] = namespace_items
+    Framework_Version[framework_name] = importlib.metadata.version(framework_name)
 
     Translate_Namespace[framework_name] = importlib.import_module(translate_rule_file)

@@ -25,7 +25,8 @@ def numeric_equivalence_check(cirmat1 : numpy.array, cirmat2 : numpy.array,
 
 若两个量子线路判定为相等，则返回`True`；否则返回`False`。
 
-该函数的具体执行流程为：设两个量子线路对应的矩阵分别为 $A$, $B$ ，传入的`tolerance`参数记为 $\epsilon$ ，
+该函数的具体执行流程为：设两个量子线路对应的矩阵分别为 $A$, $B$ ，传入的`tolerance`参数记为 $\epsilon$
+
 - 若`ignore_global_phase`设置为`False`，则函数按照给定的范数函数`norm`计算两矩阵差值的范数 $\|A-B\|$ 并与 $\epsilon$ 进行比较，函数返回`True`当且仅当 $\|A-B\| \leq \epsilon$ 。
 - 若`ignore_global_phase`设置为`True`，则函数首先寻找 $B$ 中模最大的元素，假设其下标为 $i',j'$ ；然后函数通过该元素下标计算 $A$ 与 $B$ 之间的可能存在的相位差： $\kappa=a_{i'j'}/b_{i'j'}$ ；最后函数按照给定的范数函数`norm`计算范数 $\|A-\kappa B\|$ 并与 $\epsilon$ 进行比较，函数返回`True`当且仅当 $\|A-\kappa B\| \leq \epsilon$ 。
 

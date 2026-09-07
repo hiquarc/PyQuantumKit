@@ -21,7 +21,7 @@ Standard_Gate_Name = {
 def get_args_assign_str(argname : str, nargs : int) -> str:
     s = ""
     for i in range(nargs):
-        s += (argname + "[" + str(i) + "]")
+        s += f"{argname}[{i}]"
         if i != nargs - 1:
             s += ","
     return s

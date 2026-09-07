@@ -50,7 +50,7 @@ The `apply_gate` member function of the CircuitIO class is similar to the global
 ```python
 def apply_gate(self, gatestr : str, qbits : list[int], paras : list = None) -> None
 ```
-- The parameter `gate_str` is a string indicating the gate to be applied. Considering that the same gate may have multiple different names (e.g., Toffoli, CCNOT, CCX all represent the same gate), PyQuantumKit allows using different name strings to represent the same gate, and the case is insensitive. [Click here to view](../api/supported-gates.md) the specific supported quantum gates and their corresponding strings.
+- The parameter `gate_str` is a string indicating the gate to be applied. Considering that the same gate may have multiple different names (e.g., Toffoli, CCNOT, CCX all represent the same gate), PyQuantumKit allows using different name strings to represent the same gate, and the case is insensitive. [Click here to view](supported-gates.md) the specific supported quantum gates and their corresponding strings.
 - The parameter `qbits` is a list of integers specifying the list of quantum bit subscripts to which the gate is to be applied. Note that whether the quantum gate is single-qubit or multi-qubit, this parameter must be assigned **in the form of a list**.
 - The parameter `paras` is a list used to assign parameters to parameterized gates; for non-parameterized gates, this parameter does not need to be assigned.
 

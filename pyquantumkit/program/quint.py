@@ -12,8 +12,8 @@ class QuUnsignedInt(QStruct):
         self.__qubits = QubitArray(length)
         self.init_qstruct(self.__qubits)
 
-    def _interpret_output_str(self, output : str):
-        binstr = self.__qubits._interpret_output_str(output)
+    def _interpret_(self, output : str):
+        binstr = self.__qubits._interpret_(output)
         return get_int_from_binstr_le(binstr)
     def __len__(self):
         return len(self.__qubits)
