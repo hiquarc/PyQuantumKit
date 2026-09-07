@@ -11,7 +11,7 @@ apply_gate(circuit, 'S', [2])
 **详细说明**
 
 - `circuit`是受支持的量子开发框架中的量子线路类的对象（例如qiskit的`QuantumCircuit`、pyqpanda3的`QCircuit`或`QProg`、quafu的`QuantumCircuit`或cqlib的`Circuit`）。
-- 字符串`'S'`指示应用的是一个S门，[点此查看](../api/supported-gates.md)具体量子门对应的字符串。
+- 字符串`'S'`指示应用的是一个S门，[点此查看](./api/supported-gates.md)具体量子门对应的字符串。
 - 数组`[2]`指示应用量子门的下标，数组元素个数应与门的比特数相同。注意无论量子门是单比特还是多比特，都需要**以列表的方式指派此参数**。
 
 **例2**. 对下标为0、2和3的量子位应用Toffoli门
@@ -31,7 +31,7 @@ apply_gate(circuit, 'Rx', [1], [0.1])
 apply_gate(circuit, 'U3', [0], [0.2, 0.3, 0.4])
 ```
 
-以上给出了`apply_gate`函数的4个使用例子，**对于该函数更详细说明，请[点此查看](../api/construct.md#apply_gate)。**
+以上给出了`apply_gate`函数的4个使用例子，**对于该函数更详细说明，请[点此查看](./api/construct.md#apply_gate)。**
 
 ### 2. 应用测量
 
@@ -53,7 +53,7 @@ apply_measure(circuit, range(5), range(5))
 
 ## 二、量子线路的模块化构建（实验性）
 
-- **注1：此节内容可能只适用于部分量子开发框架**，[点此查看详情](../api/supported-platforms.md)。
+- **注1：此节内容可能只适用于部分量子开发框架**，[点此查看详情](./api/supported-platforms.md)。
 - **注2：此功能为实验性功能，未经过系统性的测试，且接口在未来可能改变，请谨慎使用。**
 - **注3：当前若需要使用模块化构建，推荐使用CircuitIO类（见下文）**
 
@@ -74,7 +74,7 @@ cio.apply_gate('CX', [0, 1])              # Use CircuitIO member function <gate_
 
 在CircuitIO对象上应用量子门，可以直接使用通用的`apply_gate`函数，将CircuitIO对象作为量子线路对象传入；也可以使用CircuitIO类提供的同名成员函数`CircuitIO.apply_gate`。
 
-**CircuitIO类包含的成员函数的详细说明请[点此查看](../api/circuitio.md)。** 下面给出CircuitIO类的三个典型用法。
+**CircuitIO类包含的成员函数的详细说明请[点此查看](./api/circuitio.md)。** 下面给出CircuitIO类的三个典型用法。
 
 ### 1. 利用CircuitIO类在不受支持的量子开发平台上进行量子线路的模块化构建
 
@@ -99,7 +99,7 @@ cio >> quafu_circuit       # insert the CircuitIO object cio into quafu's circui
 
 ### 2. 利用CircuitIO类导出代码
 
-可以使用CircuitIO类的`get_circuit_code`函数将量子线路转换为受支持的框架或语言的代码（[点此查看](../api/supported-platforms.md)受支持的框架和语言）。函数的输出为一个字符串，可以复制到源代码文件中。
+可以使用CircuitIO类的`get_circuit_code`函数将量子线路转换为受支持的框架或语言的代码（[点此查看](./api/supported-platforms.md)受支持的框架和语言）。函数的输出为一个字符串，可以复制到源代码文件中。
 
 **例9**. 利用CircuitIO类构建生成GHZ态，并导出为qiskit代码和Microsoft Q#的代码。
 

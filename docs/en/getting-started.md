@@ -49,7 +49,7 @@ import pyquantumkit as PQK
 ```
 
 ### 2. Write the Circuit Using Functions Provided by PyQuantumKit
-Here, two functions `apply_gate` and `apply_measure` are used. [Click here to view](stable/circuit.md) the function details.
+Here, two functions `apply_gate` and `apply_measure` are used. [Click here to view](circuit-level/circuit.md) the function details.
 
 ```python
 def ghz_state(circuit, nqbits : int):

@@ -38,14 +38,27 @@ class QVar(abc.ABC):
     #     #TODO: finish
     #     pass
 
+    # ------ user-define special methods ------
+    # Get the number of qubits of this QVar
     @abc.abstractmethod
     def n_qubits(self) -> int|None:
         pass
+
+    # Get the number of measure cbits of this QVar
     def n_measure_cbits(self) -> int|None:
         return self.n_qubits()
 
+    # How to interpret the output string for this QVar?
     @abc.abstractmethod
-    def _interpret_output_str(self, output : str):
+    def _interpret_(self, output : str):
+        pass
+
+    # Initialize operation
+    def _initialize_(self):
+        pass
+
+    # Pre-measurement operation
+    def _premeasure_(self):
         pass
 
 
@@ -59,7 +72,7 @@ class QStruct(QVar, abc.ABC):
         current_address = 0
         for item in args:
             if not isinstance(item, QVar):
-                raise QuantumProgramBuildError(str(item) + " is not a quantum variable.")
+                raise TypeError(f"{item} is not a quantum variable.")
             item._relative_address = current_address
             current_address += item.n_qubits()
         self._items = args
@@ -97,11 +110,18 @@ class QStruct(QVar, abc.ABC):
     def __len__(self) -> int:
         return len(self._items)
 
-    def _interpret_output_str(self, output : str):
+    def _interpret_(self, output : str):
         ret = {}
         for item in self._items:
-            ret[item.get_varname()] = item._interpret_output_str(output)
+            ret[item.get_varname()] = item._interpret_(output)
         return ret
+
+    def _initialize_(self):
+        for item in self._items:
+            item._initialize_()
+    def _premeasure_(self):
+        for item in self._items:
+            item._premeasure_()
 
 
 class QTuple(QStruct):
@@ -109,11 +129,13 @@ class QTuple(QStruct):
     def __init__(self, varname = None):
         super().__init__(varname)
     def __getitem__(self, index : int):
+        if not isinstance(index):
+            raise TypeError("The index for QTuple must be integer.")
         return self._items[index]
-    def _interpret_output_str(self, output : str):
+    def _interpret_(self, output : str):
         ret = []
         for item in self._items:
-            ret.append(item._interpret_output_str(output))
+            ret.append(item._interpret_(output))
         return ret
 
 
@@ -127,7 +149,7 @@ class QUnion(QVar, abc.ABC):
     def init_qunion(self, *args):
         for item in args:
             if not isinstance(item, QVar):
-                raise QuantumProgramBuildError(str(item) + " is not a quantum variable.")
+                raise TypeError(f"{item} is not a quantum variable.")
             item._relative_address = 0
         self._items = args
 
@@ -160,15 +182,22 @@ class QUnion(QVar, abc.ABC):
 
     def set_activity_item(self, act_item : QVar) -> None:
         if act_item not in self._items:
-            raise QuantumProgramBuildError(str(act_item) + " is not the item of QUnion " + str(self))
+            raise QuantumProgramBuildError(f"{act_item} is not the item of QUnion {self}")
         self._activity_item = act_item
 
-    def _interpret_output_str(self, output : str):
+    def _interpret_(self, output : str):
         if self._activity_item is None:
             raise QuantumProgramBuildError("No activity item is specified.")
         ret = {}
-        ret[self._activity_item.get_varname()] = self._activity_item._interpret_output_str(output)
+        ret[self._activity_item.get_varname()] = self._activity_item._interpret_(output)
         return ret
+
+    def _initialize_(self):
+        for item in self._items:
+            item._initialize_()
+    def _premeasure_(self):
+        for item in self._items:
+            item._premeasure_()
 
 
 class QArray(QVar, abc.ABC):
@@ -181,7 +210,7 @@ class QArray(QVar, abc.ABC):
 
     def init_qarray(self) -> None:
         if not isinstance(self._base_obj, QVar):
-            raise QuantumProgramBuildError(str(self._base_obj) + " is not a quantum variable.")
+            raise TypeError(f"{self._base_obj} is not a quantum variable.")
         if self._length is None:
             return
         if self._length < 0:
@@ -198,13 +227,13 @@ class QArray(QVar, abc.ABC):
     def _locate(self, builder, address : int) -> None:
         super()._locate(builder, address)
         if self._length is None:
-            raise QuantumProgramBuildError("Cannot call _locate() on the undetermined-length QArray: " + str(self))
+            raise QuantumProgramBuildError(f"Cannot call _locate() on the undetermined-length QArray: {self}")
         for item in self._items:
             item._locate(builder, self._address)
     def _measure(self, m_address : int) -> None:
         super()._measure(m_address)
         if self._length is None:
-            raise QuantumProgramBuildError("Cannot measure the undetermined-length QArray: " + str(self))
+            raise QuantumProgramBuildError(f"Cannot measure the undetermined-length QArray: {self}")
         offset = 0
         for item in self._items:
             item._measure(self._m_address + offset)
@@ -232,11 +261,19 @@ class QArray(QVar, abc.ABC):
     def __len__(self) -> int|None:
         return self._length
     def __getitem__(self, index : int):
+        if not isinstance(index):
+            raise TypeError("The index for QArray must be integer.")
         return self._items[index]
 
-    def _interpret_output_str(self, output : str):
+    def _interpret_(self, output : str):
         ret = []
         for item in self._items:
-            ret.append(item._interpret_output_str(output))
+            ret.append(item._interpret_(output))
         return ret
 
+    def _initialize_(self):
+        for item in self._items:
+            item._initialize_()
+    def _premeasure_(self):
+        for item in self._items:
+            item._premeasure_()

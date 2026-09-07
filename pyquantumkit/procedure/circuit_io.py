@@ -181,7 +181,7 @@ class CircuitIO:
                 for i in range(len(item[1])):
                     item[1][i] = remap[item[1][i]]
         else:
-            raise OperationError('Invalid remap: ' + str(remap))
+            raise OperationError(f"Invalid remap: {remap}")
         return self
 
     def remap_cbits(self, remap : int|list|range):
@@ -205,7 +205,7 @@ class CircuitIO:
                     for i in range(len(item[2])):
                         item[2][i] = remap[item[2][i]]
         else:
-            raise OperationError('Invalid remap: ' + str(remap))
+            raise OperationError(f"Invalid remap: {remap}")
         return self
 
     def append_circuit_io(self, cir_io_obj):

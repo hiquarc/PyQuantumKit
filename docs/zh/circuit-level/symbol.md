@@ -8,12 +8,12 @@ PyQuantumKit提供了symbol模块 (`pyquantumkit.symbol`) ，此模块基于SymP
 - `pyquantumkit.symbol.qstate`模块提供了基本量子态向量表示（包括ket表示、bra表示和密度矩阵表示）。
 - `pyquantumkit.symbol.circuit`模块提供了若干用于构造量子线路的矩阵表示的函数。
 
-**pyquantumkit.symbol模块的详细内容请[点此查看](../api/symbol.md)。**
+**pyquantumkit.symbol模块的详细内容请[点此查看](./api/symbol.md)。**
 
 **注意：由于Python对于下标的约定是从0开始，pyquantumkit.symbol库涉及下标的参数均按照Python的约定从0开始，这与Mathematica的从1开始的约定不同。**
 
 ## 一、使用量子门对应的矩阵
-`pyquantumkit.symbol.gate`模块中预置了受支持量子门对应的SymPy矩阵对象或生成矩阵对象的函数（对于带参数量子门）。可以直接使用具体的对象名（[查看详情](../api/supported-gates.md)）来引用：
+`pyquantumkit.symbol.gate`模块中预置了受支持量子门对应的SymPy矩阵对象或生成矩阵对象的函数（对于带参数量子门）。可以直接使用具体的对象名（[查看详情](./api/supported-gates.md)）来引用：
 
 ```python
 import pyquantumkit.symbol.gate as PQK_S_GATE
@@ -29,7 +29,7 @@ Matrix([[1/2 - I/2, 1/2 + I/2], [1/2 + I/2, 1/2 - I/2]])
 Matrix([[0.968912421710645, 0, 0, -0.247403959254523*I], [0, 0.968912421710645, -0.247403959254523*I, 0], [0, -0.247403959254523*I, 0.968912421710645, 0], [-0.247403959254523*I, 0, 0, 0.968912421710645]])
 ```
 
-也可以使用`symbol_gate_matrix`函数，传入一个指示门的字符串来引用，该字符串与`apply_gate`函数中的相同（[查看详情](../api/supported-gates.md)）。上述示例中的代码还可以等价地写为：
+也可以使用`symbol_gate_matrix`函数，传入一个指示门的字符串来引用，该字符串与`apply_gate`函数中的相同（[查看详情](./api/supported-gates.md)）。上述示例中的代码还可以等价地写为：
 
 ```python
 import pyquantumkit.symbol.gate as PQK_S_GATE
@@ -40,7 +40,7 @@ print(PQK_S_GATE.symbol_gate_matrix('Rxx', [0.5]))  # Rxx gate with theta=0.5
 ```
 
 ## 二、使用量子态向量
-`pyquantumkit.symbol.qstate`模块中预置了常见量子态的态向量或矩阵表示，例如ket表示 $\ket{0}$ 、bra表示 $\bra{+}$ 、贝尔态的密度矩阵表示 $\ket{\beta_{00}}\bra{\beta_{00}}$ 等。可以直接使用具体的对象名（[查看详情](../api/symbol.md#pyquantumkitsymbolqstate)）来引用：
+`pyquantumkit.symbol.qstate`模块中预置了常见量子态的态向量或矩阵表示，例如ket表示 $\ket{0}$ 、bra表示 $\bra{+}$ 、贝尔态的密度矩阵表示 $\ket{\beta_{00}}\bra{\beta_{00}}$ 等。可以直接使用具体的对象名（[查看详情](./api/symbol.md#pyquantumkitsymbolqstate)）来引用：
 
 ```python
 import pyquantumkit.symbol.qstate as PQK_S_STATE
@@ -87,7 +87,7 @@ Matrix([[sqrt(2)/2, 0, sqrt(2)/2, 0], [0, sqrt(2)/2, 0, sqrt(2)/2], [0, sqrt(2)/
 ```
 
 ### 方法2：利用CircuitIO类导出量子线路的矩阵
-CircuitIO类对象支持以SymPy符号作为含参量子门（例如Rx门）的参数，并可根据对象内已包含的量子门序列计算出整个量子线路的矩阵表示。CircuitIO类对象导出量子线路的矩阵表示的函数为`get_sympy_matrix`（返回SymPy矩阵）和`get_numpy_matrix`（返回NumPy矩阵），函数的具体细节请[点此查看](../api/circuitio.md#get_sympy_matrix)。
+CircuitIO类对象支持以SymPy符号作为含参量子门（例如Rx门）的参数，并可根据对象内已包含的量子门序列计算出整个量子线路的矩阵表示。CircuitIO类对象导出量子线路的矩阵表示的函数为`get_sympy_matrix`（返回SymPy矩阵）和`get_numpy_matrix`（返回NumPy矩阵），函数的具体细节请[点此查看](./api/circuitio.md#get_sympy_matrix)。
 
 **例1'**. 利用CircuitIO类计算例1中量子线路的矩阵表示
 

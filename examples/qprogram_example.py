@@ -1,3 +1,8 @@
+# example/special_qubit_types.py
+#    2026/8/30
+#    Author: Peixun Long
+#    Computing Center, Institute of High Energy Physics, CAS
+
 import pyqpanda3.core as qpanda
 import qiskit
 import qiskit_aer

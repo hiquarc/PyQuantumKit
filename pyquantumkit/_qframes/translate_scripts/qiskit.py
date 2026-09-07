@@ -25,7 +25,7 @@ def CODE(cir_name : str, gate_lib_name : str,
     if g == 'i':
         g = 'id'
     if g == 'm':
-        execstr += ".measure(" + str(qbits) + ", " + str(paras) + ")"
+        execstr += f".measure({qbits}, {paras})"
         return execstr
 
     if g == 'sw':

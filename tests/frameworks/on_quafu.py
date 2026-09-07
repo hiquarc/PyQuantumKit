@@ -9,7 +9,7 @@ import tests.common.test_procedure as T_P
 import tests.common.test_state_prepare as T_SP
 import tests.common.test_program_check as T_PC
 
-RUN_TEST_FRAMEWORK = 'quafu'
+RUN_TEST_FRAMEWORK = 'pyquafu'
 RUN_TEST_MACHINE = simulate
 
 # BEGIN ---------- procedure ----------

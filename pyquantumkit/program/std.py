@@ -5,7 +5,7 @@
 
 from pyquantumkit.program_build.qtype import QVar, QStruct, QTuple, QUnion, QArray, QuantumProgramBuildError, ResultInterpretError
 from pyquantumkit.program_build.builder import QProgramBuilder
-
+from pyquantumkit._qframes.code_translate import get_standard_gatename
 
 class Qubit(QVar):
     def __init__(self, varname : str = None):
@@ -15,22 +15,28 @@ class Qubit(QVar):
     def _measure(self, m_address : int):
         super()._measure(m_address)
         self._builder._built_circuit.apply_measure([self._address], [self._m_address])
-    def _interpret_output_str(self, output : str):
+    def _interpret_(self, output : str) -> str:
         if output[self._m_address] == '0':
             return '0'
         elif output[self._m_address] == '1':
             return '1'
         else:
-            raise ResultInterpretError("Invalid output string '" + output + "'")
+            raise ResultInterpretError(f"Invalid output string '{output}'")
+    def _gate_(self, gate_name : str, qubit_var_list : list, paras : list):
+        return self
 
 
 def gate(gate_name : str, qubit_var_list : list[Qubit], paras : list = None):
     builder = qubit_var_list[0]._builder
     for var in qubit_var_list:
+        if not isinstance(var, QVar):
+            raise QuantumProgramBuildError(f"<{var}> is not qubit variable.")
+        if not hasattr(var, '_gate_'):
+            raise QuantumProgramBuildError(f"<{var}> does not define the attribute '_gate_'. It cannot be regarded as Qubit.")
         if var._builder is not builder:
             raise QuantumProgramBuildError("Qubits belongs to different QProgramBuilder!")
 
-    index_list = [var._address for var in qubit_var_list]
+    index_list = [var._gate_(gate_name, qubit_var_list, paras)._address for var in qubit_var_list]
     builder._apply_gate(gate_name, index_list, paras)
 
 
@@ -40,8 +46,8 @@ class QubitArray(QArray):
         self._length = length
         self._base_obj = Qubit()
         self.init_qarray()
-    def _interpret_output_str(self, output : str):
-        return ''.join(super()._interpret_output_str(output))
+    def _interpret_(self, output : str):
+        return ''.join(super()._interpret_(output))
 
     def create_state_by_01pm_str(self, statestr : str):
         """

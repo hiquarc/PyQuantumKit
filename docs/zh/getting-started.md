@@ -49,7 +49,7 @@ import pyquantumkit as PQK
 ```
 
 ### 2. 利用PyQuantumKit提供的函数编写线路
-这里用到了`apply_gate`和`apply_measure`两个函数，[点此查看](stable/circuit.md)函数详情。
+这里用到了`apply_gate`和`apply_measure`两个函数，[点此查看](circuit-level/circuit.md)函数详情。
 
 ```python
 def ghz_state(circuit, nqbits : int):

@@ -26,6 +26,7 @@ def numeric_equivalence_check(cirmat1 : numpy.array, cirmat2 : numpy.array,
 Returns `True` if the two quantum circuits are judged to be equivalent; otherwise returns `False`.
 
 The specific execution process of the function is as follows: let the matrices corresponding to the two quantum circuits be $A$ and $B$ respectively, and the input `tolerance` parameter be denoted as $\epsilon$.
+
 - If `ignore_global_phase` is set to `False`, the function calculates the norm of the difference between the two matrices $\|A-B\|$ according to the given norm function `norm` and compares it with $\epsilon$. The function returns `True` if and only if $\|A-B\| \leq \epsilon$.
 - If `ignore_global_phase` is set to `True`, the function first finds the element with the largest modulus in $B$, assuming its subscript is $i',j'$; then the function calculates the possible phase difference between $A$ and $B$ through this element subscript: $\kappa=a_{i'j'}/b_{i'j'}$; finally the function calculates the norm $\|A-\kappa B\|$ according to the given norm function `norm` and compares it with $\epsilon$. The function returns `True` if and only if $\|A-\kappa B\| \leq \epsilon$.
 

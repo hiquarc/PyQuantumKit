@@ -26,38 +26,36 @@ def CODE(cir_name : str, gate_lib_name : str,
     #    return ''
     if g == 'M':
         # NOTE: there are some bugs in measure(list, list) in pyqpanda3 (ver 0.3.1)
-        #execstr = " << framework_modules('pyqpanda3').measure(" + str(qbits) + ", " + str(paras) + ")"
+        #execstr = f" << framework_modules('pyqpanda3').measure({qbits}, {paras})"
         # Temporarily use bit-by-bit operation to avoid the bugs in pyqpanda3
         for i in range(len(qbits)):
-            execstr += " << " + glib + "measure(" + str(qbits[i]) + ", " + str(paras[i]) + ")"
+            execstr += f" << {glib}measure({qbits[i]}, {paras[i]})"
         return execstr
     
     # pyqpanda3 does not support SqrtX and SqrtXdag gates,
     #   so translate them into H * S * H and H * Sdag * H
     if g == 'SX':
-        execstr += " << " + glib + "H(" + str(qbits[0]) + ") << " + glib + "S(" + str(qbits[0]) + \
-                   ") << " + glib + "H(" + str(qbits[0]) + ")"
+        execstr += f" << {glib}H({qbits[0]}) << {glib}S({qbits[0]}) << {glib}H({qbits[0]})"
         return execstr
     if g == 'SXD':
-        execstr += " << " + glib + "H(" + str(qbits[0]) + ") << " + glib + "S(" + str(qbits[0]) + \
-                   ").dagger() << " + glib + "H(" + str(qbits[0]) + ")"
+        execstr += f" << {glib}H({qbits[0]}) << {glib}S({qbits[0]}).dagger() << {glib}H({qbits[0]})"
         return execstr
     
     execstr += " << " + glib
     if g in {'CH', 'CY', 'CS'}:
-        execstr += g[1] + "(" + str(qbits[1]) + ").control(" + str(qbits[0]) + ")"
+        execstr += f"{g[1]}({qbits[1]}).control({qbits[0]})"
         return execstr
     if g == 'CSW':
-        execstr += "SWAP(" + str(qbits[1]) + ", " + str(qbits[2]) + ").control(" + str(qbits[0]) + ")"
+        execstr += f"SWAP({qbits[1]}, {qbits[2]}).control({qbits[0]})"
         return execstr
     if g in {'SD', 'TD'}:
-        execstr += g[0] + "(" + str(qbits[0]) + ").dagger()"
+        execstr += f"{g[0]}({qbits[0]}).dagger()"
         return execstr
     if g == 'CSD':
-        execstr += "S(" + str(qbits[1]) + ").dagger().control(" + str(qbits[0]) + ")"
+        execstr += f"S({qbits[1]}).dagger().control({qbits[0]})"
         return execstr
     if g == 'CCZ':
-        execstr += "Z(" + str(qbits[2]) + ").control(" + str(qbits[0:2]) + ")"
+        execstr += f"Z({qbits[2]}).control({qbits[0:2]})"
         return execstr
     
     if g == 'CX':

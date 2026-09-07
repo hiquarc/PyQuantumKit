@@ -249,8 +249,8 @@ print(rec_result)
 然后我们输入一组符合要求的数字，这里输入 `44 58 7 12`，运行结果为：
 
 构建为Qiskit量子线路，然后运行并解读结果为：
-![](../../../imgs/twovars_example_qiskit.jpg)
-![](../../../imgs/twovars_example_qpanda.jpg)
+![](../../imgs/twovars_example_qiskit.jpg)
+![](../../imgs/twovars_example_qpanda.jpg)
 
 显然，整个量子程序需要6+6=12个量子比特，总的量子态为 $\frac{1}{\sqrt{2}}\left(\ket{44} + \ket{58}\right) \otimes \frac{1}{\sqrt{2}}\left(\ket{7} + \ket{12}\right) = \frac{1}{2}(\ket{44}\ket{7} + \ket{58}\ket{7} + \ket{44}\ket{12} + \ket{58}\ket{12})$ 。
 

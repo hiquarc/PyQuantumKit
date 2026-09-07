@@ -165,7 +165,7 @@ def quantum_action(action : Action, framework_indicator : str|int, *args, **kwar
     elif isinstance(framework_indicator, str):
         framework = framework_indicator
     else:
-        raise FrameworkMapError('Invalid framework indicator: ' + str(framework_indicator))
+        raise FrameworkMapError(f"Invalid framework indicator: {framework_indicator}")
     
     if framework.find('pyquantumkit') != -1:
         is_circuit_io = True

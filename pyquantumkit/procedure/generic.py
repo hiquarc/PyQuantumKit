@@ -94,7 +94,7 @@ def append_circuit(dest_qcir, src_qcir, remap : int|list|range = None, inverse :
     elif isinstance(remap, (list, range)):
         remaplist = remap
     else:
-        raise OperationError('Invalid remap: ' + str(remap))
+        raise OperationError(f"Invalid remap: {remap}")
     
     quantum_action(Action.CIRCUIT, 1, dest_qcir, src_qcir, remaplist, inverse)
     return dest_qcir
@@ -148,13 +148,13 @@ def append_mixed_circuit(dest_qp, src_qp, qbits_remap : int|list|range = None, c
     elif isinstance(qbits_remap, (list, range)):
         qrlist = qbits_remap
     else:
-        raise OperationError('Invalid qbits_remap: ' + str(qbits_remap))
+        raise OperationError(f"Invalid qbits_remap: {qbits_remap}")
     if isinstance(cbits_remap, int):
         crlist = [x + cbits_remap for x in get_cbit_list(src_qp)]
     elif isinstance(cbits_remap, (list, range)):
         crlist = cbits_remap
     else:
-        raise OperationError('Invalid cbits_remap: ' + str(cbits_remap))
+        raise OperationError(f"Invalid cbits_remap: {cbits_remap}")
 
     quantum_action(Action.MIXED_CIRCUIT, 1, dest_qp, src_qp, qrlist, crlist)
     return dest_qp

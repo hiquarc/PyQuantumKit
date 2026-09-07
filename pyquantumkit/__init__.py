@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-__version__ = '0.2.0a'
+__version__ = '0.2.0b'
 
 import sys
 import os
@@ -20,9 +20,12 @@ def get_framework_from_type(t : type) -> str:
     modstr = t.__module__
     if modstr.find('pyquantumkit') != -1:
         return 'pyquantumkit'
-    for fname in Supported_Frameworks:
-        if modstr.find(fname) != -1:
-            return fname
+    for lib_name in Supported_Frameworks:
+        for module_name in Supported_Frameworks[lib_name]:
+            if modstr.find(module_name) != -1:
+                return lib_name
+        if modstr.find(lib_name) != -1:
+            return lib_name
     return ''
 
 def get_framework_from_object(obj) -> str:
@@ -50,19 +53,20 @@ def pyquantumkit_init():
                 Supported_Frameworks[rawlist[0]] = rawlist[1:] if len(rawlist) > 1 else []
 
     # Initialize the namespace and version of imported frameworks
-    for fname in Supported_Frameworks:
-        if fname in sys.modules:
-            namespace_items = []
-            for fn_item in Supported_Frameworks[fname]:
-                if fn_item in sys.modules:
-                    namespace_items.append(importlib.import_module(fn_item))
-            Framework_Namespace[fname] = namespace_items
-            Framework_Version[fname] = importlib.metadata.version(fname)
+    for lib_name in Supported_Frameworks:
+        namespace_items = []
+        for fn_item in Supported_Frameworks[lib_name]:
+            if fn_item in sys.modules:
+                namespace_items.append(importlib.import_module(fn_item))
+        Framework_Namespace[lib_name] = namespace_items
+        if namespace_items:
+            Framework_Version[lib_name] = importlib.metadata.version(lib_name)
 
 pyquantumkit_init()
 
 # default imported modules
 from .procedure.generic import *
 from .procedure.circuit_io import CircuitIO
-from ._qframes.user_define import add_extra_framework
 from .program_build.builder import QProgramBuilder
+from ._qframes.user_define import add_extra_framework
+from ._qframes.code_translate import get_standard_gatename
