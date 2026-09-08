@@ -2,6 +2,9 @@
 **这里对PyQuantumKit的一些实验性功能进行说明，这些功能尚处于实验阶段，未经过系统性的测试，且接口在未来可能改变，请谨慎使用。**
 
 ## 模块化量子线路构建
+**警告：随着高级语言级量子程序开发功能的引入，此模块在未来将仅作为内部使用，不建议用户直接使用该模块。**
+
+**替代方案：** 建议使用高级语言级量子程序设计。
 
 量子线路/程序的新建、复制、串联、并联： `new_circuit`, `new_program`, `copy_circuit`, `copy_program`, `append_circuit`, `append_program`, `parallel_circuits`, `parallel_programs`
 
@@ -20,16 +23,19 @@ Pauli测量： `apply_measure_x`, `apply_measure_y`, `apply_measure_z`, `apply_p
 提取出现的运行结果集合：`get_result_str_set`
 
 ## pyquantumkit.state_prepare模块：提供一些量子态制备算法
+**警告：随着高级语言级量子程序开发功能的引入，此模块在未来将被废弃。**
 
-根据一个字符串制备状态： `create_state_by_01pm`, `uncompute_state_by_01pm`, `create_state_by_sqgate_str`, `uncompute_state_by_sqgate_str`
+**替代方案：** `pyquantumkit.program.std`中的`QubitArray`类型和`pyquantumkit.program.quint`中的`QuInt`类型。
 
-计算基态 $\ket{x}$ ： `create_ket_int_le`, `create_ket_int_be`, `uncompute_ket_int_le`, `uncompute_ket_int_be`
+*根据一个字符串制备状态： `create_state_by_01pm`, `uncompute_state_by_01pm`, `create_state_by_sqgate_str`, `uncompute_state_by_sqgate_str`*
 
-互补叠加态 $\frac{1}{\sqrt2}(\ket{x}+e^{i\phi}\ket{\bar{x}})$ ，其中 $\bar{x}$ 是 $x$ 的按位取反， $e^{i\phi}$ 是相对相位： `create_ket_int_plus_eiphi_neg_le`, `create_ket_int_plus_eiphi_neg_be`, `uncompute_ket_int_plus_eiphi_neg_le`, `uncompute_ket_int_plus_eiphi_neg_be`
+*计算基态 $\ket{x}$ ： `create_ket_int_le`, `create_ket_int_be`, `uncompute_ket_int_le`, `uncompute_ket_int_be`*
 
-二值叠加态 $\frac{1}{\sqrt2}(\ket{x}+e^{i\phi}\ket{y})$ ： `create_ket_int1_plus_eiphi_ket_int2_le`, `create_ket_int1_plus_eiphi_ket_int2_be`, `uncompute_ket_int1_plus_eiphi_ket_int2_le`, `uncompute_ket_int1_plus_eiphi_ket_int2_be`
+*互补叠加态 $\frac{1}{\sqrt2}(\ket{x}+e^{i\phi}\ket{\bar{x}})$ ，其中 $\bar{x}$ 是 $x$ 的按位取反， $e^{i\phi}$ 是相对相位： `create_ket_int_plus_eiphi_neg_le`, `create_ket_int_plus_eiphi_neg_be`, `uncompute_ket_int_plus_eiphi_neg_le`, `uncompute_ket_int_plus_eiphi_neg_be`*
 
-Pauli算子的本征态： `create_pauli_eigenstate`, `uncompute_pauli_eigenstate`
+*二值叠加态 $\frac{1}{\sqrt2}(\ket{x}+e^{i\phi}\ket{y})$ ： `create_ket_int1_plus_eiphi_ket_int2_le`, `create_ket_int1_plus_eiphi_ket_int2_be`, `uncompute_ket_int1_plus_eiphi_ket_int2_le`, `uncompute_ket_int1_plus_eiphi_ket_int2_be`*
+
+*Pauli算子的本征态： `create_pauli_eigenstate`, `uncompute_pauli_eigenstate`*
 
 ## pyquantumkit.library模块：提供一些常用量子算法
 

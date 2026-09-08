@@ -107,14 +107,14 @@ def create_ket_int_plus_eiphi_neg_le(q_circuit, number : int, phi : float, qbitl
 
     apply_gate(q_circuit, 'H', [qbitlist[0]])
     if ((number & 1) == 1):
-        apply_gate(q_circuit, 'U1', [qbitlist[0]], [phi])
+        apply_gate(q_circuit, 'U1', [qbitlist[0]], [-phi])
         for i in range(1, N):
             if ((temp & 1) == 0):
                 apply_gate(q_circuit, 'X', [qbitlist[i]])
             temp >>= 1
             apply_gate(q_circuit, 'CX', [qbitlist[0], qbitlist[i]])
     else:
-        apply_gate(q_circuit, 'U1', [qbitlist[0]], [-phi])
+        apply_gate(q_circuit, 'U1', [qbitlist[0]], [phi])
         for i in range(1, N):
             if ((temp & 1) == 1):
                 apply_gate(q_circuit, 'X', [qbitlist[i]])

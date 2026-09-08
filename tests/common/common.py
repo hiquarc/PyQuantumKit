@@ -80,9 +80,9 @@ def T_equivalence(framework : str, machine, nqbits : int, ncbits : int,
     return res
 
 
-# ---------- Common test quantum programs ----------
+# ---------- Common test quantum circuits ----------
 
-# Correct programs:
+# Correct circuits:
 def EmptyCir(framework : str):
     return new_circuit(framework, 4)
 
@@ -158,7 +158,7 @@ def Cir1C(framework : str):
     cio >> qc
     return qc
 
-# Buggy programs:
+# Buggy circuits:
 def Empty_bug1(framework : str):
     qc = new_mixed_circuit(framework, 4, 1)
     apply_measure(qc, [0], [0])

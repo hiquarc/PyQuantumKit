@@ -190,11 +190,11 @@ def qmain(builder : QProgramBuilder):
 
 ### 定义结构体
 
-用户通过派生`QStruct`类来定义自己的结构体，在派生类的`__init__()`中定义各字段。
+用户通过派生`QStruct`类来定义自己的结构体，在派生类的`__init__`方法中定义各字段。
 ```python
 class MyStruct(QStruct):
     def __init__(self, varname=None):
-        # 这一行是必须的，调用父类的__init__()
+        # 这一行是必须的，调用父类的__init__
         super().__init__(varname)
 
         # 定义结构体的各字段
