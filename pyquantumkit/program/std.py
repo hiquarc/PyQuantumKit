@@ -8,11 +8,14 @@ from pyquantumkit.program_build.builder import QProgramBuilder
 from pyquantumkit._qframes.code_translate import get_standard_gatename
 
 class Qubit(QVar):
+    """
+    Qubit: the basic quantum type for "quantum bit".
+    """
     def __init__(self, varname : str = None):
         super().__init__(varname)
     def n_qubits(self) -> int:
         return 1
-    def _measure(self, m_address : int):
+    def _measure(self, m_address : int) -> None:
         super()._measure(m_address)
         self._builder._built_circuit.apply_measure([self._address], [self._m_address])
     def _interpret_(self, output : str) -> str:
@@ -26,8 +29,17 @@ class Qubit(QVar):
         return self
 
 
-def gate(gate_name : str, qubit_var_list : list[Qubit], paras : list = None):
+def gate(gate_name : str, qubit_var_list : list[Qubit], paras : list = None) -> None:
+    """
+    Apply a quantum gate on one or several Qubit variables.
+
+        gate_name      : (str) a string to identify the quantum gate.
+        qubit_var_list : (list[Qubit]) the list of applied Qubit variables.
+        paras          : (optional) the parameters of the gate
+    """
     builder = qubit_var_list[0]._builder
+    if builder is None or (not isinstance(builder, QProgramBuilder)):
+        raise QuantumProgramBuildError("Cannot load the builder. Do you forget to declare the quantum variable?")
     for var in qubit_var_list:
         if not isinstance(var, QVar):
             raise QuantumProgramBuildError(f"<{var}> is not qubit variable.")
@@ -41,7 +53,16 @@ def gate(gate_name : str, qubit_var_list : list[Qubit], paras : list = None):
 
 
 class QubitArray(QArray):
+    """
+    QubitArray: the quantum type for the array of Qubit.
+    """
     def __init__(self, length : int, varname = None):
+        """
+        Create an array for Qubit.
+
+            length  : (int) the number of elements.
+            varname : (str) the name of the QArray variable.
+        """
         super().__init__(varname)
         self._length = length
         self._base_obj = Qubit()
@@ -49,7 +70,7 @@ class QubitArray(QArray):
     def _interpret_(self, output : str):
         return ''.join(super()._interpret_(output))
 
-    def create_state_by_01pm_str(self, statestr : str):
+    def create_state_by_01pm_str(self, statestr : str) -> None:
         """
         Create a state according to a 0/1/+/- string on the QubitArray.
 
@@ -70,7 +91,7 @@ class QubitArray(QArray):
             elif statestr[i] == '-':
                 gate('X', [self[i]])
                 gate('H', [self[i]])
-    def uncompute_state_by_01pm_str(self, statestr : str):
+    def uncompute_state_by_01pm_str(self, statestr : str) -> None:
         """
         Uncompute a state according to a 0/1/+/- string on the QubitArray.
 
@@ -90,7 +111,7 @@ class QubitArray(QArray):
                 gate('H', [self[i]])
                 gate('X', [self[i]])
 
-    def create_complementary_superposition(self, binstr : str, phi : float = None):
+    def create_complementary_superposition(self, binstr : str, phi : float = None) -> None:
         """
         Create a complementary superposition state according to statestr.
 
@@ -108,20 +129,20 @@ class QubitArray(QArray):
         gate('H', [self[0]])
         if (binstr[0] == '1'):
             if phi is not None:
-                gate('U1', [self[0]], [phi])
+                gate('U1', [self[0]], [-phi])
             for i in range(1, N):
                 if (binstr[i] == '0'):
                     gate('X', [self[i]])
                 gate('CX', [self[0], self[i]])
         else:
             if phi is not None:
-                gate('U1', [self[0]], [-phi])
+                gate('U1', [self[0]], [phi])
             for i in range(1, N):
                 if (binstr[i] == '1'):
                     gate('X', [self[i]])
                 gate('CX', [self[0], self[i]])
 
-    def create_two_binstr_superposition(self, binstr1 : str, binstr2 : str, phi : float = None):
+    def create_two_binstr_superposition(self, binstr1 : str, binstr2 : str, phi : float = None) -> None:
         """
         Create a two-value superposition state according to two binary strings.
 
@@ -154,21 +175,28 @@ class QubitArray(QArray):
             gate('H', [self[difflist[0]]])
             if (binstr1[difflist[0]] == '1'):
                 if phi is not None:
-                    gate('U1', [self[difflist[0]]], [phi])
+                    gate('U1', [self[difflist[0]]], [-phi])
                 for i in range(1, Ndiff):
                     if (binstr1[difflist[i]] == '0'):
                         gate('X', [self[difflist[i]]])
                     gate('CX', [self[difflist[0]], self[difflist[i]]])
             else:
                 if phi is not None:
-                    gate('U1', [self[difflist[0]]], [-phi])
+                    gate('U1', [self[difflist[0]]], [phi])
                 for i in range(1, Ndiff):
                     if (binstr1[difflist[i]] == '1'):
                         gate('X', [self[difflist[i]]])
                     gate('CX', [self[difflist[0]], self[difflist[i]]])
 
 
-def make_qarray(base : type|QVar, length : int, varname : str = None):
+def make_qarray(base : type|QVar, length : int, varname : str = None) -> QArray:
+    """
+    Create an array for a given quantum type.
+
+        base    : (type or QVar) indicate the base type of the QArray.
+        length  : (int) the number of elements.
+        varname : (str) the name of the QArray variable.
+    """
     base_obj = None
     if isinstance(base, QVar):
         base_obj = base
@@ -185,9 +213,15 @@ def make_qarray(base : type|QVar, length : int, varname : str = None):
     return QArrayType(varname)
 
 
-def make_qtuple(element_list : tuple[type|QVar], varname : str = None):
+def make_qtuple(element_type : tuple[type|QVar], varname : str = None) -> QTuple:
+    """
+    Create an array for a given quantum type.
+
+        element_type : (tuple[type|QVar]) indicate the base type of each element.
+        varname      : (str) the name of the QArray variable.
+    """
     element_obj_list = []
-    for element in element_list:
+    for element in element_type:
         if isinstance(element, QVar):
             element_obj_list.append(element)
         elif isinstance(element, type) and issubclass(element, QVar):

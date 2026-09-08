@@ -7,6 +7,9 @@ from pyquantumkit.classical.common import get_int_from_binstr_le, get_binstr_fro
 from .std import QStruct, QubitArray, gate
 
 class QuUnsignedInt(QStruct):
+    """
+    QuUnsignedInt: the quantum type for unsigned integers.
+    """
     def __init__(self, length, varname = None):
         super().__init__(varname)
         self.__qubits = QubitArray(length)
@@ -77,5 +80,6 @@ class QuUnsignedInt(QStruct):
         self.__qubits.create_two_binstr_superposition(xbits, ybits, phi)
 
 
+# QuInt is the abbreviation of QuUnsignedInt
 QuInt = QuUnsignedInt
 

@@ -8,6 +8,9 @@ from pyquantumkit._qframes.framework_map import get_reverse_output_str
 from .qtype import QVar, QuantumProgramBuildError
 
 class QProgramBuilder:
+    """
+    QProgramBuilder: the class to build the quantum program.
+    """
     def __init__(self):
         self._built_circuit = CircuitIO()
         self._qvars = {}            # name : [obj, type, address, measure_address]
@@ -20,7 +23,10 @@ class QProgramBuilder:
         self.__declared_ancilla = False
         self.__measured = False
 
-    def clear(self):
+    def clear(self) -> None:
+        """
+        Clear the builder.
+        """
         self._built_circuit.clear()
         self._qvars.clear()
         self._qancillas.clear()
@@ -38,6 +44,11 @@ class QProgramBuilder:
         self._built_circuit.apply_gate(gate_name, index_list, paras)
 
     def declare_qvars(self, *args) -> None:
+        """
+        Declare the quantum variables and associate them to the builder.
+
+            *args : quantum variables.
+        """
         if self.__declared_qvars:
             raise QuantumProgramBuildError("declare_qvars() can only be called once!")
         self.__declared_qvars = True
@@ -57,6 +68,11 @@ class QProgramBuilder:
         self.__n_variable_qubits = current_address
 
     def measure(self, *args) -> None:
+        """
+        Measure the quantum variables.
+
+            *args : quantum variables.
+        """
         if self.__measured:
             raise QuantumProgramBuildError("Measurement can only be executed once.")
         current_m_address = 0
@@ -74,20 +90,44 @@ class QProgramBuilder:
         self.__measured = True
 
     def measure_all(self) -> None:
+        """
+        Measure all quantum variables according to the parameters when call declare_qvars(...)
+        """
         measure_list = []
         for varname in self._qvars:
             measure_list.append(self._qvars[varname][0])
         self.measure(*measure_list)
 
     def build(self, main_func : callable, *args, **kwargs) -> None:
+        """
+        Build the quantum program into quantum circuit.
+
+            main_func       : (callable) the quantum main function.
+            *args, **kwargs : other parameters of the quantum main function.
+        """
         main_func(self, *args, **kwargs)
+        self._built_circuit.set_nqbits(self.__n_variable_qubits)
+        self._built_circuit.set_ncbits(self.__n_measure_cbits)
+
     def get_built_circuit(self) -> CircuitIO:
+        """
+        Get the built CircuitIO object.
+        """
         return self._built_circuit
     
     def _print_qvars(self):
+        """
+        (Inner function) print the quantum variables in the builder.
+        """
         print(self._qvars)
 
     def interpret_output_str(self, output_str : str, framework : str = None) -> dict:
+        """
+        Interpret an output 0/1 string.
+
+            output_str : (str) the 0/1 string.
+            framework  : (str, default None) according to which framework's convention.
+        """
         reverse = False if framework is None else get_reverse_output_str(framework)
         correct_str = output_str[::-1] if reverse else output_str
         ret = {}
@@ -96,6 +136,12 @@ class QProgramBuilder:
         return ret
 
     def interpret_result_dict(self, output_dict : dict, framework : str = None) -> list:
+        """
+        Interpret an output dict.
+
+            output_str : (dict) the dict of the running results.
+            framework  : (str, default None) according to which framework's convention.
+        """
         ret = []
         for output_str in output_dict:
             result = self.interpret_output_str(output_str, framework)

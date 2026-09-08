@@ -61,6 +61,7 @@ def qmain(builder : QProgramBuilder, a : int, b : int, c : int, d : int):
 ```
 
 各种类型的量子变量占据的量子比特数如下：
+
 - `Qubit`类型变量占据1个量子比特；
 - 数组（QArray）变量占据的量子比特数等于数组长度乘以每个元素占据的量子比特数；
 - 结构体（QStruct）和元组（QTuple）变量占据的量子比特数等于其各字段占据的量子比特数之和；
