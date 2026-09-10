@@ -47,10 +47,10 @@ class MyUnion(QUnion):
 <img src=../../../../imgs/memory_union_zh.jpg width=50% />
 </div>
 
-### 获取量子变量的量子比特数：n_qubits()方法
+### 获取量子变量的量子比特数：`n_qubits()`方法
 每个量子变量都需要占据一个或多个量子比特，可以调用量子变量的`n_qubits()`方法获得其占据的量子比特数。
 ```python
-def qmain(builder : QProgramBuilder, a : int, b : int, c : int, d : int):
+def qmain(builder : QProgramBuilder):
     twodim = make_qarray(QubitArray(6), 2, 'twodim')
     mystruct = MyStruct('mystruct')
     myunion = MyUnion('myunion')
@@ -67,13 +67,15 @@ def qmain(builder : QProgramBuilder, a : int, b : int, c : int, d : int):
 - 结构体（QStruct）和元组（QTuple）变量占据的量子比特数等于其各字段占据的量子比特数之和；
 - 联合体（QUnion）变量占据的量子比特数等于其最长字段占据的量子比特数。
 
+在对复合量子数据类型的变量调用`n_qubits()`方法时，会递归调用其内部元素或字段的`n_qubits()`方法来完成计算。
+
 ## 二、量子比特的分配
 为什么在声明量子变量时需要调用`declare_qvars(...)`？以及为什么在初始化结构体和联合体时需要调用`init_qstruct(...)`和`init_qunion(...)`？这与量子比特的分配过程有关，本节对此做一个简要的说明。
 
 在将量子程序编译为量子线路的过程中，需要为各量子变量分配在最终生成的量子线路中的量子比特。`QProgramBuilder`类的`declare_qvars()`方法即用于完成此过程。该方法会按照传入的量子变量的顺序，从下标0开始依次为各量子变量分配量子比特，每个量子变量分配的量子比特数等于其需要占据的量子比特数（`n_qubits()`方法的返回值）。
 例如，下列程序
 ```python
-def qmain(builder : QProgramBuilder, a : int, b : int, c : int, d : int):
+def qmain(builder : QProgramBuilder):
     qarr2 = QubitArray(6, 'qarr2')
     qarr1 = QubitArray(6, 'qarr1')
     builder.declare_qvars(qarr1, qarr2)
@@ -86,6 +88,12 @@ def qmain(builder : QProgramBuilder, a : int, b : int, c : int, d : int):
 
 绝对地址`_address`记录该量子变量在编译生成的最终量子线路中对应的起始量子比特下标，它的默认值为`None`，表明该量子变量未被分配量子比特。在调用`declare_qvars()`时，各量子变量的`_address`会被修改为相应的下标整数值。事实上，除了在main函数中直接声明的量子变量的`_address`会被确定外，各量子变量内部的元素或字段的`_address`值也会被确定。确定量子变量内部的元素或字段的`_address`需要用到相对地址的概念。
 
-相对地址`_relative_address`记录该量子变量相对于其外层量子变量（例如结构体字段相对于结构体本身）的地址偏移量值。在调用`init_qstruct()`和`init_qunion()`时，结构体或联合体内各字段的`_relative_address`会被计算出来。其中，结构体各字段的`_relative_address`会按照调用`init_qstruct()`中的参数顺序依次完成分配，为每个字段分配的量子比特数等于其需要占据的量子比特数。而联合体调用`init_qunion()`时所有字段的`_relative_address`都会被设置为0。事实上，在定义数组和元组时也存在类似的计算相对地址的过程，只不过这个过程被封装在`make_qarray()`和`make_qtuple()`函数中了。
+相对地址`_relative_address`记录该量子变量相对于其外层量子变量（例如结构体字段相对于结构体本身）的地址偏移量值。在调用`init_qstruct()`和`init_qunion()`时，结构体或联合体内各字段的`_relative_address`会被计算出来。其中，结构体各字段的`_relative_address`会按照调用`init_qstruct()`中的参数顺序依次完成分配，为每个字段分配的量子比特数等于其需要占据的量子比特数。而联合体调用`init_qunion()`时所有字段的`_relative_address`都会被设置为0。
 
-在调用`declare_qvars()`为量子变量分配量子比特时，其内部的元素或字段的`_address`值也会被确定。计算方式是：内部元素或字段的绝对地址`_address`被设定为外层变量的绝对地址`_address`加上该元素或字段的相对地址`_relative_address`。
+事实上，在定义数组和元组时也存在类似的计算相对地址的过程，只不过这个过程被封装在`make_qarray()`和`make_qtuple()`函数中了。
+
+在main函数中调用`declare_qvars()`为量子变量分配量子比特时，其内部的元素或字段的`_address`值也会被确定，计算公式是：
+
+**变量内部字段/元素的绝对地址 := 变量本身的绝对地址 + 字段/元素的相对地址**
+
+并且，对于复合数据类型，计算`_address`的过程会对其内部字段/元素递归调用。因而无论复合数据类型嵌套了多少层，其内部各层次变量的绝对地址都能被计算出来。得到各个量子变量及其内部元素或字段的绝对地址（即其在量子线路中的起始量子比特下标）后，对量子变量的操作就很容易翻译为量子线路上对具体量子比特的操作了。

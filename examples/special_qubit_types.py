@@ -76,5 +76,6 @@ qpanda_qvm = qpanda.CPUQVM()
 qpanda_qvm.run(qpanda_cir, 1000)
 qpanda_result = qpanda_qvm.result().get_counts()
 
-rec_result = qpbuilder.interpret_result_dict(qpanda_result, 'pyqpanda3')
+rec_result = qpbuilder.interpret_result_dict(qpanda_result, \
+                QProgramBuilder.framework_interpret_protocol('pyqpanda3'))
 print(rec_result)

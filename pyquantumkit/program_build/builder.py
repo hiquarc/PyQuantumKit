@@ -5,7 +5,7 @@
 
 from pyquantumkit import CircuitIO
 from pyquantumkit._qframes.framework_map import get_reverse_output_str
-from .qtype import QVar, QuantumProgramBuildError
+from .qtype import QVar, QuantumProgramBuildError, ResultInterpretError
 
 class QProgramBuilder:
     """
@@ -16,6 +16,8 @@ class QProgramBuilder:
         self._qvars = {}            # name : [obj, type, address, measure_address]
         self._qancillas = {}
         self._measure_qvars = []
+
+        self.__build_options = {}
         self.__n_variable_qubits = 0
         self.__n_ancilla_qubits = 0
         self.__n_measure_cbits = 0
@@ -31,6 +33,8 @@ class QProgramBuilder:
         self._qvars.clear()
         self._qancillas.clear()
         self._measure_qvars.clear()
+
+        self.__build_options.clear()
         self.__n_variable_qubits = 0
         self.__n_ancilla_qubits = 0
         self.__n_measure_cbits = 0
@@ -73,6 +77,8 @@ class QProgramBuilder:
 
             *args : quantum variables.
         """
+        if 'ignore_measure' in self.__build_options and self.__build_options['ignore_measure']:
+            return
         if self.__measured:
             raise QuantumProgramBuildError("Measurement can only be executed once.")
         current_m_address = 0
@@ -93,10 +99,20 @@ class QProgramBuilder:
         """
         Measure all quantum variables according to the parameters when call declare_qvars(...)
         """
+        if 'ignore_measure' in self.__build_options and self.__build_options['ignore_measure']:
+            return
         measure_list = []
         for varname in self._qvars:
             measure_list.append(self._qvars[varname][0])
         self.measure(*measure_list)
+
+    def set_build_options(self, **kwargs) -> None:
+        """
+        Set the build options.
+
+            **kwargs : the dict of options
+        """
+        self.__build_options = kwargs
 
     def build(self, main_func : callable, *args, **kwargs) -> None:
         """
@@ -121,31 +137,73 @@ class QProgramBuilder:
         """
         print(self._qvars)
 
-    def interpret_output_str(self, output_str : str, framework : str = None) -> dict:
+    def interpret_output_str(self, output_str : str, protocol : str = 'l') -> dict:
         """
         Interpret an output 0/1 string.
 
             output_str : (str) the 0/1 string.
-            framework  : (str, default None) according to which framework's convention.
+            protocol   : (str) the protocol in interpretation, default 'l'.
+                - 'l' or 'L': interpret from left, i.e., output_str[0] associated with the first qubit
+                - 'r' or 'R': interpret from right, i.e., output_str[0] associated with the last qubit
+
+        Return the dict with form {qvar1: value1, qvar2: value2, ...}
         """
-        reverse = False if framework is None else get_reverse_output_str(framework)
-        correct_str = output_str[::-1] if reverse else output_str
+        if len(output_str) != self.__n_measure_cbits:
+            raise ResultInterpretError(\
+                f"The length of <output_str> {len(output_str)} is not match the number of measure bits {self.__n_measure_cbits}")
+
+        correct_str = output_str
+        if protocol.lower() == 'l':
+            pass
+        elif protocol.lower() == 'r':
+            correct_str = output_str[::-1]
+        else:
+            raise ResultInterpretError(f"Unsupported interpret protocol '{protocol}'")
+
         ret = {}
         for variable in self._measure_qvars:
             ret[variable.get_varname()] = variable._interpret_(correct_str)
         return ret
 
-    def interpret_result_dict(self, output_dict : dict, framework : str = None) -> list:
+    def interpret_result_dict(self, output_dict : dict, protocol : str = 'l') -> list:
         """
         Interpret an output dict.
 
             output_str : (dict) the dict of the running results.
-            framework  : (str, default None) according to which framework's convention.
+            protocol   : (str) the protocol in interpretation, default 'l'.
+                - 'l' or 'L': interpret from left, i.e., output_str[0] associated with the first qubit
+                - 'r' or 'R': interpret from right, i.e., output_str[0] associated with the last qubit
+
+        Return the list with form [(interpreted result 1, times1), (interpreted result 2, times2), ...]
         """
+        if output_dict is None:
+            return None
         ret = []
         for output_str in output_dict:
-            result = self.interpret_output_str(output_str, framework)
+            result = self.interpret_output_str(output_str, protocol)
             times = output_dict[output_str]
             ret.append((result, times))
         return ret
-    
+
+    @staticmethod
+    def framework_interpret_protocol(framework : str) -> str:
+        """
+        Get the interpret protocol of the framework
+
+            framework : (str) the framework name
+        """
+        if get_reverse_output_str(framework):
+            return 'r'
+        else:
+            return 'l'
+
+    def n_qvars_qubits(self) -> int:
+        """
+        Get the number of qubits for quantum variables.
+        """
+        return self.__n_variable_qubits
+    def n_measure_cbits(self) -> int:
+        """
+        Get the number of cbits for storing measurement results.
+        """
+        return self.__n_measure_cbits

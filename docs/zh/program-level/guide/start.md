@@ -7,9 +7,13 @@ PyQuantumKit提供的高级语言级量子编程能力，使得用户可以利�
 
 main函数的结构分为**变量声明、函数主体、测量操作**三大部分，且**必须保持此顺序**。
 
-- 变量声明部分首先在函数体内定义局部变量，定义完成后调用`builder.declare_qvars(*args)`（这里的`builder`为main函数的第一个参数）函数将局部变量与`builder`相关联，以使其能进行后续量子比特分配和编译为量子线路的操作。**该函数需要且只能被调用一次**，因而如果有多个变量需要声明时，直接在参数列表中依次列出，例如`builder.declare_qvars(var1, var2, var3)`。如果该函数重复调用多次，则会抛出`QProgramBuildError`异常。
-- 函数主体部分编写对已声明的量子变量的具体操作，只有声明过（即在`declare_qvars()`的参数中列出过）的变量才能进行操作。
-- 测量部分只需调用`builder.declare_qvars(*args)`函数，其中参数依次列出需要测量的量子变量。和声明一样，该函数只能被调用一次，如果该函数重复调用多次，则会抛出`QProgramBuildError`异常。测量过后无法再对量子变量进行其他操作，否则会抛出`QProgramBuildError`异常。
+- **变量声明**部分首先在函数体内定义局部变量，定义完成后调用`builder.declare_qvars(*args)`（这里的`builder`为main函数的第一个参数）函数将局部变量与`builder`相关联，以使其能进行后续量子比特分配和编译为量子线路的操作。**该函数只能被调用一次**，因而如果有多个变量需要声明时，直接在参数列表中依次列出，例如`builder.declare_qvars(var1, var2, var3)`。如果该函数重复调用多次，则会抛出`QProgramBuildError`异常。
+- **函数主体**部分编写对已声明的量子变量的具体操作，只有声明过（即在`declare_qvars()`的参数中列出过）的变量才能进行操作。
+- **测量操作**部分只需调用`builder.declare_qvars(*args)`函数，其中参数依次列出需要测量的量子变量。和声明一样，该函数只能被调用一次，如果该函数重复调用多次，则会抛出`QProgramBuildError`异常。测量过后无法再对量子变量进行其他操作，否则会抛出`QProgramBuildError`异常。
+
+只要函数主体部分中存在对任何量子变量的操作，那么变量声明部分就是必须的，因为只有被声明过的量子变量才能在main函数中进行操作。
+
+没有对任何量子变量进行测量的量子程序也能顺利编译为量子线路，只是这样的量子线路。
 
 下列程序声明了两个量子比特变量`q1`和`q2`，并在其上调用`gate()`函数来应用一个H门和一个CNOT门，最终制备Bell态。
 ```python
@@ -84,26 +88,35 @@ qpbuilder.get_built_circuit()
 对代表一次测量的输出结果的`'0'`/`'1'`串，可以对已完成线路编译的`QProgramBuilder`对象调用`interpret_output_str()`方法，方法原型为：
 
 ```python
-def interpret_output_str(self, output_str : str, framework : str = None) -> dict:
+def interpret_output_str(self, output_str : str, protocol : str = 'l') -> dict:
 ```
 - `output_str`是代表一次测量结果的`'0'`/`'1'`字符串。请注意，输入的字符串的长度必须与对应的量子程序对应的测量比特数相匹配，且不能包含除`'0'`,`'1'`外的其他字符。
-- `framework`参数指定按哪个量子开发框架的输出结果约定进行解读，必须为首支持的量子开发框架名。例如，指定为`'qiskit'`, `'pyqanda3'`则右开始解读，指定为`'pyquafu'`则从左开始解读。**若未指定，则默认从左开始解读。**
+- `protocol`参数指定按照何种约定进行解读，目前支持两种协议：
+    - `'l'`或`'L'`：按照从左开始约定进行解读（默认方式）；
+    - `'r'`或`'R'`：按照从右开始约定进行解读。
+
+不同的量子开发框架右不同的解读顺序约定，例如`'qiskit'`, `'pyqanda3'`为从右开始，`'pyquafu'`则为从左开始。可以调用`QProgramBuilder`类的`framework_interpret_protocol()`静态方法获得具体框架的解读约定：
+```python
+print(QProgramBuilder.framework_interpret_protocol('qiskit'))       # -> 'r'
+print(QProgramBuilder.framework_interpret_protocol('pyqpanda3'))    # -> 'r'
+print(QProgramBuilder.framework_interpret_protocol('pyquafu'))      # -> 'l'
+```
 
 现在考虑前文提到的制备Bell态并测量的量子程序，它包含两个量子比特，因而测量结果`'0'`/`'1'`串的长度为2。测量结果会被解读为 `量子变量 : 取值` 的形式：
 
 ```python
-print(qpbuilder.interpret_output_str('00', 'qiskit'))  #输出：{'q1': '0', 'q2': '0'}
-print(qpbuilder.interpret_output_str('01', 'qiskit'))  #输出：{'q1': '1', 'q2': '0'}
-print(qpbuilder.interpret_output_str('10', 'qiskit'))  #输出：{'q1': '0', 'q2': '1'}
-print(qpbuilder.interpret_output_str('11', 'qiskit'))  #输出：{'q1': '1', 'q2': '1'}
+print(qpbuilder.interpret_output_str('01', 'l'))    # -> {'q1': '0', 'q2': '1'}
+print(qpbuilder.interpret_output_str('10', 'l'))    # -> {'q1': '1', 'q2': '0'}
+print(qpbuilder.interpret_output_str('01', 'r'))    # -> {'q1': '1', 'q2': '0'}
+print(qpbuilder.interpret_output_str('10', 'r'))    # -> {'q1': '0', 'q2': '1'}
 ```
 
 ### 运行结果字典的解读
-由于在大多数量子开发框架中，量子程序运行的结果是由形如 `测量`'0'`/`'1'`串 : 出现次数` 的项构成的字典，可以使用`QProgramBuilder`对象的`interpret_output_dict`成员函数来解读整个结果字典。该函数的参数的原型为：
+由于在大多数量子开发框架中，量子程序运行的结果是由形如 `测量结果'0'/'1'字符串 : 出现次数` 的项构成的字典，可以使用`QProgramBuilder`对象的`interpret_result_dict()`方法来解读整个结果字典。该函数的参数的原型为：
 ```python
-def interpret_result_dict(self, output_dict : dict, framework : str = None) -> list:
+def interpret_result_dict(self, output_dict : dict, protocol : str = 'l') -> list:
 ```
-其中`output_dict`是测量结果字典，通常可以直接使用量子线路在`framework`参数相应的量子开发框架上运行结果的字典。
+其中`output_dict`是测量结果字典，通常可以直接使用量子线路在`framework`参数相应的量子开发框架上运行结果的字典。`protocol`参数指定按照何种约定进行解读（目前支持`l`和`r`）。
 
 ```python
 qiskit_cir = qiskit.QuantumCircuit(2, 2)
@@ -113,7 +126,8 @@ qiskit_sim = qiskit_aer.AerSimulator()
 result = qiskit_sim.run(qiskit_cir, shots = 1000).result().get_counts()
 
 # call interpret_result_dict()
-rec_result = qpbuilder.interpret_result_dict(result, 'qiskit')
+rec_result = qpbuilder.interpret_result_dict(result, \
+                QProgramBuilder.framework_interpret_protocol('qiskit'))
 print(rec_result)
 ```
 上述代码的运行结果为：
