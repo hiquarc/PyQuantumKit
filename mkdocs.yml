@@ -73,9 +73,9 @@ nav:
       - 演示示例: zh/program-level/example-program.md
       - 高级语言级量子编程指南:
         - 开始编写量子程序: zh/program-level/guide/start.md
-        # - 量子变量的声明: 
         - 量子类型系统: zh/program-level/guide/type.md
         - 量子变量内存布局和量子比特分配: zh/program-level/guide/memory.md
+        - 测量结果的存放与解读: zh/program-level/guide/measure.md
         - 自定义量子数据类型: zh/program-level/guide/user-define.md 
         # - 经典-量子混合编程: 
     - 实际应用案例:

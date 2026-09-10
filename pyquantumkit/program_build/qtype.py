@@ -214,9 +214,11 @@ class QUnion(QVar, abc.ABC):
             # Locate each item of QUnion.
             item._locate(builder, self._address)
     def _measure(self, m_address : int) -> None:
+        super()._measure(m_address)
+        if not self._items:
+            return
         if self._activity_item is None:
             raise QuantumProgramBuildError("No activity item is specified before measurement.")
-        super()._measure(m_address)
         # Only the activity item will be measured.
         self._activity_item._measure(self._m_address)
 
@@ -230,6 +232,8 @@ class QUnion(QVar, abc.ABC):
                 ret = item_nq if item_nq > ret else ret
         return ret
     def n_measure_cbits(self) -> int|None:
+        if not self._items:
+            return 0
         if self._activity_item is None:
             raise QuantumProgramBuildError("No activity item is specified.")
         return self._activity_item.n_measure_cbits()
@@ -248,6 +252,8 @@ class QUnion(QVar, abc.ABC):
         self._activity_item = act_item
 
     def _interpret_(self, output : str):
+        if not self._items:
+            return {}
         if self._activity_item is None:
             raise QuantumProgramBuildError("No activity item is specified.")
         ret = {}
@@ -313,14 +319,16 @@ class QArray(QVar, abc.ABC):
             return 0
         return self._length * base_nq
     def n_measure_cbits(self) -> int|None:
-        if self._length is None:
-            return None
-        base_nmc = self._base_obj.n_measure_cbits()
-        if base_nmc is None:
-            return None
-        if self._length == 0:
-            return 0
-        return self._length * base_nmc
+        # Note that QArray maybe contain QUnions and different items may have different activity items.
+        #     The n_measure_cbits needs to be calculated item by item, just like QStruct.
+        ret = 0
+        for item in self._items:
+            item_nmc = item.n_measure_cbits()
+            if item_nmc is None:
+                return None
+            else:
+                ret += item_nmc
+        return ret
     
     def __len__(self) -> int|None:
         return self._length

@@ -71,7 +71,8 @@ result = qiskit_sim.run(qiskit_cir, shots = 1000).result().get_counts()
 print(result)
 
 # Call interpret_result_dict() of the QProgramBuilder object to interpret the result dict
-rec_result = qpbuilder.interpret_result_dict(result, 'qiskit')
+rec_result = qpbuilder.interpret_result_dict(result, \
+                QProgramBuilder.framework_interpret_protocol('qiskit'))
 print(rec_result)
 
 
@@ -91,5 +92,6 @@ qpanda_result = qpanda_qvm.result().get_counts()
 print(qpanda_result)
 
 # Call interpret_result_dict() of the QProgramBuilder object to interpret the result dict
-rec_result = qpbuilder.interpret_result_dict(qpanda_result, 'pyqpanda3')
+rec_result = qpbuilder.interpret_result_dict(qpanda_result, \
+                QProgramBuilder.framework_interpret_protocol('pyqpanda3'))
 print(rec_result)

@@ -100,9 +100,9 @@ gate('CZ', [two_dim[1][2], two_dim[1][4]])
 ```
 在上述二维数组的访问中，第一个`[]`访问了外层数组（2维），第二个`[]`访问了内层数组（6维）。
 
-可用`len()`获得量子数组的长度：
+可用`len()`获得量子数组的长度（元素个数）：
 ```python
-print(len(my_array))
+    print(len(my_array))    # -> 5
 ```
 
 PyQuantumKit目前暂时只支持定长数组，下标访问运算符`[]`目前暂时只支持以单个整数作为下标，暂时不支持范围下标。
@@ -218,9 +218,15 @@ class MyStruct(QStruct):
 
 各字段被定义为类的成员变量（`self.xxx`的形式）。
 
-最后需要调用`self.init_qstruct(...)`函数来完成结构体的初始化，函数参数只需依次填入各字段即可。
+最后需要调用`self.init_qstruct(...)`方法来完成结构体的初始化，参数只需依次填入各字段即可。
 
-除了初始化方法`__init__`需要定义外，用户也可以为结构体添加其他的自定义方法。
+用户可以定义不包含任何量子变量字段的结构体（空结构体），定义时仍需调用`self.init_qstruct()`方法。
+```python
+class EmptyStruct(QStruct):
+    def __init__(self, varname=None):
+        super().__init__(varname)
+        self.init_qstruct()     # 定义空结构体时，这一行也是必须的
+```
 
 ### 结构体的使用
 
