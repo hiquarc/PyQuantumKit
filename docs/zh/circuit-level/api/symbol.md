@@ -74,9 +74,8 @@ def symbol_apply_gate(gate : sympy.Matrix, nqbits : int, indexlist : list[int]) 
 - 该函数的返回值为一个 $2^n\times 2^n$ 维矩阵。
 
 **例1**. 设总共有5个量子比特，以下标为3的量子比特为控制位，下标为1的量子比特为目标位应用一个CNOT门，如下图所示：
-<div align="left">
-<img src=../../../../imgs/5cnot31.jpg width=20% />
-</div>
+
+![](../../../imgs/5cnot31.jpg){ style="width: 20%; height: auto;" }
 
 可用如下方式使用该函数生成对应的矩阵表示：
 
@@ -152,9 +151,8 @@ cccnot = symbol_controlled_gate(X, 3)
 ```
 
 然后将上述量子门以下标为2的量子比特为目标位，其余为控制位构造量子线路，如下图所示：
-<div align="left">
-<img src=../../../../imgs/cccx.jpg width=20% />
-</div>
+
+![](../../../imgs/cccx.jpg){ style="width: 20%; height: auto;" }
 
 实现代码为：
 ```python

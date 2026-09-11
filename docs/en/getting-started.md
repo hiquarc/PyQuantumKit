@@ -85,10 +85,7 @@ qiskit_result = qiskit_job.result().get_counts()
 print(qiskit_result)        # print running results
 ```
 
-The running results are:
-<div align="left">
-<img src=../../imgs/ghz_qiskit.jpg width=50% />
-</div>
+![](../imgs/ghz_qiskit.jpg){ style="width: 50%; height: auto;" }
 
 ### 5. Run on pyqpanda3
 
@@ -106,9 +103,8 @@ print(qpanda_result)        # print running results
 ```
 
 The running results are:
-<div align="left">
-<img src=../../imgs/ghz_qpanda.jpg width=50% />
-</div>
+
+![](../imgs/ghz_qpanda.jpg){ style="width: 50%; height: auto;" }
 
 ### 6. Run on quafu
 
@@ -124,6 +120,5 @@ print(quafu_result.counts)    # print running results
 ```
 
 The running results are:
-<div align="left">
-<img src=../../imgs/ghz_quafu.jpg width=50% />
-</div>
+
+![](../imgs/ghz_quafu.jpg){ style="width: 50%; height: auto;" }

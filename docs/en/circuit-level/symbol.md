@@ -62,9 +62,8 @@ Matrix([[1/2, 0, 0, 1/2], [0, 0, 0, 0], [0, 0, 0, 0], [1/2, 0, 0, 1/2]])
 One way to construct the matrix corresponding to a quantum circuit using the matrices of quantum gates is to directly use the matrix operations provided by SymPy: the sequential application of quantum gates corresponds to matrix multiplication, and the parallel application of quantum gates corresponds to matrix Kronecker product.
 
 **Example 1**. Consider the following quantum circuit for preparing the Bell state:
-<div align="left">
-<img src=../../../imgs/bell.jpg width=50% />
-</div>
+
+![](../../imgs/bell.jpg){ style="width: 50%; height: auto;" }
 
 It consists of an H gate acting on the first qubit and a CNOT gate acting on two qubits. The H gate acting on the first qubit can be expressed in the form of a tensor product (Kronecker product) as $H\otimes I$, and the total matrix representation is the product of the matrix representations of the two quantum gates:
 

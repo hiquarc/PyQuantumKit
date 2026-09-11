@@ -3,23 +3,10 @@ site_description: A python-based development kit for cross-platform quantum prog
 site_author: Peixun Long
 site_url: https://github.com/hiquarc/PyQuantumKit/
 
-plugins:
-  - search
-  # - i18n:
-      #default_language: en
-      # languages:
-      #   - locale: en
-      #     name: English
-      #     link: /en/
-      #     build: true
-      #   - locale: zh
-      #     name: 中文
-      #     link: /zh/
-      #     build: true
-      #     default: true
 
 theme:
-  name: readthedocs
+  name: material
+  languages: zh
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -31,6 +18,94 @@ theme:
       accent: indigo
 # extra_css:
 #   - css/extra.css
+
+plugins:
+  - search
+  - i18n:
+      languages:
+        - locale: zh
+          name: 中文
+          default: true
+          build: true
+        - locale: en
+          name: English
+          build: true
+          nav_translations:
+            "首页": "Home"
+            "安装与使用": "Getting Started"
+            "量子线路级开发": "Circuit-level Development"
+            "API参考": "API reference"
+            "跨平台量子线路构建": "Construct Quantum Circuit"
+            "量子线路矩阵的符号表示": "Symbolic Representation"
+            "量子开发框架参考": "Quantum Development Frameworks"
+            "量子门参考": "Supported Quantum Gates"
+            "量子线路构建API": "API of Construct QCs"
+            "CircuitIO类": "CircuitIO Class"
+            "symbol模块": "Module pyquantumkit.symbol"
+            "program_check模块": "Module pyquantumkit.program_check"
+            "实际应用案例": "Practical Examples"
+            "带参数量子线路的符号表示及检验": "Symbolic Representation and Verification of Parametric Quantum Circuits"
+            "实验性功能": "Experimental Features"
+            "实验性功能总览": "Overview"
+            "量子线路模块化构建": "Modular Construction of QCs"
+            "量子哈密顿量模拟": "Quantum Hamiltonian Simulation"
+            "更新历史": "Changelog"
+            
+      reconfigure_material: true
+      docs_structure: folder
+
+
+
+nav:
+  # - zh:
+  - 首页: index.md
+  - 安装与使用: getting-started.md
+  - 量子线路级开发:
+    - 跨平台量子线路构建: circuit-level/circuit.md
+    - 量子线路矩阵的符号表示: circuit-level/symbol.md
+    - API参考:
+      - 量子开发框架参考: circuit-level/api/supported-platforms.md
+      - 量子门参考: circuit-level/api/supported-gates.md
+      - 量子线路构建API: circuit-level/api/construct.md
+      - CircuitIO类: circuit-level/api/circuitio.md
+      - symbol模块: circuit-level/api/symbol.md
+      - program_check模块: circuit-level/api/program-check.md
+  - （新功能）高级语言级量子程序开发:
+    - 高级语言级量子编程概览: program-level/introduction.md
+    - 演示示例: program-level/example-program.md
+    - 高级语言级量子编程指南:
+      - 开始编写量子程序: program-level/guide/start.md
+      - 量子类型系统: program-level/guide/type.md
+      - 量子变量内存布局和量子比特分配: program-level/guide/memory.md
+      - 测量结果的存放与解读: program-level/guide/measure.md
+      - 自定义量子数据类型: program-level/guide/user-define.md 
+  - 实际应用案例:
+    - 带参数量子线路的符号表示及检验: examples/z2.md
+  - 实验性功能:
+    - 实验性功能总览: experimental/overall.md
+    - 量子线路模块化构建: experimental/construct.md
+    - 量子哈密顿量模拟: experimental/hsim.md
+  - 更新历史: changelog.md
+  # - en:
+  #   - Home: index.md
+  #   - Getting Started: getting-started.md
+  #   - Circuit-level Development:
+  #     - Construction of Quantum Circuits: circuit-level/circuit.md
+  #     - Symbolic Representation of Quantum Circuit Matrices: circuit-level/symbol.md
+  #     - API Quick reference:
+  #       - Quick Reference of Quantum Development Framework: circuit-level/api/supported-platforms.md
+  #       - Quick Reference of Supported Quantum Gates: circuit-level/api/supported-gates.md
+  #       - Quantum Circuit Construction API: circuit-level/api/construct.md
+  #       - CircuitIO Class: circuit-level/api/circuitio.md
+  #       - symbol Module: circuit-level/api/symbol.md
+  #       - program_check Module: circuit-level/api/program-check.md
+  #   - Practical Examples:
+  #     - Symbolic Representation and Verification of Parametric Quantum Circuits: examples/z2.md
+  #   - Experimental Features:
+  #     - Overview and Explanation: experimental/overall.md
+  #     - Modular Construction of Quantum Circuits: experimental/construct.md
+  #     - Quantum Hamiltonian Simulation: experimental/hsim.md
+  #   - Changelog: changelog.md
 
 # Activate the LateX formula
 markdown_extensions:
@@ -50,58 +125,9 @@ markdown_extensions:
   # - pymdownx.tilde
   - pymdownx.arithmatex:
       generic: true
+  - attr_list
 extra_javascript:
   - javascripts/mathjax.js
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
-nav:
-  - 中文:
-    - 首页: zh/index.md
-    - 安装与使用: zh/getting-started.md
-    - 量子线路级开发:
-      - 跨平台量子线路构建: zh/circuit-level/circuit.md
-      - 量子线路矩阵的符号表示: zh/circuit-level/symbol.md
-      - API参考:
-        - 量子开发框架参考: zh/circuit-level/api/supported-platforms.md
-        - 量子门参考: zh/circuit-level/api/supported-gates.md
-        - 量子线路构建API: zh/circuit-level/api/construct.md
-        - CircuitIO类: zh/circuit-level/api/circuitio.md
-        - symbol模块: zh/circuit-level/api/symbol.md
-        - program_check模块: zh/circuit-level/api/program-check.md
-    - （新功能）高级语言级量子程序开发:
-      - 高级语言级量子编程概览: zh/program-level/introduction.md
-      - 演示示例: zh/program-level/example-program.md
-      - 高级语言级量子编程指南:
-        - 开始编写量子程序: zh/program-level/guide/start.md
-        - 量子类型系统: zh/program-level/guide/type.md
-        - 量子变量内存布局和量子比特分配: zh/program-level/guide/memory.md
-        - 测量结果的存放与解读: zh/program-level/guide/measure.md
-        - 自定义量子数据类型: zh/program-level/guide/user-define.md 
-        # - 经典-量子混合编程: 
-    - 实际应用案例:
-      - 带参数量子线路的符号表示及检验: zh/examples/z2.md
-    - 实验性功能:
-      - 实验性功能总览: zh/experimental/overall.md
-      - 量子线路模块化构建: zh/experimental/construct.md
-      - 量子哈密顿量模拟: zh/experimental/hsim.md
-    - 更新历史: zh/changelog.md
-  - English:
-    - Home: en/index.md
-    - Getting Started: en/getting-started.md
-    - Circuit-level Development:
-      - Construction of Quantum Circuits: en/circuit-level/circuit.md
-      - Symbolic Representation of Quantum Circuit Matrices: en/circuit-level/symbol.md
-      - API Quick reference:
-        - Quick Reference of Quantum Development Framework: en/circuit-level/api/supported-platforms.md
-        - Quick Reference of Supported Quantum Gates: en/circuit-level/api/supported-gates.md
-        - Quantum Circuit Construction API: en/circuit-level/api/construct.md
-        - CircuitIO Class: en/circuit-level/api/circuitio.md
-        - symbol Module: en/circuit-level/api/symbol.md
-        - program_check Module: en/circuit-level/api/program-check.md
-    - Practical Examples:
-      - Symbolic Representation and Verification of Parametric Quantum Circuits: en/examples/z2.md
-    - Experimental Features:
-      - Overview and Explanation: en/experimental/overall.md
-      - Modular Construction of Quantum Circuits: en/experimental/construct.md
-      - Quantum Hamiltonian Simulation: en/experimental/hsim.md
-    - Changelog: en/changelog.md
+

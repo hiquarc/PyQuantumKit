@@ -9,6 +9,7 @@ PyQuantumKit中，数组（QArray）、结构体（QStruct）和联合体（QUni
     twodim = make_qarray(QubitArray(6), 2, 'twodim')
 ```
 的内存布局如图：
+
 ![](../../../imgs/memory_array_zh.jpg)
 
 结构体的内存布局是其中各字段变量的**无空隙的连续分配**，不存在C语言中结构体可能出现的字节对齐导致留空隙。下列结构体
@@ -24,9 +25,8 @@ class MyStruct(QStruct):
         self.init_qstruct(self.x, self.y, self.z)
 ```
 的内存布局如图：
-<div align="left">
-<img src=../../../../imgs/memory_struct_zh.jpg width=80% />
-</div>
+
+![](../../../imgs/memory_struct_zh.jpg){ style="width: 80%; height: auto;" }
 
 结构体中各字段的分配顺序以调用`init_qstruct()`函数的参数顺序为准。
 
@@ -43,9 +43,8 @@ class MyUnion(QUnion):
         self.init_qunion(self.x, self.y, self.z)
 ```
 的字段定义与`MyStruct`相同，它的内存布局如图：
-<div align="left">
-<img src=../../../../imgs/memory_union_zh.jpg width=50% />
-</div>
+
+![](../../../imgs/memory_union_zh.jpg){ style="width: 50%; height: auto;" }
 
 ### 获取量子变量的量子比特数：`n_qubits()`方法
 每个量子变量都需要占据一个或多个量子比特，可以调用量子变量的`n_qubits()`方法获得其占据的量子比特数。

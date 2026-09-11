@@ -74,9 +74,8 @@ def symbol_apply_gate(gate : sympy.Matrix, nqbits : int, indexlist : list[int]) 
 - The return value of this function is a $2^n\times 2^n$-dimensional matrix.
 
 **Example 1**. Suppose there are 5 qubits in total, and a CNOT gate is applied with the qubit at index 3 as the control bit and the qubit at index 1 as the target bit, as shown in the figure below:
-<div align="left">
-<img src=../../../../imgs/5cnot31.jpg width=20% />
-</div>
+
+![](../../../imgs/5cnot31.jpg){ style="width: 20%; height: auto;" }
 
 The matrix representation can be generated using this function as follows:
 
@@ -152,9 +151,8 @@ cccnot = symbol_controlled_gate(X, 3)
 ```
 
 Then construct a quantum circuit with the qubit at index 2 as the target bit and the others as control bits using the above quantum gate, as shown in the figure below:
-<div align="left">
-<img src=../../../../imgs/cccx.jpg width=20% />
-</div>
+
+![](../../../imgs/bell.jpg){ style="width: 20%; height: auto;" }
 
 The implementation code is:
 ```python

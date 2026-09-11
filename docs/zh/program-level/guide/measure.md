@@ -108,11 +108,13 @@ def interpret_output_str(self, output_str : str, framework : str = None) -> dict
     - `'l'`或`'L'`：按照从左开始约定进行解读（默认方式）；
     - `'r'`或`'R'`：按照从右开始约定进行解读。
     - 可以调用`QProgramBuilder`类的`framework_interpret_protocol()`静态方法获得具体框架的解读约定：
-        ```python
-        print(QProgramBuilder.framework_interpret_protocol('qiskit'))       # -> 'r'
-        print(QProgramBuilder.framework_interpret_protocol('pyqpanda3'))    # -> 'r'
-        print(QProgramBuilder.framework_interpret_protocol('pyquafu'))      # -> 'l'
-        ```
+        
+        `print(QProgramBuilder.framework_interpret_protocol('qiskit'))       # 返回'r'`
+
+        `print(QProgramBuilder.framework_interpret_protocol('pyqpanda3'))    # 返回'r'`
+
+        `print(QProgramBuilder.framework_interpret_protocol('pyquafu'))      # 返回'l'`
+        
 - 返回值为解读得到的字典，该字典的结构为：
 
     `{变量名1: 值1, 变量名2: 值2, ...}`
