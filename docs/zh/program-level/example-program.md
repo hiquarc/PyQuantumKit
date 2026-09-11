@@ -84,9 +84,8 @@ rec_result = qpbuilder.interpret_result_dict(result, \
 print(rec_result)
 ```
 编译完成后，调用QProgramBuilder对象的成员方法`get_built_circuit()`获得此`CircuitIO`对象，然后使用`>>`运算符将其插入Qiskit量子线路中。在Qiskit模拟器上运行并获得结果字典，然后调用`qpbuilder.interpret_result_dict()`从结果字典中解读信息。运行结果为：
-<div align="left">
-<img src=../../../imgs/program_example_qiskit.jpg width=60% />
-</div>
+
+![](../../imgs/program_example_qiskit.jpg){ style="width: 60%; height: auto;" }
 
 可以看到，编译生成的量子线路与[本节概览](introduction.md)中手写的Qiskit程序相同。
 
@@ -118,9 +117,8 @@ print(rec_result)
 ```
 
 运行结果为：
-<div align="left">
-<img src=../../../imgs/program_example_qpanda.jpg width=70% />
-</div>
+
+![](../../imgs/program_example_qpanda.jpg){ style="width: 70%; height: auto;" }
 
 ## 例2. 从命令行输入整数并构建量子态
 

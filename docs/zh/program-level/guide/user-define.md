@@ -58,7 +58,7 @@ PyQuantumKit的量子数据类型提供了一些特殊方法，这些方法通�
 
 在定义`_initialize_`方法时，它只需要一个参数`self`，且不需要返回值：
 ```python
-    def _initialize_(self):
+    def _initialize_(self) -> None:
         # 具体代码
 ```
 
@@ -71,7 +71,7 @@ PyQuantumKit的量子数据类型提供了一些特殊方法，这些方法通�
 
 在定义`_premeasure_`方法时，它只需要一个参数`self`，且不需要返回值：
 ```python
-    def _premeasure_(self):
+    def _premeasure_(self) -> None:
         # 具体代码
 ```
 
@@ -82,7 +82,7 @@ PyQuantumKit的量子数据类型提供了一些特殊方法，这些方法通�
 
 在定义`_interpret_`方法时，它需要两个参数：`self`和代表测量结果字符串的`output: str`；而它的返回值为解读结果。
 ```python
-    def _interpret_(self, output : str) -> str:
+    def _interpret_(self, output : str) -> Any:
         # 具体代码
         # 最后需要return解读结果
 ```
@@ -90,7 +90,7 @@ PyQuantumKit的量子数据类型提供了一些特殊方法，这些方法通�
 对于通过继承或组合方式定义的量子数据类型，其结果字符串的解读往往可以通过父类或包含的字段的结果解读方法经过适当的处理得来。例如之前的`QuBool`类型的例子中，它的`_interpret_`通过对其父类`super()`（`Qubit`类型）调用`_interpret_`的返回结果进行适当的处理后得到：
 ```python
 class QuBool(Qubit):
-    def _interpret_(self, output):
+    def _interpret_(self, output) -> bool:
         return (True if super()._interpret_(output) == '1' else False)
 ```
 
@@ -105,9 +105,16 @@ class QuBool(Qubit):
 ```
 函数的返回值为需要被作为应用量子门目标的量子比特。如果是通过继承`Qubit`类型来构建的自定义类型，在编写完前面的处理逻辑后，通常可以直接返回`self`。
 
+三个参数`gate_name`, `qubit_var_list`, `paras`参数也可以直接用`*args`代替。
+```python
+    def _gate_(self, *args) -> Qubit:
+        # 具体代码
+        # 最后需要return作为应用量子门目标的量子比特
+```
 
-### 特殊方法的使用例子
-下面给出两个定义专门的量子比特类型的例子来说明特殊方法的使用。
+
+## 三、自定义量子数据类型例子
+下面给出几个实例来说明如何使用PyQuantumKit自定义量子数据类型。
 
 #### **例1.** 定义一个基于 $\ket{+},\ket{-}$ 基的量子比特类型`PMQubit`
 
@@ -124,11 +131,11 @@ class QuBool(Qubit):
 # 基于 |+>, |-> 基的量子比特类型，通过继承Qubit类来定义
 class PMQubit(Qubit):
     # 初始化操作
-    def _initialize_(self):
+    def _initialize_(self) -> None:
         gate('H', [self])
 
     # 测量前操作
-    def _premeasure_(self):
+    def _premeasure_(self) -> None:
         gate('H', [self])
 
     # 解读测量结果
@@ -151,9 +158,7 @@ def qmain(builder : QProgramBuilder):
 ```
 声明了两个`PMQubit`变量然后直接测量，编译生成的量子线路和运行结果为：
 
-<div align="left">
-<img src=../../../../imgs/pmqubit1.jpg width=50% />
-</div>
+![](../../../imgs/pmqubit1.jpg){ style="width: 50%; height: auto;" }
 
 根据定义，每一个`PMQubit`类型量子变量在声明时会应用一个H门，在测量前也会应用一个H门，因此编译生成的量子线路中一共有4个H门。测量结果被解读为
 ```
@@ -176,9 +181,7 @@ def qmain(builder : QProgramBuilder):
 ```
 在之前程序的基础上，对`pmq1`应用了X门，对`pmq2`应用了Z门，然后测量。编译生成的量子线路和运行结果为：
 
-<div align="left">
-<img src=../../../../imgs/pmqubit2.jpg width=50% />
-</div>
+![](../../../imgs/pmqubit2.jpg){ style="width: 50%; height: auto;" }
 
 可以看到，生成的量子线路在初始化和测量前的一对H门之间分别加入了X门和Z门。测量结果被解读为：
 ```
@@ -209,3 +212,167 @@ class CliffordQubit(Qubit):
 ```
 在上述代码中，`CliffordQubit`类型继承了`Qubit`类型，但改写了`_gate_`方法。在返回`self`作为应用量子门的目标量子比特之前，首先调用`get_standard_gatename()`函数（该函数由PyQuantumKit提供）将量子门的名称转换为标准名称，然后根据标准名称检验其是否为Clifford门。若不是，则报错。
 
+以上的例子通过改写`Qubit`类型的特殊方法来定义特殊的量子比特类型，下面给出一个以组合方式定义量子数据类型的实例。
+
+#### **例3.** 定义一个存储Bell态的数据类型，并提供四个Bell态之间的转换操作
+
+四个Bell态的定义为：
+
+$$
+\begin{aligned}
+\ket{\Phi^+} &= \frac{\ket{00} + \ket{11}}{\sqrt{2}} \\
+\ket{\Phi^-} &= \frac{\ket{00} - \ket{11}}{\sqrt{2}} \\
+\ket{\Psi^+} &= \frac{\ket{01} + \ket{10}}{\sqrt{2}} \\
+\ket{\Psi^-} &= \frac{\ket{01} - \ket{10}}{\sqrt{2}}
+\end{aligned}
+$$
+
+这四个Bell态之间可以通过对其中任意一个量子比特应用Pauli门（ $I$, $X$, $Y$, $Z$ ）来进行相互转换，如下表所示：
+
+|  | $\ket{\Phi^+}$ | $\ket{\Phi^-}$ | $\ket{\Psi^+}$ | $\ket{\Psi^-}$ |
+|----------------|------------------|------------------|------------------|------------------|
+| $\ket{\Phi^+}$ | $I$              | $Z$              | $X$              | $Y$   |
+| $\ket{\Phi^-}$ | $Z$              | $I$              | $Y$   | $X$              |
+| $\ket{\Psi^+}$ | $X$              | $Y$   | $I$              | $Z$              |
+| $\ket{\Psi^-}$ | $Y$   | $X$              | $Z$              | $I$              |
+
+现在我们来定义一个`BellQubitPair`类型，我们希望该类型能提供如下功能：
+
+1. 用两个量子比特来存储Bell态；
+2. 声明该类型的变量时，需要指定初始状态为这四个量子态中的哪一个，并制备该初态；
+3. 可对`BellQubitPair`类型变量直接使用下标访问运算符`[]`获得其中的量子比特，下标值限制为0或1；
+4. 提供`i()`, `x()`, `y()`, `z()`四个方法按照上表实现Bell态之间的转换；
+5. 测量结果解读为长度为2的`0`/`1`字符串：`'00'`, `'01'`, `'10'`, `'11'`。
+
+让我们依次看看如何实现各项功能。
+
+**实现功能1**需要将两个量子比特变量放在一起，这里有三种方案：
+
+- 方案1：直接继承`QubitArray`类型；
+- 方案2：在结构体中封装一个长度为2的`QubitArray`类型的变量；
+- 方案3：在结构体中封装两个`Qubit`类型的变量。
+
+方案1直接被否决，因为从语义上来说，`BellQubitPair`并不是量子比特数组，而是持有两个量子比特，很明显是has-a语义。方案2和方案3原则上都可以，但是考虑到功能5的实现方便（可直接复用`QubitArray`的解读方式），因此我们采用方案2。
+
+**实现功能2**时，由于特殊方法`_initialize_`不带其他参数，因此需要在结构体内声明一个（经典）成员变量来存放要初始化的状态。在`__init__`方法中，需要增加一个额外的参数，用于指示要初始化的状态，并将该参数保存为成员变量。这样`_initialize_`就可以根据该成员变量来应用制备对应的量子态的量子门操作了。
+
+这里我们用字符串变量来指示初始化的状态，允许以下四个字符串之一：`'phi+'`, `'phi-'`, `'psi+'`, `'psi-'`（不区分大小写）。因此`__init__`方法的参数应写为：
+
+```python
+    # 增加一个自定义参数state_str
+    def __init__(self, state_str : str, varname=None):
+        super().__init__(varname)
+        # ......
+```
+
+**注意：** PyQuantumKit约定量子变量类型`__init__`方法的代表变量名称的`varname`应作为最后一个参数，且默认值为`None`，这样在定义匿名变量时可以直接省略`None`参数，在定义数组、元组等需要匿名变量的情形时可读性更好。为了遵循这个约定，额外引入的参数`state_str`放置在`varname`的前面。
+
+**实现功能3**时，需要定义`__getitem__`方法，检查下标是否合法（为0或1），并返回相应的量子比特。
+
+**实现功能4**，定义四个额外的方法`i()`, `x()`, `y()`, `z()`。
+
+**实现功能5**时，需要改写特殊方法`_interpret_`。由于我们以`QubitArray`类型来存放两个量子比特，因此可以直接复用`QubitArray`类型的`_interpret_`特殊方法。
+
+以下是数据类型的完整定义：
+
+```python
+# 存放Bell态的类型
+class BellQubitPair(QStruct):
+    # 在__init__方法中增加一个字符串参数state_str，用于指定初始化的Bell态
+    #    字符串应为'phi+', 'phi-', 'psi+', 'psi-'之一
+    def __init__(self, state_str : str, varname=None):
+        super().__init__(varname)
+
+        # 定义一个（经典的）变量self.__state来存放初始化的状态，以便后续_initialize_方法调用
+        self.__state = state_str.lower()
+        # 检查传入的字符串是否符合要求
+        if self.__state not in {'phi+', 'phi-', 'psi+', 'psi-'}:
+            # 非法字符串，报错
+            raise QuantumProgramBuildError(\
+                "The string about init state must be one of 'phi+', 'phi-', 'psi+', 'psi-'")
+
+        # 定义一个包含两个量子比特的数组来存放量子态
+        self.__qubit_pair = QubitArray(2)
+        self.init_qstruct(self.__qubit_pair)
+
+    # 下标访问方法
+    def __getitem__(self, index : int):
+        if index not in {0, 1}:
+            raise QuantumProgramBuildError("The index must be 0 or 1.")
+        # 返回对量子比特数组self.__qubit_pair下标访问的结果
+        return self.__qubit_pair[index]
+
+    # 初始化操作
+    def _initialize_(self) -> None:
+        super()._initialize_()
+        # 根据self.__state的值来决定制备哪个量子态
+        if self.__state == 'phi+':
+            pass
+        elif self.__state == 'phi-':
+            # 注：由于我们定义了__getitem__，因此可以直接self[index]
+            gate('X', [self[0]])
+        elif self.__state == 'psi+':
+            gate('X', [self[1]])
+        elif self.__gtate == 'psi-':
+            gate('X', [self[0]])
+            gate('X', [self[1]])
+        gate('H', [self[0]])
+        gate('CNOT', [self[0], self[1]])
+
+    # 转换操作i(), x(), y(), z()
+    def i(self) -> None:
+        pass
+    def x(self) -> None:
+        gate('X', [self[0]])
+    def y(self) -> None:
+        gate('Y', [self[0]])
+    def z(self) -> None:
+        gate('Z', [self[0]])
+
+    # 解读测量结果
+    def _interpret_(self, output) -> str:
+        # 直接使用量子比特数组self.__qubit_pair的解读结果
+        return self.__qubit_pair._interpret_(output)
+```
+
+下面尝试使用`BellQubitPair`类型。
+
+以下程序`qmain1`声明一个初态为 $\ket{\Psi^+}$ （对应字符串`'psi+'`）的`BellQubitPair`变量：
+```python
+def qmain1(builder : QProgramBuilder):
+    mybell = BellQubitPair('psi+', 'mybell')
+    builder.declare_qvars(mybell)
+    builder.measure_all()
+```
+将其编译为QPanda3量子线路，打印生成的线路，并查看运行结果解读：
+```python
+qpbuilder = QProgramBuilder()
+qpbuilder.build(qmain1)
+
+qpanda_cir = qpanda.QProg()
+qpbuilder.get_built_circuit() >> qpanda_cir
+print(qpanda_cir)
+
+qpanda_qvm = qpanda.CPUQVM()
+qpanda_qvm.run(qpanda_cir, 1000)
+qpanda_result = qpanda_qvm.result().get_counts()
+print(qpanda_result)
+
+rec_result = qpbuilder.interpret_result_dict(qpanda_result, \
+                                             QProgramBuilder.framework_interpret_protocol('pyqpanda3'))
+print(rec_result)
+```
+
+![](../../../imgs/belltype1.jpg){ style="width: 50%; height: auto;" }
+
+以下程序`qmain2`与`qmain1`相比，在测量之前调用了`mybell`变量的`y()`方法，
+```python
+def qmain2(builder : QProgramBuilder):
+    mybell = BellQubitPair('psi+', 'mybell')
+    builder.declare_qvars(mybell)
+    mybell.y()
+    builder.measure_all()
+```
+其编译和运行结果为：
+
+![](../../../imgs/belltype2.jpg){ style="width: 50%; height: auto;" }
