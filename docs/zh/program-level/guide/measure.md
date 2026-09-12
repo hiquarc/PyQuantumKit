@@ -98,10 +98,13 @@ def qmain4(builder : QProgramBuilder):
 ```python
 def interpret_output_str(self, output_str : str, framework : str = None) -> dict:
 ```
+
 - `output_str`是代表一次测量结果的`'0'`/`'1'`字符串。请注意，**输入的字符串的长度必须与`QProgramBuilder`中的量子程序分配的存放测量结果的经典比特数相匹配**，且不能包含除`'0'`,`'1'`外的其他字符，否则会抛出`ResultInterpretError`异常。
 
     - 例如，前文程序`qmain1`、`qmain2`和`qmain4`中分配的经典比特数均为7，因此对编译这三个程序的`QProgramBuilder`类，`'0011001'`、`'1101111'`是调用`interpret_output_str()`方法的合法字符串，而`'110'`、`'1101'`、`'11+-abc'`不是合法字符串。
+
     - 程序`qmain3`中分配的经典比特数为4，因而`'1101'`是调用的合法字符串，而`'110'`、`'0011001'`不是合法的字符串。
+
     - 可以调用`QProgramBuilder`对象的`n_measure_cbits()`方法来获得分配的用于存放测量结果的经典比特数。
 
 - `protocol`参数指定按照何种约定进行解读，目前支持两种协议：
@@ -109,11 +112,11 @@ def interpret_output_str(self, output_str : str, framework : str = None) -> dict
     - `'r'`或`'R'`：按照从右开始约定进行解读。
     - 可以调用`QProgramBuilder`类的`framework_interpret_protocol()`静态方法获得具体框架的解读约定：
         
-        `print(QProgramBuilder.framework_interpret_protocol('qiskit'))       # 返回'r'`
-
-        `print(QProgramBuilder.framework_interpret_protocol('pyqpanda3'))    # 返回'r'`
-
-        `print(QProgramBuilder.framework_interpret_protocol('pyquafu'))      # 返回'l'`
+    ```python
+    print(QProgramBuilder.framework_interpret_protocol('qiskit'))       # 返回'r'
+    print(QProgramBuilder.framework_interpret_protocol('pyqpanda3'))    # 返回'r'
+    print(QProgramBuilder.framework_interpret_protocol('pyquafu'))      # 返回'l'
+    ```
         
 - 返回值为解读得到的字典，该字典的结构为：
 

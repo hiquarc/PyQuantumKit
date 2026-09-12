@@ -27,10 +27,10 @@ def qmain(builder : QProgramBuilder):
 
 `Qubit`类型变量的测量结果将被解读为单个字符`'0'`或`'1'`：
 ```python
-print(qpbuilder.interpret_output_str('00', 'qiskit'))    # 输出：{'q1': '0', 'q2': '0'}
-print(qpbuilder.interpret_output_str('01', 'qiskit'))    # 输出：{'q1': '1', 'q2': '0'}
-print(qpbuilder.interpret_output_str('10', 'qiskit'))    # 输出：{'q1': '0', 'q2': '1'}
-print(qpbuilder.interpret_output_str('11', 'qiskit'))    # 输出：{'q1': '1', 'q2': '1'}
+print(qpbuilder.interpret_output_str('00', 'r'))    # 输出：{'q1': '0', 'q2': '0'}
+print(qpbuilder.interpret_output_str('01', 'r'))    # 输出：{'q1': '1', 'q2': '0'}
+print(qpbuilder.interpret_output_str('10', 'r'))    # 输出：{'q1': '0', 'q2': '1'}
+print(qpbuilder.interpret_output_str('11', 'r'))    # 输出：{'q1': '1', 'q2': '1'}
 ```
 
 ### 量子变量的基类型`QVar`
@@ -61,7 +61,7 @@ def qmain(builder : QProgramBuilder):
 PyQuantumKit要求凡是在`declare_qvars()`中直接声明的量子变量都需要命名。
 
 ## 二、数组（QArray）
-量子数组由若干个相同类型的量子变量组成，可用下标运算符`[]`访问其中的元素。
+数组由若干个相同类型的量子变量组成，可用下标运算符`[]`访问其中的元素。
 
 ### 定义数组：`make_qarray()`函数
 
@@ -103,6 +103,7 @@ gate('CZ', [two_dim[1][2], two_dim[1][4]])
 可用`len()`获得量子数组的长度（元素个数）：
 ```python
     print(len(my_array))    # -> 5
+    print(len(two_dim))     # -> 2 ，这里返回的是最外层数组的长度
 ```
 
 PyQuantumKit目前暂时只支持定长数组，下标访问运算符`[]`目前暂时只支持以单个整数作为下标，暂时不支持范围下标。
@@ -186,7 +187,7 @@ def qmain(builder : QProgramBuilder):
 
 
 ## 三、结构体（QStruct）和元组（QTuple）
-量子结构体由若干个量子变量字段组成，每个字段有自己的变量名，各个字段可以有不同的类型，可以使用成员访问运算符`.`来访问其中的某个字段。
+结构体由若干个量子变量字段组成，每个字段有自己的变量名，各个字段可以有不同的类型，可以使用成员访问运算符`.`来访问其中的某个字段。
 
 ### 定义结构体
 
@@ -290,7 +291,7 @@ def qmain(builder : QProgramBuilder):
 ```
 
 ## 四、联合体（QUnion）
-与结构体类似，量子联合体也是若干个量子变量字段组成，每个字段有自己的变量名，各个字段可以有不同的类型，可以使用成员访问运算符`.`来访问其中的某个字段。与结构体不同的是，联合体中所有字段共用同一段量子内存地址，PyQuantumKit保证联合体内的所有字段的起始地址都等于联合体本身的地址。联合体可用于需要通过共用来节约量子比特的情形，或者需要对量子比特进行重解释的情形。
+与结构体类似，联合体也是若干个量子变量字段组成，每个字段有自己的变量名，各个字段可以有不同的类型，可以使用成员访问运算符`.`来访问其中的某个字段。与结构体不同的是，联合体中所有字段共用同一段量子内存地址，PyQuantumKit保证联合体内的所有字段的起始地址都等于联合体本身的地址。联合体可用于需要通过共用来节约量子比特的情形，或者需要对量子比特进行重解释的情形。
 
 定义联合体的方式与定义结构体类似，只是需要从`QUnion`类派生，并且初始化函数为`self.init_qunion(...)`。
 

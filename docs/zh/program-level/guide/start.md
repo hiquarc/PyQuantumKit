@@ -1,19 +1,19 @@
 # 开始编写量子程序
 
-PyQuantumKit提供的高级语言级量子编程能力，使得用户可以利用Python的语法来定义量子变量，编写量子程序，也可以利用包含量子变量的数组、结构体、元组、联合体来构建自定义量子数据类型。
+PyQuantumKit提供的高级语言级量子编程能力，使得用户可以利用Python的语法来定义量子变量，编写量子程序，也可以利用包含量子变量的数组、结构体、元组、联合体来构建自定义量子数据类型。本节简要介绍如何基于PyQuantumKit编写一个高级语言级的量子程序。
 
 ## 一、量子程序的main函数
 和经典程序一样，一组量子程序也需要一个唯一的入口点（main函数）。在PyQuantumKit中，量子main函数的第一个参数必须为`QProgramBuilder`对象，它可以绑定程序中的量子变量，并将整个量子程序编译为量子线路。建议将函数名命名为`qmain`，第一个参数写为`builder : QProgramBuilder`。
 
 main函数的结构分为**变量声明、函数主体、测量操作**三大部分，且**必须保持此顺序**。
 
-- **变量声明**部分首先在函数体内定义局部变量，定义完成后调用`builder.declare_qvars(*args)`（这里的`builder`为main函数的第一个参数）函数将局部变量与`builder`相关联，以使其能进行后续量子比特分配和编译为量子线路的操作。**该函数只能被调用一次**，因而如果有多个变量需要声明时，直接在参数列表中依次列出，例如`builder.declare_qvars(var1, var2, var3)`。如果该函数重复调用多次，则会抛出`QProgramBuildError`异常。
+- **变量声明**部分首先在函数体内定义局部变量，定义完成后调用`builder.declare_qvars(...)`函数将局部变量与`builder`相关联，以使其能进行后续量子比特分配和编译为量子线路的操作。**该函数只能被调用一次**，因而如果有多个变量需要声明时，直接在参数列表中依次列出，例如`builder.declare_qvars(var1, var2, var3)`。如果该函数重复调用多次，则在编译时会抛出`QuantumProgramBuildError`异常，代表编译出错。
 - **函数主体**部分编写对已声明的量子变量的具体操作，只有声明过（即在`declare_qvars()`的参数中列出过）的变量才能进行操作。
-- **测量操作**部分只需调用`builder.declare_qvars(*args)`函数，其中参数依次列出需要测量的量子变量。和声明一样，该函数只能被调用一次，如果该函数重复调用多次，则会抛出`QProgramBuildError`异常。测量过后无法再对量子变量进行其他操作，否则会抛出`QProgramBuildError`异常。
+- **测量操作**部分只需调用`builder.measure(...)`函数，其中参数依次列出需要测量的量子变量。和声明一样，该函数只能被调用一次，如果该函数重复调用多次，则编译时会出错。请注意，目前PyQuantumKit暂时不支持测量后再对量子变量进行操作，以及在一段程序中对同一个量子变量进行重复测量。
 
-只要函数主体部分中存在对任何量子变量的操作，那么变量声明部分就是必须的，因为只有被声明过的量子变量才能在main函数中进行操作。
+只要函数主体部分中存在对任何量子变量的操作，那么变量声明部分就是必须的，因为只有被声明过的量子变量才能在main函数中进行操作。没有声明任何量子变量的程序也能完成编译，这样生成的量子线路为空线路。
 
-没有对任何量子变量进行测量的量子程序也能顺利编译为量子线路，只是这样的量子线路。
+没有对任何量子变量进行测量的量子程序也能顺利编译为量子线路，这样的量子线路只包含量子门而不包含测量操作，通常无法在量子开发平台上运行并得到结果。
 
 下列程序声明了两个量子比特变量`q1`和`q2`，并在其上调用`gate()`函数来应用一个H门和一个CNOT门，最终制备Bell态。
 ```python
@@ -38,14 +38,14 @@ def qmain(builder : QProgramBuilder):
     # ------ 测量操作结束 ------
 ```
 
-其中对量子比特变量应用量子门使用`gate()`函数，它与量子线路级编程中的`apply_gate()`函数类似（[查看详情](../../circuit-level/api/construct.md)），函数原型为：
+这里的`gate()`函数与量子线路级编程中的`apply_gate()`函数类似（[查看详情](../../circuit-level/api/construct.md)），函数原型为：
 ```python
 def gate(gate_str : str, qubits : list[Qubit], paras : list = None):
 ```
 它与`apply_gate()`的区别在于：
 
 1. 相比于`apply_gate()`，`gate()`函数无需指定量子线路对象，因而少了第一个量子线路的参数。
-2. 而在`apply_gate()`函数中，`qubits`参数指派的是代表量子比特下标的整数列表；在`gate()`函数中，`qubits`参数指派的是`Qubit`类型元素的列表，相当于不用下标，而是用`Qubit`变量来指代目标量子比特。
+2. 在`apply_gate()`函数中，`qubits`参数指派的是代表量子比特下标的整数列表；而在`gate()`函数中，`qubits`参数指派的是`Qubit`类型元素的列表，相当于不用下标，而是用`Qubit`变量来指代目标量子比特。
 
 ## 二、定义函数
 也可以利用Python语法来定义接受量子变量的函数，以实现面向过程的量子程序开发。例如，下列程序定义了一个制备Bell态的函数。
@@ -71,7 +71,7 @@ def qmain(builder : QProgramBuilder):
     builder.measure(q1, q2)
 ```
 
-不过，考虑到量子模拟器和硬件的限制，**PyQuantumKit暂时不支持在非main函数内声明局部量子变量**（但可以定义局部经典变量，这是Python本身支持的），**目前只能在main函数中声明量子变量**。调用函数时，可将已声明的量子变量作为参数传入函数。由于Python对函数参数是按引用传递，因而上述代码中`create_bell()`函数内操作的就是变量`q1`, `q2`对应的内容。
+不过，考虑到量子模拟器和硬件的限制，**PyQuantumKit暂时不支持在非main函数内声明局部量子变量，目前只能在main函数中声明量子变量**（但可以定义局部经典变量，这是Python本身支持的）。调用函数时，可将已声明的量子变量作为参数传入函数。由于Python对函数参数是按引用传递，因而上述代码中`create_bell()`函数内操作的就是变量`q1`, `q2`对应的内容。
 
 ## 三、编译为量子线路
 首先声明一个QProgramBuilder对象，然后以`qmain`函数为参数调用成员方法`build()`，即可将量子程序`qmain`编译为量子线路。编译结果为一个`CircuitIO`对象，其中包含了生成的量子线路（可以理解为平台无关的量子线路的一种中间表示），可用成员方法`get_built_circuit()`获得此`CircuitIO`对象。
@@ -126,8 +126,7 @@ qiskit_sim = qiskit_aer.AerSimulator()
 result = qiskit_sim.run(qiskit_cir, shots = 1000).result().get_counts()
 
 # call interpret_result_dict()
-rec_result = qpbuilder.interpret_result_dict(result, \
-                QProgramBuilder.framework_interpret_protocol('qiskit'))
+rec_result = qpbuilder.interpret_result_dict(result, 'r')
 print(rec_result)
 ```
 上述代码的运行结果为：

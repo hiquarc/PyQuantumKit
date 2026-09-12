@@ -79,8 +79,7 @@ result = qiskit_sim.run(qiskit_cir, shots = 1000).result().get_counts()
 print(result)
 
 # 调用qpbuilder.interpret_result_dict()从结果字典中解读信息
-rec_result = qpbuilder.interpret_result_dict(result, \
-                QProgramBuilder.framework_interpret_protocol('qiskit'))
+rec_result = qpbuilder.interpret_result_dict(result, 'r')
 print(rec_result)
 ```
 编译完成后，调用QProgramBuilder对象的成员方法`get_built_circuit()`获得此`CircuitIO`对象，然后使用`>>`运算符将其插入Qiskit量子线路中。在Qiskit模拟器上运行并获得结果字典，然后调用`qpbuilder.interpret_result_dict()`从结果字典中解读信息。运行结果为：
@@ -111,8 +110,7 @@ qpanda_result = qpanda_qvm.result().get_counts()
 print(qpanda_result)
 
 # 调用qpbuilder.interpret_result_dict()从结果字典中解读信息
-rec_result = qpbuilder.interpret_result_dict(qpanda_result, \
-                QProgramBuilder.framework_interpret_protocol('pyqpanda3'))
+rec_result = qpbuilder.interpret_result_dict(qpanda_result, 'r')
 print(rec_result)
 ```
 
@@ -207,8 +205,7 @@ qiskit_sim = qiskit_aer.AerSimulator()
 result = qiskit_sim.run(qiskit_cir, shots = 1000).result().get_counts()
 print(result)
 
-rec_result = qpbuilder.interpret_result_dict(result, \
-                QProgramBuilder.framework_interpret_protocol('qiskit'))
+rec_result = qpbuilder.interpret_result_dict(result, 'r')
 print(rec_result)
 
 # ---------- Run on pyqpanda3 ----------
@@ -222,8 +219,7 @@ qpanda_qvm.run(qpanda_cir, 1000)
 qpanda_result = qpanda_qvm.result().get_counts()
 print(qpanda_result)
 
-rec_result = qpbuilder.interpret_result_dict(qpanda_result, \
-                QProgramBuilder.framework_interpret_protocol('pyqpanda3'))
+rec_result = qpbuilder.interpret_result_dict(qpanda_result, 'r')
 print(rec_result)
 ```
 

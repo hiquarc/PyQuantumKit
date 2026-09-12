@@ -86,28 +86,8 @@ nav:
     - 量子线路模块化构建: experimental/construct.md
     - 量子哈密顿量模拟: experimental/hsim.md
   - 更新历史: changelog.md
-  # - en:
-  #   - Home: index.md
-  #   - Getting Started: getting-started.md
-  #   - Circuit-level Development:
-  #     - Construction of Quantum Circuits: circuit-level/circuit.md
-  #     - Symbolic Representation of Quantum Circuit Matrices: circuit-level/symbol.md
-  #     - API Quick reference:
-  #       - Quick Reference of Quantum Development Framework: circuit-level/api/supported-platforms.md
-  #       - Quick Reference of Supported Quantum Gates: circuit-level/api/supported-gates.md
-  #       - Quantum Circuit Construction API: circuit-level/api/construct.md
-  #       - CircuitIO Class: circuit-level/api/circuitio.md
-  #       - symbol Module: circuit-level/api/symbol.md
-  #       - program_check Module: circuit-level/api/program-check.md
-  #   - Practical Examples:
-  #     - Symbolic Representation and Verification of Parametric Quantum Circuits: examples/z2.md
-  #   - Experimental Features:
-  #     - Overview and Explanation: experimental/overall.md
-  #     - Modular Construction of Quantum Circuits: experimental/construct.md
-  #     - Quantum Hamiltonian Simulation: experimental/hsim.md
-  #   - Changelog: changelog.md
 
-# Activate the LateX formula
+
 markdown_extensions:
   # - pymdownx.superfences
   # - pymdownx.betterem:
@@ -123,9 +103,12 @@ markdown_extensions:
   # - pymdownx.superfences
   # - pymdownx.tasklist
   # - pymdownx.tilde
-  - pymdownx.arithmatex:
+  - pymdownx.arithmatex:         # Activate the LateX formula
       generic: true
   - attr_list
+  - pymdownx.inlinehilite        # 行内代码高亮
+  - pymdownx.snippets            # 代码片段嵌入
+  - pymdownx.superfences         # 高级围栏代码块（嵌套、自定义等）
 extra_javascript:
   - javascripts/mathjax.js
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
