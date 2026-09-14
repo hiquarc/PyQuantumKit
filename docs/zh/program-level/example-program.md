@@ -46,9 +46,9 @@ def qmain(builder : QProgramBuilder):
 
 main函数的结构分为**变量声明、函数主体、测量操作**三大部分，且**必须保持此顺序**。
 
-- 变量声明部分首先在函数体内定义局部变量，定义完成后调用`builder.declare_qvars(*args)`（这里的`builder`为main函数的第一个参数）函数将局部变量与`builder`相关联，以使其能进行后续量子比特分配和编译为量子线路的操作。**该函数需要且只能被调用一次**，因而如果有多个变量需要声明时，直接在参数列表中依次列出，例如`builder.declare_qvars(var1, var2, var3)`。如果该函数重复调用多次，会报错。
+- 变量声明部分首先在函数体内定义局部变量，定义完成后调用`builder.declare_qvars(*args)`（这里的`builder`为main函数的第一个参数）函数将局部变量与`builder`相关联，以使其能进行后续量子比特分配和编译为量子线路的操作。
 - 函数主体部分编写对已声明的量子变量的具体操作，只有声明过（即在`declare_qvars()`的参数中列出过）的变量才能进行操作。
-- 测量部分只需调用`builder.declare_qvars(*args)`函数，其中参数依次列出需要测量的量子变量。和声明一样，该函数只能被调用一次，如果该函数重复调用多次，则会报错。测量过后无法再对量子变量进行其他操作，否则会报错。
+- 测量部分只需调用`builder.declare_qvars(*args)`函数，其中参数依次列出需要测量的量子变量。
 
 本例中，我们用`qnum = QuInt(6, 'qnum')`语句定义了一个函数内的局部变量`qnum`，变量类型为包含6个量子比特的量子整型（`QuInt`）。第二个参数的字符串`'qnum'`是变量的名称，在解读测量结果时会用到。然后，调用`builder.declare_qvars(qnum)`将局部变量`qnum`与builder相关联。
 
@@ -79,11 +79,10 @@ result = qiskit_sim.run(qiskit_cir, shots = 1000).result().get_counts()
 print(result)
 
 # 调用qpbuilder.interpret_result_dict()从结果字典中解读信息
-rec_result = qpbuilder.interpret_result_dict(result, \
-                QProgramBuilder.framework_interpret_protocol('qiskit'))
+rec_result = qpbuilder.interpret_result_dict(result, 'r')
 print(rec_result)
 ```
-编译完成后，调用QProgramBuilder对象的成员方法`get_built_circuit()`获得此`CircuitIO`对象，然后使用`>>`运算符将其插入Qiskit量子线路中。在Qiskit模拟器上运行并获得结果字典，然后调用`qpbuilder.interpret_result_dict()`从结果字典中解读信息。运行结果为：
+编译完成后，调用QProgramBuilder对象的成员方法`get_built_circuit()`获得此`CircuitIO`对象，然后使用`>>`运算符将其插入Qiskit量子线路中。在Qiskit模拟器上运行并获得结果字典，然后调用`qpbuilder.interpret_result_dict()`从结果字典中解读信息，其中的第二个参数`'r'`是对测量结果的解读约定，Qiskit采用从右开始解读的约定，因此该参数指定为`'r'`。运行结果为：
 
 ![](../../imgs/program_example_qiskit.jpg){ style="width: 60%; height: auto;" }
 
@@ -111,8 +110,7 @@ qpanda_result = qpanda_qvm.result().get_counts()
 print(qpanda_result)
 
 # 调用qpbuilder.interpret_result_dict()从结果字典中解读信息
-rec_result = qpbuilder.interpret_result_dict(qpanda_result, \
-                QProgramBuilder.framework_interpret_protocol('pyqpanda3'))
+rec_result = qpbuilder.interpret_result_dict(qpanda_result, 'r')
 print(rec_result)
 ```
 
@@ -207,8 +205,7 @@ qiskit_sim = qiskit_aer.AerSimulator()
 result = qiskit_sim.run(qiskit_cir, shots = 1000).result().get_counts()
 print(result)
 
-rec_result = qpbuilder.interpret_result_dict(result, \
-                QProgramBuilder.framework_interpret_protocol('qiskit'))
+rec_result = qpbuilder.interpret_result_dict(result, 'r')
 print(rec_result)
 
 # ---------- Run on pyqpanda3 ----------
@@ -222,8 +219,7 @@ qpanda_qvm.run(qpanda_cir, 1000)
 qpanda_result = qpanda_qvm.result().get_counts()
 print(qpanda_result)
 
-rec_result = qpbuilder.interpret_result_dict(qpanda_result, \
-                QProgramBuilder.framework_interpret_protocol('pyqpanda3'))
+rec_result = qpbuilder.interpret_result_dict(qpanda_result, 'r')
 print(rec_result)
 ```
 

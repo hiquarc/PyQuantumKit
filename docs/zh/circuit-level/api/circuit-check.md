@@ -1,8 +1,8 @@
-# pyquantumkit.program_check模块
-program_check模块提供了用于检验量子线路和量子程序的函数。
+# pyquantumkit.circuit_check模块
+circuit_check模块提供了用于检验量子线路和量子程序的函数。
 
-## pyquantumkit.program_check.matrix_based模块
-`pyquantumkit.program_check.matrix_based`提供了基于矩阵表示的量子线路检验方法。
+## pyquantumkit.circuit_check.matrix_based模块
+`pyquantumkit.circuit_check.matrix_based`提供了基于矩阵表示的量子线路检验方法。
 
 ### numeric_equivalence_check函数
 `numeric_equivalence_check`函数输入代表两个量子线路的NumPy矩阵，利用矩阵范数检验它们是否等价。函数原型为：
@@ -13,11 +13,13 @@ def numeric_equivalence_check(cirmat1 : numpy.array, cirmat2 : numpy.array,
                               tolerance : float = DEFAULT_TOLERANCE,
                               norm = numpy_2_norm) -> bool:
 ```
+
 - 参数`cirmat1`为代表第一个量子线路的NumPy矩阵（可以利用CircuitIO类的`get_numpy_matrix`函数获取，[点此查看](./circuitio.md#get_numpy_matrix)）。
 - 参数`cirmat2`为代表第二个量子线路的NumPy矩阵。
 - 参数`ignore_global_phase`指定在检验等价时，是否忽略全局相位。如果设置为`False`，则只有当两个量子线路对应的矩阵在误差范围内相等时才判定为等价；如果设置为`True`，则只要两个量子线路对应的矩阵只相差一个全局相位时就判定为等价。默认为`True`。
 - 参数`tolerance`指定在判定相等时的误差容许度，默认为`DEFAULT_TOLERANCE = 0.001`。
 - 参数`norm`指定计算时采用的矩阵范数函数，范数函数应以`numpy.array`类型作为唯一参数，以`float`类型作为返回值。用户可以自定义的范数函数，也可使用如下预置的范数函数（默认为`numpy_2_norm`）：
+
     - `numpy_1_norm`: 1-范数 $\|A\|_1 = \max_{1\leq j \leq n}\sum_{i=1}^n a_{ij}$
     - `numpy_2_norm`: 2-范数（谱范数）， $A^T A$ 的最大特征值的平方根。
     - `numpy_inf_norm`: $\infty$-范数 $\|A\|_{\infty} = \max_{1\leq i \leq n}\sum_{j=1}^n a_{ij}$
@@ -39,6 +41,7 @@ def numeric_identity_check(cirmat : numpy.array,
                            tolerance : float = DEFAULT_TOLERANCE,
                            norm = numpy_2_norm) -> bool:
 ```
+
 - 参数`cirmat`为代表待检验量子线路的NumPy矩阵。
 - 参数`ignore_global_phase`指定在检验等价时，是否忽略全局相位。如果设置为`False`，则只有当两个量子线路对应的矩阵在误差范围内相等时才判定为等价；如果设置为`True`，则只要两个量子线路对应的矩阵只相差一个全局相位时就判定为等价。默认为`True`。
 - 参数`tolerance`指定在判定相等时的误差容许度，默认为`DEFAULT_TOLERANCE = 0.001`。

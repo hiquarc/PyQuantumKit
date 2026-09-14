@@ -25,7 +25,7 @@ Pauli测量： `apply_measure_x`, `apply_measure_y`, `apply_measure_z`, `apply_p
 ## pyquantumkit.state_prepare模块：提供一些量子态制备算法
 **警告：随着高级语言级量子程序开发功能的引入，此模块在未来将被废弃。**
 
-**替代方案：** `pyquantumkit.program.std`中的`QubitArray`类型和`pyquantumkit.program.quint`中的`QuInt`类型。
+**替代方案：** `pyquantumkit.program.std`中的`QubitArray`类型和`pyquantumkit.program.quint`中的`QuInt`类型，它们提供了类似的方法。
 
 *根据一个字符串制备状态： `create_state_by_01pm`, `uncompute_state_by_01pm`, `create_state_by_sqgate_str`, `uncompute_state_by_sqgate_str`*
 
@@ -38,10 +38,12 @@ Pauli测量： `apply_measure_x`, `apply_measure_y`, `apply_measure_z`, `apply_p
 *Pauli算子的本征态： `create_pauli_eigenstate`, `uncompute_pauli_eigenstate`*
 
 ## pyquantumkit.library模块：提供一些常用量子算法
+**警告：随着高级语言级量子程序开发功能的引入，此模块在未来将逐渐迁移至高级语言，不建议用户直接使用该模块。**
 
 交换测试（Swap Test）、量子态层析（Tomography）、量子傅里叶变换（QFT）、量子哈密顿模拟
 
-## pyquantumkit.program_check.program_relation模块：提供量子程序性质检验算法
+## pyquantumkit.circuit_check.circuit_relation模块：提供量子程序性质检验算法
+**警告：随着高级语言级量子程序开发功能的引入，此模块在未来将仅作为内部使用，不建议用户直接使用该模块。**
 
 此模块基于论文 https://arxiv.org/abs/2307.01481 实现。
 

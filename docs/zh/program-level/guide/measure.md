@@ -96,12 +96,15 @@ def qmain4(builder : QProgramBuilder):
 ### 单个0/1串的解读：`interpret_output_str()`方法
 对代表一次测量的输出结果的`'0'`/`'1'`字符串，可以对已完成线路编译的`QProgramBuilder`对象调用`interpret_output_str()`方法，方法原型为：
 ```python
-def interpret_output_str(self, output_str : str, framework : str = None) -> dict:
+def interpret_output_str(self, output_str : str, protocol : str = 'l') -> dict:
 ```
+
 - `output_str`是代表一次测量结果的`'0'`/`'1'`字符串。请注意，**输入的字符串的长度必须与`QProgramBuilder`中的量子程序分配的存放测量结果的经典比特数相匹配**，且不能包含除`'0'`,`'1'`外的其他字符，否则会抛出`ResultInterpretError`异常。
 
     - 例如，前文程序`qmain1`、`qmain2`和`qmain4`中分配的经典比特数均为7，因此对编译这三个程序的`QProgramBuilder`类，`'0011001'`、`'1101111'`是调用`interpret_output_str()`方法的合法字符串，而`'110'`、`'1101'`、`'11+-abc'`不是合法字符串。
+
     - 程序`qmain3`中分配的经典比特数为4，因而`'1101'`是调用的合法字符串，而`'110'`、`'0011001'`不是合法的字符串。
+
     - 可以调用`QProgramBuilder`对象的`n_measure_cbits()`方法来获得分配的用于存放测量结果的经典比特数。
 
 - `protocol`参数指定按照何种约定进行解读，目前支持两种协议：
@@ -109,11 +112,11 @@ def interpret_output_str(self, output_str : str, framework : str = None) -> dict
     - `'r'`或`'R'`：按照从右开始约定进行解读。
     - 可以调用`QProgramBuilder`类的`framework_interpret_protocol()`静态方法获得具体框架的解读约定：
         
-        `print(QProgramBuilder.framework_interpret_protocol('qiskit'))       # 返回'r'`
-
-        `print(QProgramBuilder.framework_interpret_protocol('pyqpanda3'))    # 返回'r'`
-
-        `print(QProgramBuilder.framework_interpret_protocol('pyquafu'))      # 返回'l'`
+    ```python
+    print(QProgramBuilder.framework_interpret_protocol('qiskit'))       # -> 'r'
+    print(QProgramBuilder.framework_interpret_protocol('pyqpanda3'))    # -> 'r'
+    print(QProgramBuilder.framework_interpret_protocol('pyquafu'))      # -> 'l'
+    ```
         
 - 返回值为解读得到的字典，该字典的结构为：
 
@@ -126,9 +129,9 @@ def interpret_output_str(self, output_str : str, framework : str = None) -> dict
     - 数组（QArray）类型的变量的测量结果将被解读为由其各元素的解读结果组成的列表。
     - 结构体（QStruct）类型变量的测量结果将被解读为以各字段变量名为键，以对应的字段的解读结果为值的字典。
     - 元组（QTuple）类型变量的测量结果将被解读为其各字段的解读结果组成的列表。
-    - 联合体（QUnion）类型变量的测量结果将被解读为只包含一个活跃字段的`变量名 : 解读结果`字典。
+    - 联合体（QUnion）类型变量的测量结果将被解读为只包含一个活跃字段的字典。
 
-**注： `interpret_output_str()`方法仅按照约定量子比特和经典比特的分配来解读结果字符串，因此其返回值仅与被编译程序的变量声明部分和测量操作部分有关，与函数主体无关。** 例如，程序`qmain1`和`qmain4`的变量声明部分和测量操作部分相同，仅有函数主体部分不同，因此对编译它们的`QProgramBuilder`对象调用`interpret_output_str()`方法的行为相同。
+**注： `interpret_output_str()`方法仅按照约定量子比特和经典比特的分配来解读结果字符串，因此其返回值仅与被编译程序的变量声明部分和测量操作部分有关，与函数主体无关。** 例如，虽然程序`qmain1`和`qmain4`的函数主体部分不同，但它们的变量声明部分和测量操作部分完全相同，因此对编译它们的`QProgramBuilder`对象调用`interpret_output_str()`方法的行为相同。
 
 下面以`qmain4`来说明该方法的执行过程，我们首先利用`QProgramBuilder`编译`qmain4`，然后分别调用它的`n_qvars_qubits()`方法和`n_measure_cbits()`方法来获得为程序`qmain4`分配的量子比特数和经典比特数。
 ```python
@@ -170,7 +173,7 @@ def interpret_result_dict(self, output_dict : dict, protocol : str = 'l') -> lis
     - `'r'`或`'R'`：按照从右开始约定进行解读。
 - 返回值为由元组 `(解读结果, 出现次数)` 构成的列表。
 
-`interpret_result_dict()`方法会对传入参数`output_dict`的每个键调用`interpret_output_str()`方法进行解读，然后与对应的值组成形如 `(解读结果, 出现次数)` 的元组，返回值为由所有这样的元组构成的列表。
+`interpret_result_dict()`方法会对传入参数`output_dict`的每个键调用`interpret_output_str()`方法进行解读，然后与对应的值（出现次数）组成形如 `(解读结果, 出现次数)` 的元组，返回值为由所有这样的元组构成的列表。
 
 原始测量结果字典中，键是`'0'`/`'1'`字符串，字符串是hashable的，因而可以作为字典的键，进而构成形如 `'0'/'1'字符串 : 出现次数` 的项组成的字典。然而解读结果本身是一个字典，字典不是hashable的，不可作为字典的键，因此`interpret_result_dict()`方法的返回结果以列表形式表示，列表的每个元素是形如 `(解读结果, 出现次数)` 的元组。
 

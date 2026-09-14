@@ -1,8 +1,8 @@
-# pyquantumkit.program_check Module
-The program_check module provides functions for verifying quantum circuits and quantum programs.
+# pyquantumkit.circuit_check Module
+The circuit_check module provides functions for verifying quantum circuits and quantum programs.
 
-## pyquantumkit.program_check.matrix_based Module
-`pyquantumkit.program_check.matrix_based` provides matrix representation-based verification methods for quantum circuits.
+## pyquantumkit.circuit_check.matrix_based Module
+`pyquantumkit.circuit_check.matrix_based` provides matrix representation-based verification methods for quantum circuits.
 
 ### numeric_equivalence_check Function
 The `numeric_equivalence_check` function takes NumPy matrices representing two quantum circuits and checks their equivalence using matrix norms. The function prototype is:

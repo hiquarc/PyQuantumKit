@@ -52,9 +52,9 @@ PyQuantumKit的量子数据类型提供了一些特殊方法，这些方法通�
 在PyQuantumKit中，约定量子类型的特殊方法以“单下划线开头、单下划线结尾”命名。下列分别介绍各特殊方法。
 
 ### 初始化操作`_initialize_`
-在对量子变量执行`declare_qvars()`操作时，变量（以及其中的各元素或字段）的初始化操作`_initialize_`会被自动调用，通常用于为量子变量分配初始量子态。初始化操作类似于C++中的构造函数或Python类的`__init__`方法。
+在对量子变量执行`declare_qvars()`操作时，变量（以及其中的各元素或字段）的初始化操作`_initialize_`会被自动调用，通常用于为量子变量制备初始量子态。初始化操作类似于C++中的构造函数或Python类的`__init__`方法。
 
-**重要提示**： 由于PyQuantumKit基于Python语法构建量子数据类型，因此在使用时**请注意区分`__init__`和`_initialize_`，前者是作为Python类的`QVar`派生类的初始化，后者才是量子变量在量子程序运行过程中的初始化。**
+**重要提示**： 由于PyQuantumKit基于Python语法构建量子数据类型，因此在使用时**请注意区分`__init__`和`_initialize_`，前者是作为Python类对象的初始化，后者才是量子变量在量子程序运行过程中的初始化。**
 
 在定义`_initialize_`方法时，它只需要一个参数`self`，且不需要返回值：
 ```python
@@ -78,7 +78,7 @@ PyQuantumKit的量子数据类型提供了一些特殊方法，这些方法通�
 若未给出显式定义，量子比特`Qubit`的默认测量前操作为空操作，数组和结构体类型变量的默认测量前操作为对其各元素或字段调用相应的测量前操作，联合体类型变量只对活跃字段调用测量前操作。
 
 ### 结果字符串解读方法`_interpret_`
-`_interpret_`方法定义了如何对测量结果的`0`/`1`字符串进行解读。
+`_interpret_`方法定义了该类型量子变量应如何对测量结果的`'0'`/`'1'`字符串进行解读。
 
 在定义`_interpret_`方法时，它需要两个参数：`self`和代表测量结果字符串的`output: str`；而它的返回值为解读结果。
 ```python
@@ -105,7 +105,7 @@ class QuBool(Qubit):
 ```
 函数的返回值为需要被作为应用量子门目标的量子比特。如果是通过继承`Qubit`类型来构建的自定义类型，在编写完前面的处理逻辑后，通常可以直接返回`self`。
 
-三个参数`gate_name`, `qubit_var_list`, `paras`参数也可以直接用`*args`代替。
+三个参数`gate_name`, `qubit_var_list`, `paras`参数也可以直接用`*args`代替，当不需要在方法中使用这三个参数时可以这样简写，但不能省略参数。
 ```python
     def _gate_(self, *args) -> Qubit:
         # 具体代码
@@ -158,9 +158,9 @@ def qmain(builder : QProgramBuilder):
 ```
 声明了两个`PMQubit`变量然后直接测量，编译生成的量子线路和运行结果为：
 
-![](../../../imgs/pmqubit1.jpg){ style="width: 50%; height: auto;" }
+![](../../../imgs/pmqubit1.jpg){ style="width: 60%; height: auto;" }
 
-根据定义，每一个`PMQubit`类型量子变量在声明时会应用一个H门，在测量前也会应用一个H门，因此编译生成的量子线路中一共有4个H门。测量结果被解读为
+根据定义，每一个`PMQubit`类型量子变量在声明时会应用一个H门，在测量前也会应用一个H门，因此编译生成的量子线路中一共有4个H门（本例未做优化）。测量结果被解读为
 ```
 [({'pmq1': '+', 'pmq2': '+'}, 1000)]
 ```
@@ -181,7 +181,7 @@ def qmain(builder : QProgramBuilder):
 ```
 在之前程序的基础上，对`pmq1`应用了X门，对`pmq2`应用了Z门，然后测量。编译生成的量子线路和运行结果为：
 
-![](../../../imgs/pmqubit2.jpg){ style="width: 50%; height: auto;" }
+![](../../../imgs/pmqubit2.jpg){ style="width: 60%; height: auto;" }
 
 可以看到，生成的量子线路在初始化和测量前的一对H门之间分别加入了X门和Z门。测量结果被解读为：
 ```
@@ -242,7 +242,7 @@ $$
 2. 声明该类型的变量时，需要指定初始状态为这四个量子态中的哪一个，并制备该初态；
 3. 可对`BellQubitPair`类型变量直接使用下标访问运算符`[]`获得其中的量子比特，下标值限制为0或1；
 4. 提供`i()`, `x()`, `y()`, `z()`四个方法按照上表实现Bell态之间的转换；
-5. 测量结果解读为长度为2的`0`/`1`字符串：`'00'`, `'01'`, `'10'`, `'11'`。
+5. 测量结果解读为长度为2的`'0'`/`'1'`字符串：`'00'`, `'01'`, `'10'`, `'11'`。
 
 让我们依次看看如何实现各项功能。
 
@@ -358,12 +358,11 @@ qpanda_qvm.run(qpanda_cir, 1000)
 qpanda_result = qpanda_qvm.result().get_counts()
 print(qpanda_result)
 
-rec_result = qpbuilder.interpret_result_dict(qpanda_result, \
-                                             QProgramBuilder.framework_interpret_protocol('pyqpanda3'))
+rec_result = qpbuilder.interpret_result_dict(qpanda_result, 'r')
 print(rec_result)
 ```
 
-![](../../../imgs/belltype1.jpg){ style="width: 50%; height: auto;" }
+![](../../../imgs/belltype1.jpg){ style="width: 70%; height: auto;" }
 
 以下程序`qmain2`与`qmain1`相比，在测量之前调用了`mybell`变量的`y()`方法，
 ```python
@@ -375,4 +374,4 @@ def qmain2(builder : QProgramBuilder):
 ```
 其编译和运行结果为：
 
-![](../../../imgs/belltype2.jpg){ style="width: 50%; height: auto;" }
+![](../../../imgs/belltype2.jpg){ style="width: 70%; height: auto;" }

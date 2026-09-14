@@ -1,4 +1,4 @@
-# program_check/program_relation.py
+# circuit_check/circuit_relation.py
 #    2025/6/12
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS

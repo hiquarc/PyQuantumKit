@@ -10,7 +10,7 @@ from pyquantumkit.classical.run_result import *
 from pyquantumkit.classical.common import *
 from pyquantumkit.procedure.generic import *
 from pyquantumkit.procedure.paulis import *
-from pyquantumkit.program_check.program_relation import *
+from pyquantumkit.circuit_check.circuit_relation import *
 
 
 class Test_procedure_generic(UT.TestCase):

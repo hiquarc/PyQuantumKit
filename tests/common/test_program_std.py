@@ -5,7 +5,7 @@
 
 import unittest as UT
 from .common import is_exception, EmptyCir, Cir1A, OnlyGlobalPhase
-from pyquantumkit.program_check.matrix_based import numeric_equivalence_check, numpy_frobenius_norm
+from pyquantumkit.circuit_check.matrix_based import numeric_equivalence_check, numpy_frobenius_norm
 from .high_level_programs import *
 
 class Test_program_std(UT.TestCase):

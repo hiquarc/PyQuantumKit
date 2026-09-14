@@ -5,7 +5,7 @@ As a developer wanting to use quantum computing technology, are you facing the f
 - After writing a quantum circuit, there is no tool to check if there are any issues in the code.
 
 ## Currently Supported Frameworks
-PyQuantumKit v.0.1.6 currently supports the following quantum development frameworks:  
+
 - **IBM Qiskit**
 - **Origin Quantum QPanda3**
 - **Beijing Academy of Quantum Information Sciences Quafu**

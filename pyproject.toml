@@ -4,15 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyquantumkit"
-version = "0.1.6"
-description = "A middleware for translating a quantum program into different quantum software stacks."
+version = "0.2.0"
+description = "A tool to develop cross-platform high-level quantum programs using Python's syntax."
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
     {name = "Peixun Long", email = "longpx@ihep.ac.cn"}
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
@@ -42,7 +42,7 @@ quafu = ["pyquafu"]
 cqlib = ["cqlib"]
 
 [project.urls]
-Homepage = "https://quantum.ihep.ac.cn/"
+Homepage = "https://pyquantumkit.readthedocs.io/"
 Repository = "https://github.com/hiquarc/PyQuantumKit"
 Documentation = "https://github.com/hiquarc/PyQuantumKit"
 
