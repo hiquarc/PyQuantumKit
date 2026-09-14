@@ -42,7 +42,7 @@ plugins:
             "量子线路构建API": "API of Construct QCs"
             "CircuitIO类": "CircuitIO Class"
             "symbol模块": "Module pyquantumkit.symbol"
-            "program_check模块": "Module pyquantumkit.program_check"
+            "circuit_check模块": "Module pyquantumkit.circuit_check"
             "实际应用案例": "Practical Examples"
             "带参数量子线路的符号表示及检验": "Symbolic Representation and Verification of Parametric Quantum Circuits"
             "实验性功能": "Experimental Features"
@@ -69,8 +69,8 @@ nav:
       - 量子线路构建API: circuit-level/api/construct.md
       - CircuitIO类: circuit-level/api/circuitio.md
       - symbol模块: circuit-level/api/symbol.md
-      - program_check模块: circuit-level/api/program-check.md
-  - （新功能）高级语言级量子程序开发:
+      - circuit_check模块: circuit-level/api/circuit-check.md
+  - 高级语言级量子程序开发:
     - 高级语言级量子编程概览: program-level/introduction.md
     - 演示示例: program-level/example-program.md
     - 高级语言级量子编程指南:

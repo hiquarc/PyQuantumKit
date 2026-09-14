@@ -1,4 +1,4 @@
-# program_check/matrix_based.py
+# circuit_check/matrix_based.py
 #    2025/12/29
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS

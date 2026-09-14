@@ -8,8 +8,8 @@ from pyquantumkit._qframes.framework_map import get_reverse_output_str
 from pyquantumkit.procedure.circuit_io import *
 from pyquantumkit.classical.run_result import *
 from pyquantumkit.classical.common import *
-from pyquantumkit.program_check.program_relation import *
-from pyquantumkit.program_check.matrix_based import *
+from pyquantumkit.circuit_check.circuit_relation import *
+from pyquantumkit.circuit_check.matrix_based import *
 
 Repeat_Times_Of_State_Check = 20
 

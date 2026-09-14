@@ -7,7 +7,7 @@ from qiskit_aer import Aer
 import unittest as UT
 import tests.common.test_procedure as T_P
 import tests.common.test_state_prepare as T_SP
-import tests.common.test_program_check as T_PC
+import tests.common.test_circuit_check as T_PC
 
 RUN_TEST_FRAMEWORK = 'qiskit'
 RUN_TEST_MACHINE = Aer.get_backend('aer_simulator')
@@ -41,12 +41,12 @@ class On_qiskit_Test_state_prepare_pauli_eigenstate(T_SP.Test_state_prepare_paul
         self._qvm = RUN_TEST_MACHINE
 # END ---------- state_prepare ----------
 
-# BEGIN ---------- program_check ----------
-class On_qiskit_Test_program_check_program_relation(T_PC.Test_program_check_program_relation):
+# BEGIN ---------- circuit_check ----------
+class On_qiskit_Test_circuit_check_circuit_relation(T_PC.Test_circuit_check_circuit_relation):
     def setUp(self):
         self._fm = RUN_TEST_FRAMEWORK
         self._qvm = RUN_TEST_MACHINE
-# END ---------- program_check ----------
+# END ---------- circuit_check ----------
 
 if __name__ == '__main__':
     UT.main()

@@ -1,4 +1,4 @@
-# test: common/test_program_check.py
+# test: common/test_circuit_check.py
 #    2025/6/27
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
@@ -11,9 +11,9 @@ from pyquantumkit.classical.common import *
 from pyquantumkit.procedure.generic import *
 
 
-class Test_program_check_program_relation(UT.TestCase):
+class Test_circuit_check_circuit_relation(UT.TestCase):
     """
-    Test cases for subpackage "program_check/program_relation"
+    Test cases for subpackage "circuit_check/circuit_relation"
     """
     def __init__(self, methodName = "runTest"):
         super().__init__(methodName)
@@ -139,9 +139,9 @@ class Test_program_check_program_relation(UT.TestCase):
                 self.assertEqual(output, cases[input])
 
 
-class Test_program_check_matrix_based(UT.TestCase):
+class Test_circuit_check_matrix_based(UT.TestCase):
     """
-    Test cases for subpackage "program_check/matrix_based"
+    Test cases for subpackage "circuit_check/matrix_based"
     """
     def test_numeric_equivalence_check(self):
         cases = {

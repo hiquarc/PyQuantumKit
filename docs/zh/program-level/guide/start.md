@@ -90,6 +90,7 @@ qpbuilder.get_built_circuit()
 ```python
 def interpret_output_str(self, output_str : str, protocol : str = 'l') -> dict:
 ```
+
 - `output_str`是代表一次测量结果的`'0'`/`'1'`字符串。请注意，输入的字符串的长度必须与对应的量子程序对应的测量比特数相匹配，且不能包含除`'0'`,`'1'`外的其他字符。
 - `protocol`参数指定按照何种约定进行解读，目前支持两种协议：
     - `'l'`或`'L'`：按照从左开始约定进行解读（默认方式）；

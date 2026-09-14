@@ -35,7 +35,7 @@ Eigenstates of Pauli operators: `create_pauli_eigenstate`, `uncompute_pauli_eige
 
 Swap Test, Quantum State Tomography, Quantum Fourier Transform (QFT), Quantum Hamiltonian Simulation
 
-## pyquantumkit.program_check.program_relation module: Provides quantum program property verification algorithms
+## pyquantumkit.circuit_check.circuit_relation module: Provides quantum program property verification algorithms
 
 This module is implemented based on the paper https://arxiv.org/abs/2307.01481.
 
