@@ -18,6 +18,7 @@ $$ \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 
 ```python
 def symbol_gate_matrix(gate_str : str, paras : list = None) -> sympy.Matrix
 ```
+
 - 参数`gate_str`是一个指示量子门的字符串，与`apply_gate`函数中的相同（[查看详情](./supported-gates.md)）。
 - 参数`paras`是一个列表，用于为含参数门指派参数，与`apply_gate`函数中的相同；对于无参数门，不用指派此参数。
 
@@ -29,6 +30,7 @@ def symbol_gate_matrix(gate_str : str, paras : list = None) -> sympy.Matrix
 ```python
 def symbol_inverse_gate(mat : sympy.MatrixBase) -> sympy.Matrix
 ```
+
 - 参数`mat`是一个代表酉矩阵的sympy.Matrix对象。该函数仅仅简单取`mat`的共轭转置，不检验`mat`的幺正性（酉性）。
 
 ### is_legal_gate_matrix函数
@@ -37,6 +39,7 @@ def symbol_inverse_gate(mat : sympy.MatrixBase) -> sympy.Matrix
 ```python
 def is_legal_gate_matrix(mat : sympy.MatrixBase) -> bool
 ```
+
 - 参数`mat`是一个sympy.Matrix对象。
 
 函数返回True当且仅当`mat`是方阵且为酉矩阵。
@@ -47,6 +50,7 @@ def is_legal_gate_matrix(mat : sympy.MatrixBase) -> bool
 ```python
 def reverse_matrix_endianness(mat : sympy.MatrixBase) -> sympy.Matrix
 ```
+
 - 参数`mat`是一个sympy.Matrix对象。
 
 函数返回反转`mat`矩阵端序模式的矩阵。例如，如果输入

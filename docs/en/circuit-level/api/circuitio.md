@@ -8,6 +8,7 @@ When defining a CircuitIO object, its initialization method (constructor) `__ini
 ```python
 def __init__(self, nqbits : int = 0, ncbits : int = 0) -> None
 ```
+
 - The parameter `nqbits` specifies the number of quantum bits contained in the CircuitIO object, defaulting to 0.
 - The parameter `ncbits` specifies the number of classical bits contained in the CircuitIO object, defaulting to 0.
 
@@ -19,6 +20,7 @@ The `set_nqbits` function sets the number of quantum bits of the CircuitIO objec
 ```python
 def set_nqbits(self, nqbits) -> None
 ```
+
 - The parameter `nqbits` specifies the number of quantum bits to be set.
 
 ### set_ncbits
@@ -27,6 +29,7 @@ The `set_ncbits` function sets the number of classical bits of the CircuitIO obj
 ```python
 def set_ncbits(self, ncbits) -> None
 ```
+
 - The parameter `ncbits` specifies the number of classical bits to be set.
 
 ### get_nqbits
@@ -50,6 +53,7 @@ The `apply_gate` member function of the CircuitIO class is similar to the global
 ```python
 def apply_gate(self, gatestr : str, qbits : list[int], paras : list = None) -> None
 ```
+
 - The parameter `gate_str` is a string indicating the gate to be applied. Considering that the same gate may have multiple different names (e.g., Toffoli, CCNOT, CCX all represent the same gate), PyQuantumKit allows using different name strings to represent the same gate, and the case is insensitive. [Click here to view](supported-gates.md) the specific supported quantum gates and their corresponding strings.
 - The parameter `qbits` is a list of integers specifying the list of quantum bit subscripts to which the gate is to be applied. Note that whether the quantum gate is single-qubit or multi-qubit, this parameter must be assigned **in the form of a list**.
 - The parameter `paras` is a list used to assign parameters to parameterized gates; for non-parameterized gates, this parameter does not need to be assigned.
@@ -69,6 +73,7 @@ The `apply_measure` member function of the CircuitIO class is similar to the glo
 ```python
 def apply_measure(self, qindex : list[int], cindex : list[int]) -> None
 ```
+
 - The parameter `qindex` is a list of integers specifying the subscripts of the quantum bits to be measured.
 - The parameter `cindex` is a list of integers specifying the subscripts of the classical bits where the measurement results are stored. Each component of `qindex` and `cindex` corresponds respectively, so the lengths of `qindex` and `cindex` should be the same.
 
@@ -95,6 +100,7 @@ The `remap_qbits` function remaps the subscripts of the quantum bits in the curr
 ```python
 def remap_qbits(self, remap : int|list|range)
 ```
+
 - The parameter `remap` specifies the remapping method of quantum bits, and the passed type can be `int` or `list[int]`, defaulting to `None`, which means no remapping is performed. When an `int` type is passed, the subscript of each quantum bit in the source quantum circuit will be increased by this integer value during concatenation; when a `list[int]` type is passed, remapping is performed according to the instructions of this array during concatenation.
 
 ### remap_cbits
@@ -103,6 +109,7 @@ The `remap_cbits` function remaps the subscripts of the classical bits in the cu
 ```python
 def remap_cbits(self, remap : int|list|range)
 ```
+
 - The parameter `remap` specifies the remapping method of classical bits, and the passed type can be `int` or `list[int]`, defaulting to `None`, which means no remapping is performed. When an `int` type is passed, the subscript of each classical bit in the source quantum circuit will be increased by this integer value during concatenation; when a `list[int]` type is passed, remapping is performed according to the instructions of this array during concatenation.
 
 ### append_circuit_io
@@ -111,6 +118,7 @@ The `append_circuit_io` function concatenates the quantum circuit of another Cir
 ```python
 def append_circuit_io(self, cir_io_obj)
 ```
+
 - The parameter `cir_io_obj` specifies the source quantum circuit.
 
 ### << Operator
@@ -151,6 +159,7 @@ The `check_nqbits` function checks whether the subscript out of bounds occurs in
 ```python
 def check_nqbits(self, adjust : bool = False) -> bool
 ```
+
 - The parameter `adjust` specifies whether to automatically adjust the number of quantum bits to adapt to the subscripts of the quantum gate operations when subscript out of bounds is detected during inspection. The default is `False`, which means no adjustment is ever made.
 
 Returns `True` if there is no subscript out of bounds; otherwise returns `False`, and if the `adjust` parameter is `True`, the number of quantum bits is automatically adjusted.
@@ -173,6 +182,7 @@ The `get_sympy_matrix` function calculates the matrix representation correspondi
 ```python
 def get_sympy_matrix(self, subsdict : dict = None, simplify : bool = True) -> sympy.Matrix
 ```
+
 - The optional parameter `subsdict` is a dictionary used to specify the SymPy symbol substitution rules. The default is None, which means no symbol substitution is performed. **Note: This parameter only needs to be specified when SymPy symbols are used as quantum gate parameters.** For example, passing `{t : 3, x : 4}` means substituting the symbol `t` with the number 3 and the symbol `x` with the number 4.
 - The optional parameter `simplify` specifies whether to perform simplification (i.e., SymPy's simplify operation) during the calculation of the matrix representation, defaulting to `True`.
 
@@ -184,6 +194,7 @@ The `get_numpy_matrix` function calculates the matrix representation correspondi
 ```python
 def get_numpy_matrix(self, subsdict : dict = None) -> numpy.array
 ```
+
 - The parameter `subsdict` is a dictionary specifying whether symbols need to be substituted during calculation and the substitution method. The default is `None`, which means no substitution is performed.
 
 The function returns a NumPy matrix object.
@@ -194,6 +205,7 @@ The `symbol_subs` function substitutes SymPy symbols in the CircuitIO object (in
 ```python
 def symbol_subs(self, subsdict : dict)
 ```
+
 - The parameter `subsdict` is a dictionary specifying the substitution method.
 
 ## 6. Exporting Circuits
@@ -205,6 +217,7 @@ def get_circuit_code(self, language : str, circuit_name : str,
                      gate_lib_name : str = None, linebreak : str = '\n',
                      subsdict : dict = None) -> str
 ```
+
 - The parameter `language` is a string specifying the exported language ([click here to view](./supported-platforms.md)).
 - The parameter `circuit_name` is a string specifying the name of the quantum circuit object in the exported code.
 - The parameter `gate_lib_name` is a string specifying the package prefix of the quantum circuit object name in the exported code, defaulting to `None`, which means no prefix. **Note: Specify `None` for no prefix, do not specify an empty string `''`.**

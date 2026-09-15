@@ -12,6 +12,7 @@ PyQuantumKit区分两类量子线路：其一称为Circuit，仅包含量子门�
 ```python
 def new_circuit(framework : str, nqbits : int)
 ```
+
 - 字符串参数`framework`指示具体的框架名（例如`'qiskit'`、`'pyqpanda3'`）。
 - 整数参数`nqbits`指派量子线路包含的量子比特数。
 
@@ -23,6 +24,7 @@ def new_circuit(framework : str, nqbits : int)
 ```python
 def new_program(framework : str, nqbits : int, ncbits : int = 0)
 ```
+
 - 字符串参数`framework`指示具体的框架名（例如`'qiskit'`、`'pyqpanda3'`）。
 - 整数参数`nqbits`指派量子线路包含的量子比特数。
 - 整数参数`ncbits`指派量子线路包含的经典比特数。
@@ -35,6 +37,7 @@ def new_program(framework : str, nqbits : int, ncbits : int = 0)
 ```python
 def copy_circuit(src_qcir, remap : int|list|range = None, inverse : bool = False)
 ```
+
 - 参数`src_qcir`指派源量子线路。
 - 参数`qbits_remap`指派量子比特的重映射方式，传入类型可以为`int`或`list[int]`，默认为`None`，表示不进行重映射。当传入`int`类型时，源量子线路的每个量子比特的下标在串联时会增加此整数值；当传入`list[int]`类型时，串联时按照此数组的指示进行重映射。
 - 参数`cbits_remap`指派经典比特的重映射方式，传入类型可以为`int`或`list[int]`，默认为`None`，表示不进行重映射。当传入`int`类型时，源量子线路的每个经典比特的下标在串联时会增加此整数值；当传入`list[int]`类型时，串联时按照此数组的指示进行重映射。
@@ -47,6 +50,7 @@ def copy_circuit(src_qcir, remap : int|list|range = None, inverse : bool = False
 ```python
 def copy_program(src_qp, qbits_remap : int|list|range = None, cbits_remap : int|list|range = None)
 ```
+
 - 参数`src_qcir`指派源量子线路。
 - 参数`qbits_remap`指派量子比特的重映射方式，传入类型可以为`int`或`list[int]`，默认为`None`，表示不进行重映射。当传入`int`类型时，源量子线路的每个量子比特的下标在串联时会增加此整数值；当传入`list[int]`类型时，串联时按照此数组的指示进行重映射。
 - 参数`cbits_remap`指派经典比特的重映射方式，传入类型可以为`int`或`list[int]`，默认为`None`，表示不进行重映射。当传入`int`类型时，源量子线路的每个经典比特的下标在串联时会增加此整数值；当传入`list[int]`类型时，串联时按照此数组的指示进行重映射。
@@ -59,6 +63,7 @@ def copy_program(src_qp, qbits_remap : int|list|range = None, cbits_remap : int|
 ```python
 def append_circuit(dest_qcir, src_qcir, remap : int|list|range = None, inverse : bool = False)
 ```
+
 - 参数`dest_qcir`指派目标量子线路。
 - 参数`src_qcir`指派源量子线路。
 - 参数`remap`指派量子比特的重映射方式，传入类型可以为`int`或`list[int]`，默认为`None`，表示不进行重映射。当传入`int`类型时，源量子线路的每个量子比特的下标在串联时会增加此整数值；当传入`list[int]`类型时，串联时按照此数组的指示进行重映射。
@@ -72,6 +77,7 @@ def append_circuit(dest_qcir, src_qcir, remap : int|list|range = None, inverse :
 ```python
 def append_program(dest_qp, src_qp, qbits_remap : int|list|range = None, cbits_remap : int|list|range = None)
 ```
+
 - 参数`dest_qcir`指派目标量子线路。
 - 参数`src_qcir`指派源量子线路。
 - 参数`qbits_remap`指派量子比特的重映射方式，传入类型可以为`int`或`list[int]`，默认为`None`，表示不进行重映射。当传入`int`类型时，源量子线路的每个量子比特的下标在串联时会增加此整数值；当传入`list[int]`类型时，串联时按照此数组的指示进行重映射。
