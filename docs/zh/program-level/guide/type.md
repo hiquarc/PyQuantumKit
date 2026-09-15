@@ -40,7 +40,7 @@ print(qpbuilder.interpret_output_str('11', 'r'))    # 输出：{'q1': '1', 'q2':
 在定义量子变量时，通常需要为变量指定名称，该名称在进行结果解读时会作为相应结果字典的键。
 ```python
 def qmain(builder : QProgramBuilder):
-    q1 = Qubit('q1')     # 命名为'q1'
+    q1 = Qubit('q1')     # 定义一个Qubit类型的变量并命名为'q1'
     # ......
 ```
 结果解读
@@ -51,10 +51,11 @@ def qmain(builder : QProgramBuilder):
 在一些情况下，也可以省略变量名（或将其指定为`None`），这样定义的变量称为**匿名变量**：
 ```python
 def qmain(builder : QProgramBuilder):
-    q1 = Qubit()     # 匿名变量
+    q1 = Qubit()        # 省略变量名定义来匿名变量
+    q2 = Qubit(None)    # 将变量名指定为None来定义匿名变量
     # ......
 ```
-注意：本例中左边的`q1`仅仅是该量子变量在`qmain`函数中的局部指代，我们并未给该量子变量命名。
+注意：本例中左边的`q1`和`q2`仅仅是该量子变量在`qmain`函数中的局部指代，我们并未给该量子变量命名。
 
 匿名变量通常用于不需要变量名的嵌套数据类型中，例如数组的元素、元组的字段等。
 
@@ -70,7 +71,7 @@ PyQuantumKit要求凡是在`declare_qvars()`中直接声明的量子变量都需
 def make_qarray(base : type|QVar, length : int, varname : str = None)
 ```
 
-- `base`指示数组基类型，可用类型名（`QVar`类的派生类）或一个具体的量子变量来指示；
+- `base`参数指示数组的基类型，可用量子变量类型名（一般应为`QVar`类的派生类）或一个具体的量子变量来指示；
 - `length`参数给出生成的数组的长度；
 - `varname`参数给出生成的数组变量的名称，默认为`None`（即匿名变量）；
 - 函数返回一个新数组变量。
@@ -194,7 +195,7 @@ def qmain(builder : QProgramBuilder):
 
 ### 定义结构体
 
-用户通过派生`QStruct`类来定义自己的结构体，在派生类的`__init__`方法中定义各字段。
+用户通过**派生`QStruct`类**来定义自己的结构体，在派生类的`__init__`方法中定义各字段。
 ```python
 class MyStruct(QStruct):
     def __init__(self, varname=None):
@@ -263,7 +264,7 @@ def make_qtuple(element_list : tuple[type|QVar], varname : str = None)
 ```
 
 - `element_list`参数用Python元组指派各字段的类型；
-- `varname`参数给出生成的数组变量的名称，默认为`None`（即匿名变量）；
+- `varname`参数给出生成的元组变量的名称，默认为`None`（即匿名变量）；
 - 函数返回一个新元组变量。
 
 可用下标访问运算符`[]`来访问元组中的字段，下标从0开始。
@@ -277,9 +278,9 @@ def qmain(builder : QProgramBuilder):
     #    下标0：一个包含3个量子比特的量子比特数组
     #    下标1：一个2x2的二维量子比特数组
     #    下标2：一个量子比特
-    mytuple = make_qtuple(( QubitArray(3),
-                            make_qarray(QubitArray(2), 2),
-                            Qubit ),
+    mytuple = make_qtuple(( QubitArray(3),                   # 指定下标0类型
+                            make_qarray(QubitArray(2), 2),   # 指定下标1类型
+                            Qubit ),                         # 指定下标2类型
                           'mytuple')
     builder.declare_qvars(mytuple)
 
@@ -300,11 +301,11 @@ def qmain(builder : QProgramBuilder):
 ## 四、联合体（QUnion）
 与结构体类似，联合体也是若干个量子变量字段组成，每个字段有自己的变量名，各个字段可以有不同的类型，可以使用成员访问运算符`.`来访问其中的某个字段。与结构体不同的是，联合体中所有字段共用同一段量子内存地址，PyQuantumKit保证联合体内的所有字段的起始地址都等于联合体本身的地址。联合体可用于需要通过共用来节约量子比特的情形，或者需要对量子比特进行重解释的情形。
 
-定义联合体的方式与定义结构体类似，只是需要从`QUnion`类派生，并且初始化函数为`self.init_qunion(...)`。
+定义联合体的方式与定义结构体类似，只是需要**从`QUnion`类派生**，并且初始化函数为`self.init_qunion(...)`。
 
 当测量一个联合体类型的变量时，测量操作作用于联合体的“**活跃字段**”。可以利用成员函数`set_activity_item()`来设置或改变活跃字段。当测量一个未设置活跃字段的联合体变量时会报错。联合体类型变量的测量结果的解读将只包含活跃字段的结果。
 
-下列代码定义了一个联合体`QNumberRepresent`
+下列代码定义了一个联合体`QNumberRepresentation`
 ```python
 from pyquantumkit.program.std import *
 from pyquantumkit.program.quint import *
@@ -318,7 +319,7 @@ class QNumberRepresentation(QUnion):
 
         self.init_qunion(self.number, self.binary)
 ```
-其中包含`number`和`binary`两个字段。`number`字段是包含6个量子比特的量子整型，`binary`字段是包含6个量子比特的量子比特数组，两个字段共用同一段量子内存。
+其中包含`number`和`binary`两个字段。`number`字段是包含6个量子比特的量子整型，`binary`字段是包含6个量子比特的数组，两个字段共用同一段量子内存。
 
 由于共用，对其中一个字段的操作会影响另一个字段的内容
 ```python

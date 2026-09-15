@@ -10,7 +10,7 @@ from math import pi
 
 qc = QuantumCircuit(6, 6)
 qc.h(1)
-qc.p(math.pi / 3, 1)
+qc.p(pi / 3, 1)
 qc.x(2)
 qc.x(3)
 qc.x(5)

@@ -56,7 +56,6 @@ plugins:
       docs_structure: folder
 
 
-
 nav:
   # - zh:
   - 首页: index.md

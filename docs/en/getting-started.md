@@ -11,6 +11,7 @@ PyQuantumKit requires Python version >= 3.8 and depends on the following Python 
 
 - sympy >= 1.8
 - numpy >= 1.22.0
+- packaging >= 20.0
 
 Typically, PyQuantumKit needs to be used in conjunction with supported Python-based quantum development frameworks (e.g., qiskit or pyqpanda3). You can install PyQuantumKit along with a supported quantum development framework. For example, use the following command to install PyQuantumKit and qiskit simultaneously:
 
