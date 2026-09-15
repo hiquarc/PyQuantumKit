@@ -12,6 +12,7 @@ The `new_circuit` function creates a new quantum circuit object on the target qu
 ```python
 def new_circuit(framework : str, nqbits : int)
 ```
+
 - The string parameter `framework` indicates the specific framework name (e.g., `'qiskit'`, `'pyqpanda3'`).
 - The integer parameter `nqbits` specifies the number of qubits contained in the quantum circuit.
 
@@ -23,6 +24,7 @@ The `new_program` function creates a new quantum circuit object on the target qu
 ```python
 def new_program(framework : str, nqbits : int, ncbits : int = 0)
 ```
+
 - The string parameter `framework` indicates the specific framework name (e.g., `'qiskit'`, `'pyqpanda3'`).
 - The integer parameter `nqbits` specifies the number of qubits contained in the quantum circuit.
 - The integer parameter `ncbits` specifies the number of classical bits contained in the quantum circuit.
@@ -35,6 +37,7 @@ The `copy_circuit` function copies the source quantum circuit and returns an add
 ```python
 def copy_circuit(src_qcir, remap : int|list|range = None, inverse : bool = False)
 ```
+
 - The parameter `src_qcir` specifies the source quantum circuit.
 - The parameter `qbits_remap` specifies the qubit remapping method, which can be passed as an `int` or `list[int]` type, with a default value of `None` (indicating no remapping). When an `int` type is passed, the index of each qubit in the source quantum circuit will be increased by this integer value during concatenation; when a `list[int]` type is passed, remapping will be performed according to the instructions of this array during concatenation.
 - The parameter `cbits_remap` specifies the classical bit remapping method, which can be passed as an `int` or `list[int]` type, with a default value of `None` (indicating no remapping). When an `int` type is passed, the index of each classical bit in the source quantum circuit will be increased by this integer value during concatenation; when a `list[int]` type is passed, remapping will be performed according to the instructions of this array during concatenation.
@@ -47,6 +50,7 @@ The `copy_program` function copies the source quantum circuit and returns an add
 ```python
 def copy_program(src_qp, qbits_remap : int|list|range = None, cbits_remap : int|list|range = None)
 ```
+
 - The parameter `src_qcir` specifies the source quantum circuit.
 - The parameter `qbits_remap` specifies the qubit remapping method, which can be passed as an `int` or `list[int]` type, with a default value of `None` (indicating no remapping). When an `int` type is passed, the index of each qubit in the source quantum circuit will be increased by this integer value during concatenation; when a `list[int]` type is passed, remapping will be performed according to the instructions of this array during concatenation.
 - The parameter `cbits_remap` specifies the classical bit remapping method, which can be passed as an `int` or `list[int]` type, with a default value of `None` (indicating no remapping). When an `int` type is passed, the index of each classical bit in the source quantum circuit will be increased by this integer value during concatenation; when a `list[int]` type is passed, remapping will be performed according to the instructions of this array during concatenation.
@@ -59,6 +63,7 @@ The `append_circuit` function concatenates a source quantum circuit to the end o
 ```python
 def append_circuit(dest_qcir, src_qcir, remap : int|list|range = None, inverse : bool = False)
 ```
+
 - The parameter `dest_qcir` specifies the target quantum circuit.
 - The parameter `src_qcir` specifies the source quantum circuit.
 - The parameter `remap` specifies the qubit remapping method, which can be passed as an `int` or `list[int]` type, with a default value of `None` (indicating no remapping). When an `int` type is passed, the index of each qubit in the source quantum circuit will be increased by this integer value during concatenation; when a `list[int]` type is passed, remapping will be performed according to the instructions of this array during concatenation.
@@ -72,6 +77,7 @@ The `append_program` function concatenates a source quantum circuit to the end o
 ```python
 def append_program(dest_qp, src_qp, qbits_remap : int|list|range = None, cbits_remap : int|list|range = None)
 ```
+
 - The parameter `dest_qcir` specifies the target quantum circuit.
 - The parameter `src_qcir` specifies the source quantum circuit.
 - The parameter `qbits_remap` specifies the qubit remapping method, which can be passed as an `int` or `list[int]` type, with a default value of `None` (indicating no remapping). When an `int` type is passed, the index of each qubit in the source quantum circuit will be increased by this integer value during concatenation; when a `list[int]` type is passed, remapping will be performed according to the instructions of this array during concatenation.

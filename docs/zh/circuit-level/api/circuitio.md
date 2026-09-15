@@ -8,6 +8,7 @@
 ```python
 def __init__(self, nqbits : int = 0, ncbits : int = 0) -> None
 ```
+
 - 参数`nqbits`指定CircuitIO对象包含的量子比特数，默认为0。
 - 参数`ncbits`指定CircuitIO对象包含的经典比特数，默认为0。
 
@@ -19,6 +20,7 @@ def __init__(self, nqbits : int = 0, ncbits : int = 0) -> None
 ```python
 def set_nqbits(self, nqbits) -> None
 ```
+
 - 参数`nqbits`指定要设置的量子比特数。
 
 ### set_ncbits
@@ -27,6 +29,7 @@ def set_nqbits(self, nqbits) -> None
 ```python
 def set_ncbits(self, ncbits) -> None
 ```
+
 - 参数`ncbits`指定要设置的量子比特数。
 
 ### get_nqbits
@@ -50,6 +53,7 @@ CircuitIO类的`apply_gate`成员函数与全局的`apply_gate`函数类似，�
 ```python
 def apply_gate(self, gatestr : str, qbits : list[int], paras : list = None) -> None
 ```
+
 - 参数`gate_str`是一个字符串，用于指示需要应用的门。考虑到同一个门可能有多个不同的名称（例如Toffoli,CCNOT,CCX都表示同一个门），PyQuantumKit允许以不同的名字字符串来表示同一个门，且不区分大小写。[点此查看](supported-gates.md)具体支持的量子门及其对应的字符串。
 - 参数`qbits`是一个整数列表，指定门要应用的量子比特下标列表。注意无论量子门是单比特还是多比特，都需要**以列表的方式指派此参数**。
 - 参数`paras`是一个列表，用于为含参数门指派参数；对于无参数门，不用指派此参数。
@@ -69,6 +73,7 @@ CircuitIO类的`apply_measure`成员函数与全局的`apply_measure`函数类�
 ```python
 def apply_measure(self, qindex : list[int], cindex : list[int]) -> None
 ```
+
 - 参数`qindex`是一个整数列表，指定要测量的量子比特下标。
 - 参数`cindex`是一个整数列表，指定测量结果存放的经典比特下标。`qindex`和`cindex`各分量分别对应，因此`qindex`和`cindex`长度应相同。
 
@@ -95,6 +100,7 @@ def inverse(self)
 ```python
 def remap_qbits(self, remap : int|list|range)
 ```
+
 - 参数`remap`指派量子比特的重映射方式，传入类型可以为`int`或`list[int]`，默认为`None`，表示不进行重映射。当传入`int`类型时，源量子线路的每个量子比特的下标在串联时会增加此整数值；当传入`list[int]`类型时，串联时按照此数组的指示进行重映射。
 
 ### remap_cbits
@@ -103,6 +109,7 @@ def remap_qbits(self, remap : int|list|range)
 ```python
 def remap_cbits(self, remap : int|list|range)
 ```
+
 - 参数`remap`指派经典比特的重映射方式，传入类型可以为`int`或`list[int]`，默认为`None`，表示不进行重映射。当传入`int`类型时，源量子线路的每个经典比特的下标在串联时会增加此整数值；当传入`list[int]`类型时，串联时按照此数组的指示进行重映射。
 
 ### append_circuit_io
@@ -111,6 +118,7 @@ def remap_cbits(self, remap : int|list|range)
 ```python
 def append_circuit_io(self, cir_io_obj)
 ```
+
 - 参数`cir_io_obj`指派源量子线路。
 
 ### << 运算符
@@ -151,6 +159,7 @@ def contains_measure(self) -> bool
 ```python
 def check_nqbits(self, adjust : bool = False) -> bool
 ```
+
 - 参数`adjust`指定当检验出现下标越界时，是否自动调整量子比特数目以适应其中的量子门操作的下标。默认为`False`，即从不调整。
 
 若无下标越界，返回`True`；否则返回`False`，并且若`adjust`参数为`True`时，自动调整量子比特数目。
@@ -173,6 +182,7 @@ def check_ncbits(self, adjust : bool = False) -> bool
 ```python
 def get_sympy_matrix(self, subsdict : dict = None, simplify : bool = True) -> sympy.Matrix
 ```
+
 - 可选参数`subsdict`是一个字典，用于指定SymPy符号代入规则。默认为None，即不进行任何符号代换。**注：只有当使用了SymPy符号作为量子门参数时才需要指定此参数。** 例如，传入`{t : 3, x : 4}`表示用数字3代入符号`t`，用数字4代入符号`x`。
 - 可选参数`simplify`指定是否在计算矩阵表示的过程中进行化简（即SymPy的simplify操作），默认为`True`。
 
@@ -184,6 +194,7 @@ def get_sympy_matrix(self, subsdict : dict = None, simplify : bool = True) -> sy
 ```python
 def get_numpy_matrix(self, subsdict : dict = None) -> numpy.array
 ```
+
 - 参数`subsdict`是一个字典，指定在计算时是否需要对其中的符号进行代换，以及代换方式。默认为`None`，即不进行代换。
 
 函数返回NumPy矩阵对象。
@@ -194,6 +205,7 @@ def get_numpy_matrix(self, subsdict : dict = None) -> numpy.array
 ```python
 def symbol_subs(self, subsdict : dict)
 ```
+
 - 参数`subsdict`是一个字典，指定代换方式。
 
 ## 6. 导出线路
@@ -205,6 +217,7 @@ def get_circuit_code(self, language : str, circuit_name : str,
                      gate_lib_name : str = None, linebreak : str = '\n',
                      subsdict : dict = None) -> str
 ```
+
 - 参数`language`是一个字符串，指定导出的语言（[点此查看](./supported-platforms.md)）。
 - 参数`circuit_name`是一个字符串，指定导出代码中，量子线路对象名称。
 - 参数`gate_lib_name`是一个字符串，指定导出代码中，量子线路对象名称的包前缀，默认为`None`，即无前缀。**注：无前缀请指定为`None`，不要指定为空字符串`''`。**

@@ -18,6 +18,7 @@ The `symbol_gate_matrix` function converts a string representing a quantum gate 
 ```python
 def symbol_gate_matrix(gate_str : str, paras : list = None) -> sympy.Matrix
 ```
+
 - The parameter `gate_str` is a string indicating the quantum gate, consistent with that in the `apply_gate` function ([see details](./supported-gates.md)).
 - The parameter `paras` is a list used to assign parameters to parameterized gates, consistent with that in the `apply_gate` function; this parameter does not need to be assigned for parameter-free gates.
 
@@ -29,6 +30,7 @@ The `symbol_inverse_gate` function takes a sympy.Matrix matrix representing a qu
 ```python
 def symbol_inverse_gate(mat : sympy.MatrixBase) -> sympy.Matrix
 ```
+
 - The parameter `mat` is a sympy.Matrix object representing a unitary matrix. This function simply takes the conjugate transpose of `mat` and does not verify the unitarity of `mat`.
 
 ### is_legal_gate_matrix Function
@@ -37,6 +39,7 @@ The `is_legal_gate_matrix` function takes a sympy.Matrix matrix representing a q
 ```python
 def is_legal_gate_matrix(mat : sympy.MatrixBase) -> bool
 ```
+
 - The parameter `mat` is a sympy.Matrix object.
 
 The function returns True if and only if `mat` is a square matrix and a unitary matrix.
@@ -47,6 +50,7 @@ The matrices provided by this module follow a human-readable format, i.e., the f
 ```python
 def reverse_matrix_endianness(mat : sympy.MatrixBase) -> sympy.Matrix
 ```
+
 - The parameter `mat` is a sympy.Matrix object.
 
 The function returns a matrix with the endianness mode of the `mat` matrix reversed. For example, if the input is

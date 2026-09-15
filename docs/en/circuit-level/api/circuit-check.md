@@ -13,6 +13,7 @@ def numeric_equivalence_check(cirmat1 : numpy.array, cirmat2 : numpy.array,
                               tolerance : float = DEFAULT_TOLERANCE,
                               norm = numpy_2_norm) -> bool:
 ```
+
 - Parameter `cirmat1` is the NumPy matrix representing the first quantum circuit (which can be obtained using the `get_numpy_matrix` function of the CircuitIO class, [see here](./circuitio.md#get_numpy_matrix)).
 - Parameter `cirmat2` is the NumPy matrix representing the second quantum circuit.
 - Parameter `ignore_global_phase` specifies whether to ignore the global phase when checking equivalence. If set to `False`, the two quantum circuits are judged to be equivalent only if their corresponding matrices are equal within the error tolerance; if set to `True`, the two quantum circuits are judged to be equivalent as long as their corresponding matrices differ only by a global phase. The default value is `True`.
@@ -39,6 +40,7 @@ def numeric_identity_check(cirmat : numpy.array,
                            tolerance : float = DEFAULT_TOLERANCE,
                            norm = numpy_2_norm) -> bool:
 ```
+
 - Parameter `cirmat` is the NumPy matrix representing the quantum circuit to be verified.
 - Parameter `ignore_global_phase` specifies whether to ignore the global phase when checking equivalence. If set to `False`, the two quantum circuits are judged to be equivalent only if their corresponding matrices are equal within the error tolerance; if set to `True`, the two quantum circuits are judged to be equivalent as long as their corresponding matrices differ only by a global phase. The default value is `True`.
 - Parameter `tolerance` specifies the error tolerance for judging equality, with a default value of `DEFAULT_TOLERANCE = 0.001`.
