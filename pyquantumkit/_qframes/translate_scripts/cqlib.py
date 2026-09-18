@@ -23,86 +23,86 @@ def CODE(cir_name : str, gate_lib_name : str,
 
     if g == 'm':
         for i in range(len(qbits)):
-            execstr += cir_name + ".measure(" + str(qbits[i]) + "); "
+            execstr += cir_name + f".measure({qbits[i]}); "
         return execstr[:-2]
     if g == 'i':
-        execstr += cir_name + ".i(" + str(qbits[0]) + ", 1)"
+        execstr += cir_name + f".i({qbits[0]}, 1)"
         return execstr
     
     if g == 'u1':
-        execstr += cir_name + ".u(" + str(qbits[0]) + ", 0, 0, " + str(paras[0]) + ")"
+        execstr += cir_name + f".u({qbits[0]}, 0, 0, {paras[0]})"
         return execstr
     if g == 'cu1':
-        execstr += cir_name + ".u(" + str(qbits[0]) + ", 0, 0, " + str(paras[0] / 2) + "); "
-        execstr += cir_name + ".crz(" + str(qbits[0]) + ", " + str(qbits[1]) + ", " + str(paras[0]) + ")"
+        execstr += cir_name + f".u({qbits[0]}, 0, 0, {paras[0] / 2}); "
+        execstr += cir_name + f".crz({qbits[0]}, {qbits[1]}, {paras[0]})"
         return execstr
     if g == 'cs':
-        execstr += cir_name + ".t(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".crz(" + str(qbits[0]) + ", " + str(qbits[1]) + ", " + str(math.pi / 2) + ")"
+        execstr += cir_name + f".t({qbits[0]}); "
+        execstr += cir_name + f".crz({qbits[0]}, {qbits[1]}, {math.pi / 2})"
         return execstr
     if g == 'csd':
-        execstr += cir_name + ".td(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".crz(" + str(qbits[0]) + ", " + str(qbits[1]) + ", " + str(-math.pi / 2) + ")"
+        execstr += cir_name + f".td({qbits[0]}); "
+        execstr += cir_name + f".crz({qbits[0]}, {qbits[1]}, {-math.pi / 2})"
         return execstr
     if g == 'ch':
-        execstr += cir_name + ".ry(" + str(qbits[1]) + ", " + str(-math.pi / 4) + "); "
-        execstr += cir_name + ".cz(" + str(qbits[0]) + ", " + str(qbits[1]) + "); "
-        execstr += cir_name + ".ry(" + str(qbits[1]) + ", " + str(math.pi / 4) + ")"
+        execstr += cir_name + f".ry({qbits[1]}, {-math.pi / 4}); "
+        execstr += cir_name + f".cz({qbits[0]}, {qbits[1]}); "
+        execstr += cir_name + f".ry({qbits[1]}, {math.pi / 4})"
         return execstr
     if g == 'sx':
-        execstr += cir_name + ".h(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".s(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".h(" + str(qbits[0]) + ")"
+        execstr += cir_name + f".h({qbits[0]}); "
+        execstr += cir_name + f".s({qbits[0]}); "
+        execstr += cir_name + f".h({qbits[0]})"
         return execstr
     if g == 'sxd':
-        execstr += cir_name + ".h(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".sd(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".h(" + str(qbits[0]) + ")"
+        execstr += cir_name + f".h({qbits[0]}); "
+        execstr += cir_name + f".sd({qbits[0]}); "
+        execstr += cir_name + f".h({qbits[0]})"
         return execstr
     
     if g == 'isw':
-        execstr += cir_name + ".cz(" + str(qbits[0]) + ", " + str(qbits[1]) + "); "
-        execstr += cir_name + ".s(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".s(" + str(qbits[1]) + "); "
-        execstr += cir_name + ".swap(" + str(qbits[0]) + ", " + str(qbits[1]) + ")"
+        execstr += cir_name + f".cz({qbits[0]}, {qbits[1]}); "
+        execstr += cir_name + f".s({qbits[0]}); "
+        execstr += cir_name + f".s({qbits[1]}); "
+        execstr += cir_name + f".swap({qbits[0]}, {qbits[1]})"
         return execstr
     if g == 'ccz':
-        execstr += cir_name + ".h(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".ccx(" + str(qbits[0]) + ", " + str(qbits[1]) + ", " + str(qbits[2]) + "); "
-        execstr += cir_name + ".h(" + str(qbits[0]) + ")"
+        execstr += cir_name + f".h({qbits[0]}); "
+        execstr += cir_name + f".ccx({qbits[0]}, {qbits[1]}, {qbits[2]}); "
+        execstr += cir_name + f".h({qbits[0]})"
         return execstr
     if g == 'csw':
-        execstr += cir_name + ".ccx(" + str(qbits[0]) + ", " + str(qbits[1]) + ", " + str(qbits[2]) + "); "
-        execstr += cir_name + ".ccx(" + str(qbits[0]) + ", " + str(qbits[2]) + ", " + str(qbits[1]) + "); "
-        execstr += cir_name + ".ccx(" + str(qbits[0]) + ", " + str(qbits[1]) + ", " + str(qbits[2]) + ")"
+        execstr += cir_name + f".ccx({qbits[0]}, {qbits[1]}, {qbits[2]}); "
+        execstr += cir_name + f".ccx({qbits[0]}, {qbits[2]}, {qbits[1]}); "
+        execstr += cir_name + f".ccx({qbits[0]}, {qbits[1]}, {qbits[2]})"
         return execstr
 
     if g == 'rzz':
-        execstr += cir_name + ".cx(" + str(qbits[0]) + ", " + str(qbits[1]) + "); "
-        execstr += cir_name + ".rz(" + str(qbits[1]) + ", " + str(paras[0]) + "); "
-        execstr += cir_name + ".cx(" + str(qbits[0]) + ", " + str(qbits[1]) + ")"
+        execstr += cir_name + f".cx({qbits[0]}, {qbits[1]}); "
+        execstr += cir_name + f".rz({qbits[1]}, {paras[0]}); "
+        execstr += cir_name + f".cx({qbits[0]}, {qbits[1]})"
         return execstr
     if g == 'rxx':
-        execstr += cir_name + ".h(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".h(" + str(qbits[1]) + "); "
-        execstr += cir_name + ".cx(" + str(qbits[0]) + ", " + str(qbits[1]) + "); "
-        execstr += cir_name + ".rz(" + str(qbits[1]) + ", " + str(paras[0]) + "); "
-        execstr += cir_name + ".cx(" + str(qbits[0]) + ", " + str(qbits[1]) + "); "
-        execstr += cir_name + ".h(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".h(" + str(qbits[1]) + ")"
+        execstr += cir_name + f".h({qbits[0]}); "
+        execstr += cir_name + f".h({qbits[1]}); "
+        execstr += cir_name + f".cx({qbits[0]}, {qbits[1]}); "
+        execstr += cir_name + f".rz({qbits[1]}, {paras[0]}); "
+        execstr += cir_name + f".cx({qbits[0]}, {qbits[1]}); "
+        execstr += cir_name + f".h({qbits[0]}); "
+        execstr += cir_name + f".h({qbits[1]})"
         return execstr
     if g == 'ryy':
-        execstr += cir_name + ".sd(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".sd(" + str(qbits[1]) + "); "
-        execstr += cir_name + ".h(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".h(" + str(qbits[1]) + "); "
-        execstr += cir_name + ".cx(" + str(qbits[0]) + ", " + str(qbits[1]) + "); "
-        execstr += cir_name + ".rz(" + str(qbits[1]) + ", " + str(paras[0]) + "); "
-        execstr += cir_name + ".cx(" + str(qbits[0]) + ", " + str(qbits[1]) + "); "
-        execstr += cir_name + ".h(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".h(" + str(qbits[1]) + "); "
-        execstr += cir_name + ".s(" + str(qbits[0]) + "); "
-        execstr += cir_name + ".s(" + str(qbits[1]) + ")"
+        execstr += cir_name + f".sd({qbits[0]}); "
+        execstr += cir_name + f".sd({qbits[1]}); "
+        execstr += cir_name + f".h({qbits[0]}); "
+        execstr += cir_name + f".h({qbits[1]}); "
+        execstr += cir_name + f".cx({qbits[0]}, {qbits[1]}); "
+        execstr += cir_name + f".rz({qbits[1]}, {paras[0]}); "
+        execstr += cir_name + f".cx({qbits[0]}, {qbits[1]}); "
+        execstr += cir_name + f".h({qbits[0]}); "
+        execstr += cir_name + f".h({qbits[1]}); "
+        execstr += cir_name + f".s({qbits[0]}); "
+        execstr += cir_name + f".s({qbits[1]})"
         return execstr
     
     if g == 'sw':

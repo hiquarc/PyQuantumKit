@@ -44,7 +44,7 @@ cqlib = ["cqlib"]
 [project.urls]
 Homepage = "https://pyquantumkit.readthedocs.io/"
 Repository = "https://github.com/hiquarc/PyQuantumKit"
-Documentation = "https://github.com/hiquarc/PyQuantumKit"
+Documentation = "https://pyquantumkit.readthedocs.io/"
 
 [tool.setuptools.packages.find]
 include = ["pyquantumkit*"]

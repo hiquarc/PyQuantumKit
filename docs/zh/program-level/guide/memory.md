@@ -30,7 +30,7 @@ class MyStruct(QStruct):
 
 结构体中各字段的分配顺序以调用`init_qstruct()`函数的参数顺序为准。
 
-联合体的所有字段拥有相同的起始地址，共用同一段量子内存。下列结构体`MyUnion`
+联合体的所有字段拥有相同的起始地址，共用同一段量子内存。下列联合体
 ```python
 class MyUnion(QUnion):
     def __init__(self, varname=None):
