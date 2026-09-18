@@ -7,10 +7,11 @@ from ..code_translate import get_standard_gatename
 
 def float_str(num : int|float) -> str:
     ret = str(float(num))
-    if '.' in ret:
-        return ret
-    else:
-        return ret + '.0'
+    return ret
+    # if '.' in ret:
+    #     return ret
+    # else:
+    #     return ret + '.0'
 
 def CODE(cir_name : str, gate_lib_name : str,
          gate_name : str, qbits : list[int], paras : list) -> str:
@@ -20,17 +21,17 @@ def CODE(cir_name : str, gate_lib_name : str,
     if g == 'M':
         execstr = ""
         for i in range(len(qbits)):
-            execstr += "let c_" + str(paras[i]) + " = M(" + cir_name + "[" + str(qbits[i]) + "]); "
+            execstr += f"let c_{paras[i]} = M({cir_name}[{qbits[i]}]); "
         return execstr
     
     # Single qubit gate without parameter
     if g in {'I', 'X', 'Y', 'Z', 'S', 'T', 'H', 'SX'}:
-        execstr = g + "(" + cir_name + "[" + str(qbits[0]) + "]);"
+        execstr = f"{g}({cir_name}[{qbits[0]}]);"
         return execstr
     
     # Sdag and Tdag
     if g in {'SD', 'TD'}:
-        execstr = "Adjoint " + g[0] + "(" + cir_name + "[" + str(qbits[0]) + "]);"
+        execstr = f"Adjoint {g[0]}({cir_name}[{qbits[0]}]);"
         return execstr
     
     # Two qubit gate without parameter
@@ -39,7 +40,7 @@ def CODE(cir_name : str, gate_lib_name : str,
             g = 'CNOT'
         elif g == 'SW':
             g = 'SWAP'
-        execstr = g + "(" + cir_name + "[" + str(qbits[0]) + "], " + cir_name + "[" + str(qbits[1]) + "]);"
+        execstr = f"{g}({cir_name}[{qbits[0]}], {cir_name}[{qbits[1]}]);"
         return execstr
     
     # Single qubit rotation gates
@@ -48,14 +49,13 @@ def CODE(cir_name : str, gate_lib_name : str,
             g = g[0] + g[1].lower()
         elif g == 'U1':
             g = 'R1'
-        execstr = g + "(" + float_str(paras[0]) + ", " + cir_name + "[" + str(qbits[0]) + "]);"
+        execstr = f"{g}({float_str(paras[0])}, {cir_name}[{qbits[0]}]);"
         return execstr
     
     # Two qubit rotation gates
     if g in {'RXX', 'RYY', 'RZZ'}:
         g = 'R' + g[1].lower() + g[2].lower()
-        execstr = g + "(" + float_str(paras[0]) + ", "  + cir_name + "[" + str(qbits[0]) + "], "\
-                    + cir_name + "[" + str(qbits[1]) + "]);"
+        execstr = f"{g}({float_str(paras[0])}, {cir_name}[{qbits[0]}], {cir_name}[{qbits[1]}]);"
         return execstr
     
     # Controlled single qubit gates
@@ -64,8 +64,7 @@ def CODE(cir_name : str, gate_lib_name : str,
             g = 'Adjoint S'
         else:
             g = g[1]
-        execstr = "Controlled " +  g + "([" + cir_name + "[" + str(qbits[0]) + "]], "\
-                    + cir_name + "[" + str(qbits[1]) + "]);"
+        execstr = f"Controlled {g}([{cir_name}[{qbits[0]}]], {cir_name}[{qbits[1]}]);"
         return execstr
     
     # Controlled rotation gates
@@ -74,33 +73,29 @@ def CODE(cir_name : str, gate_lib_name : str,
             g = 'Controlled R' + g[2].lower()
         elif g == 'CU1':
             g = 'Controlled R1'
-        execstr = g + "([" + cir_name + "[" + str(qbits[0]) + "]], ("\
-                    + float_str(paras[0]) + ", "  + cir_name + "[" + str(qbits[1]) + "]));"
+        execstr = f"{g}([{cir_name}[{qbits[0]}]], ({float_str(paras[0])}, {cir_name}[{qbits[1]}]));"
         return execstr
     
     if g == 'CCX':
-        execstr = "CCNOT(" + cir_name + "[" + str(qbits[0]) + "], " + cir_name + "[" + str(qbits[1]) + "], "\
-                           + cir_name + "[" + str(qbits[2]) + "]);"
+        execstr = f"CCNOT({cir_name}[{qbits[0]}], {cir_name}[{qbits[1]}], {cir_name}[{qbits[2]}]);"
         return execstr
     if g == 'CCZ':
-        execstr = "Controlled Z([" + cir_name + "[" + str(qbits[0]) + "], " + cir_name + "[" + str(qbits[1]) + "]], "\
-                                   + cir_name + "[" + str(qbits[2]) + "]);"
+        execstr = f"Controlled Z([{cir_name}[{qbits[0]}], {cir_name}[{qbits[1]}]], {cir_name}[{qbits[2]}]);"
         return execstr
     if g == 'CSW':
-        execstr = "Controlled SWAP([" + cir_name + "[" + str(qbits[0]) + "]], ("\
-                                      + cir_name + "[" + str(qbits[1]) + "], " + cir_name + "[" + str(qbits[2]) + "]));"
+        execstr = f"Controlled SWAP([{cir_name}[{qbits[0]}]], ({cir_name}[{qbits[1]}], {cir_name}[{qbits[2]}]));"
         return execstr
     if g == 'SXD':
-        execstr = "Adjoint SX(" + cir_name + "[" + str(qbits[0]) + "]);"
+        execstr = f"Adjoint SX({cir_name}[{qbits[0]}]);"
         return execstr
     if g == 'ISW':
-        execstr = "CZ(" + cir_name + "[" + str(qbits[0]) + "], " + cir_name + "[" + str(qbits[1]) + "]); "
-        execstr += "S(" + cir_name + "[" + str(qbits[0]) + "]); "
-        execstr += "S(" + cir_name + "[" + str(qbits[1]) + "]); "
-        execstr += "SWAP(" + cir_name + "[" + str(qbits[0]) + "], " + cir_name + "[" + str(qbits[1]) + "]); "
+        execstr = f"CZ({cir_name}[{qbits[0]}], {cir_name}[{qbits[1]}]); "
+        execstr += f"S({cir_name}[{qbits[0]}]); "
+        execstr += f"S({cir_name}[{qbits[1]}]); "
+        execstr += f"SWAP({cir_name}[{qbits[0]}], {cir_name}[{qbits[1]}]); "
         return execstr
     if g == 'U3':
-        execstr = "R1(" + float_str(paras[2]) + ", " + cir_name + "[" + str(qbits[0]) + "]); "
-        execstr += "Ry(" + float_str(paras[0]) + ", " + cir_name + "[" + str(qbits[0]) + "]); "
-        execstr += "R1(" + float_str(paras[1]) + ", " + cir_name + "[" + str(qbits[0]) + "]); "
+        execstr = f"R1({float_str(paras[2])}, {cir_name}[{qbits[0]}]); "
+        execstr += f"Ry({float_str(paras[0])}, {cir_name}[{qbits[0]}]); "
+        execstr += f"R1({float_str(paras[1])}, {cir_name}[{qbits[0]}]); "
         return execstr

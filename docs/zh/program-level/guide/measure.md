@@ -131,7 +131,7 @@ def interpret_output_str(self, output_str : str, protocol : str = 'l') -> dict:
     - 元组（QTuple）类型变量的测量结果将被解读为其各字段的解读结果组成的列表。
     - 联合体（QUnion）类型变量的测量结果将被解读为只包含一个活跃字段的字典。
 
-**注： `interpret_output_str()`方法仅按照约定量子比特和经典比特的分配来解读结果字符串，因此其返回值仅与被编译程序的变量声明部分和测量操作部分有关，与函数主体无关。** 例如，虽然程序`qmain1`和`qmain4`的函数主体部分不同，但它们的变量声明部分和测量操作部分完全相同，因此对编译它们的`QProgramBuilder`对象调用`interpret_output_str()`方法的行为相同。
+**注： `interpret_output_str()`方法仅按照约定量子比特和经典比特的分配来解读结果字符串，因此其行为仅与被编译程序的变量声明部分和测量操作部分有关，与函数主体无关。** 例如，虽然程序`qmain1`和`qmain4`的函数主体部分不同，但它们的变量声明部分和测量操作部分完全相同，因此对编译它们的`QProgramBuilder`对象调用`interpret_output_str()`方法的行为相同。
 
 下面以`qmain4`来说明该方法的执行过程，我们首先利用`QProgramBuilder`编译`qmain4`，然后分别调用它的`n_qvars_qubits()`方法和`n_measure_cbits()`方法来获得为程序`qmain4`分配的量子比特数和经典比特数。
 ```python
@@ -177,4 +177,4 @@ def interpret_result_dict(self, output_dict : dict, protocol : str = 'l') -> lis
 
 原始测量结果字典中，键是`'0'`/`'1'`字符串，字符串是hashable的，因而可以作为字典的键，进而构成形如 `'0'/'1'字符串 : 出现次数` 的项组成的字典。然而解读结果本身是一个字典，字典不是hashable的，不可作为字典的键，因此`interpret_result_dict()`方法的返回结果以列表形式表示，列表的每个元素是形如 `(解读结果, 出现次数)` 的元组。
 
-**注：** 与`interpret_output_str()`方法类似，**`interpret_output_str()`方法的返回值仅与被编译程序的变量声明部分和测量操作部分有关，与函数主体无关。**
+**注：** 与`interpret_output_str()`方法类似，**`interpret_output_str()`方法的行为仅与被编译程序的变量声明部分和测量操作部分有关，与函数主体无关。**

@@ -1,7 +1,7 @@
 site_name: PyQuantumKit
 site_description: A python-based development kit for cross-platform quantum programs.
 site_author: Peixun Long
-site_url: https://github.com/hiquarc/PyQuantumKit/
+site_url: https://pyquantumkit.readthedocs.io/
 
 
 theme:
@@ -54,7 +54,6 @@ plugins:
             
       reconfigure_material: true
       docs_structure: folder
-
 
 
 nav:
