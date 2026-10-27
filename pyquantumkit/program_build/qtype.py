@@ -1,4 +1,4 @@
-# program_build/qtypes.py
+# program_build/qtype.py
 #    2026/8/17
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS

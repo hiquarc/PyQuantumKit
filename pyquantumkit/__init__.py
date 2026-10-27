@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-__version__ = '0.2.0'
+__version__ = '0.2.1a'
 
 import sys
 import os
@@ -31,7 +31,9 @@ def get_framework_from_type(t : type) -> str:
 def get_framework_from_object(obj) -> str:
     return get_framework_from_type(type(obj))
 
-def framework_modules(fm_name : str, index : int = 0):
+def framework_modules(fm_name : str, index : int|None = None):
+    if index is None:
+        return Framework_Namespace[fm_name]
     return Framework_Namespace[fm_name][index]
 def framework_version(fm_name : str):
     return Framework_Version[fm_name]
@@ -70,3 +72,4 @@ from .procedure.circuit_io import CircuitIO
 from .program_build.builder import QProgramBuilder
 from ._qframes.user_define import add_extra_framework
 from ._qframes.code_translate import get_standard_gatename
+from ._qframes.framework_map import framework_interpret_protocol, framework_support_subroutines

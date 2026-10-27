@@ -26,20 +26,20 @@ def derivative(q_circuit, qbitlist : list[int], createfunc : callable, rev_endia
     """
     f = get_framework_from_object(q_circuit)
     
-    if get_support_inverse(f) and get_support_remap(f):
-        tempqc = new_circuit(f, indexlist_length(qbitlist))
-        createfunc(tempqc, *args, **kwargs)
-        if rev_endian:
-            append_circuit(q_circuit, tempqc, range(0, len(qbitlist))[::-1], uncomp)
-        else:
-            append_circuit(q_circuit, tempqc, None, uncomp)
-    else:
-        cio = CircuitIO(indexlist_length(qbitlist))
-        createfunc(cio, *args, **kwargs)
-        if uncomp:
-            cio.inverse()
-        if rev_endian:
-            cio.remap_qbits(range(0, len(qbitlist))[::-1])
-        cio >> q_circuit
+    # if get_support_inverse(f) and get_support_remap(f):
+    #     tempqc = new_circuit(f, indexlist_length(qbitlist))
+    #     createfunc(tempqc, *args, **kwargs)
+    #     if rev_endian:
+    #         append_circuit(q_circuit, tempqc, range(0, len(qbitlist))[::-1], uncomp)
+    #     else:
+    #         append_circuit(q_circuit, tempqc, None, uncomp)
+    # else:
+    cio = CircuitIO(indexlist_length(qbitlist))
+    createfunc(cio, *args, **kwargs)
+    if uncomp:
+        cio.inverse()
+    if rev_endian:
+        cio.remap_qbits(range(0, len(qbitlist))[::-1])
+    cio >> q_circuit
 
     return q_circuit

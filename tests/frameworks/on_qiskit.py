@@ -3,14 +3,15 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from qiskit_aer import Aer
+from qiskit_aer import Aer, AerSimulator
 import unittest as UT
 import tests.common.test_procedure as T_P
 import tests.common.test_state_prepare as T_SP
 import tests.common.test_circuit_check as T_PC
 
 RUN_TEST_FRAMEWORK = 'qiskit'
-RUN_TEST_MACHINE = Aer.get_backend('aer_simulator')
+# RUN_TEST_MACHINE = Aer.get_backend('aer_simulator')
+RUN_TEST_MACHINE = AerSimulator()
 
 # BEGIN ---------- procedure ----------
 class On_qiskit_Test_procedure_generic(T_P.Test_procedure_generic):

@@ -1,10 +1,10 @@
-# Quick Reference of Supported Quantum Gates
+# Quantum Gates Supported by PyQuantumKit
 
-This page lists the quantum gates supported by PyQuantumKit, along with the corresponding call strings for the `apply_gate` function and the SymPy matrix names in `pyquantumkit.symbol.gate` for user reference.
+This page gives the quantum gates supported by PyQuantumKit, together with the corresponding call strings of the apply_gate function and the SymPy matrix names in pyquantumkit.symbol.gate, for users to consult.
 
-**The call strings for the `apply_gate` function are case-insensitive**. If multiple strings are listed for a gate, any of them can be used. For example, `'CCNOT'`, `'ccx'`, `'Toffoli'`, `'toFFoLi'` are all valid call strings representing the Toffoli gate. For parameterized quantum gates, an array must be assigned as the `paras` parameter. **Note: Even if there is only one parameter, it must be assigned in the form of an array**.
+**The call strings of the apply_gate function are case-insensitive**, and if a gate lists multiple strings, any one of them can be used. For example, `'CCNOT'`, `'ccx'`, `'Toffoli'` and `'toFFoLi'` are all valid call strings representing the Toffoli gate. For parameterized quantum gates, an array needs to be assigned as the `paras` parameter. **Note: Even if there is only one parameter, it must be assigned in array form**.
 
-Since the SymPy matrices provided by `pyquantumkit.symbol.gate` are Python objects or functions that return Python objects, **the SymPy matrix names are case-sensitive**. In addition, the `symbol_gate_matrix` function can be used to convert a call string to a SymPy matrix object, and the call strings for this function are the same as those for the `apply_gate` function (case-insensitive).
+Since the SymPy matrices provided by pyquantumkit.symbol.gate are Python objects or functions that return Python objects, **the SymPy matrix names are case-sensitive**. In addition, the `symbol_gate_matrix` function can be used to convert a call string into a SymPy matrix object. The call strings for this function are the same as those for the apply_gate function and are case-insensitive.
 
 ## 1. Single-Qubit Gates
 
@@ -13,285 +13,285 @@ Since the SymPy matrices provided by `pyquantumkit.symbol.gate` are Python objec
 
 $$ \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}  $$
 
-- Call strings for the `apply_gate` function (case-insensitive, the same below): `'i'`, `'id'`
-- SymPy matrix name in `pyquantumkit.symbol.gate` (case-sensitive, the same below): `Id`
+- Call strings of the apply_gate function (case-insensitive, the same below): `'i'`, `'id'`
+- SymPy matrix name in pyquantumkit.symbol.gate (case-sensitive, the same below): `Id`
 
-### X Gate
+### X gate
 - Matrix:
 
 $$ \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'x'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `X`
+- Call strings of the apply_gate function: `'x'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `X`
 
-### Y Gate
+### Y gate
 - Matrix:
 
 $$ \begin{bmatrix} 0 & -i \\ i & 0 \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'y'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `Y`
+- Call strings of the apply_gate function: `'y'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `Y`
 
-### Z Gate
+### Z gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'z'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `Z`
+- Call strings of the apply_gate function: `'z'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `Z`
 
-### S Gate
+### S gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 \\ 0 & i \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'s'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `S`
+- Call strings of the apply_gate function: `'s'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `S`
 
-### T Gate
+### T gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 \\ 0 & e^{\frac{\pi}{4}i} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'t'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `T`
+- Call strings of the apply_gate function: `'t'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `T`
 
-### Hadamard Gate
+### Hardmard gate
 - Matrix:
 
 $$ \frac{1}{\sqrt 2}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'h'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `H`
+- Call strings of the apply_gate function: `'h'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `H`
 
-### $S^{\dagger}$ Gate
+### $S^{\dagger}$ gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 \\ 0 & -i \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'sd'`, `'sdg'`, `'sdag'`, `'sdagger'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `Sdag`
+- Call strings of the apply_gate function: `'sd'`, `'sdg'`, `'sdag'`, `'sdagger'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `Sdag`
 
-### $T^{\dagger}$ Gate
+### $T^{\dagger}$ gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 \\ 0 & e^{-\frac{\pi}{4}i} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'td'`, `'tdg'`, `'tdag'`, `'tdagger'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `Tdag`
+- Call strings of the apply_gate function: `'td'`, `'tdg'`, `'tdag'`, `'tdagger'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `Tdag`
 
-### $\sqrt{X}$ Gate
+### $\sqrt{X}$ gate
 - Matrix:
 
 $$ \begin{bmatrix} 1+i & 1-i \\ 1-i & 1+i \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'sx'`, `'sqrtx'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `SqrtX`
+- Call strings of the apply_gate function: `'sx'`, `'sqrtx'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `SqrtX`
 
-### $\sqrt{X}^{\dagger}$ Gate
+### $\sqrt{X}^{\dagger}$ gate
 - Matrix:
 
 $$ \begin{bmatrix} 1-i & 1+i \\ 1+i & 1-i \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'sxd'`, `'sxdg'`, `'sxdag'`, `'sxdagger'`, `'sqrtxdg'`, `'sqrtxdag'`, `'sqrtxdag'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `SqrtXdag`
+- Call strings of the apply_gate function: `'sxd'`, `'sxdg'`, `'sxdag'`, `'sxdagger'`, `'sqrtxdg'`, `'sqrtxdag'`, `'sqrtxdag'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `SqrtXdag`
 
 ## 2. Two-Qubit Gates
-### CNOT Gate (Controlled-X Gate)
+### CNOT gate (controlled-X gate)
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 1 & 0 \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'cx'`, `'cnot'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `CNOT`
+- Call strings of the apply_gate function: `'cx'`, `'cnot'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `CNOT`
 
-### Controlled-Y Gate
+### Controlled-Y gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & -i \\ 0 & 0 & i & 0 \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'cy'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `CY`
+- Call strings of the apply_gate function: `'cy'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `CY`
 
-### Controlled-Z Gate
+### Controlled-Z gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & -1 \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'cz'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `CZ`
+- Call strings of the apply_gate function: `'cz'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `CZ`
 
-### Controlled-S Gate
+### Controlled-S gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & i \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'cs'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `CS`
+- Call strings of the apply_gate function: `'cs'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `CS`
 
-### Controlled $S^{\dagger}$ Gate
+### Controlled $S^{\dagger}$ gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & -i \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'csd'`, `'csdg'`, `'csdag'`, `'csdagger'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `CSdag`
+- Call strings of the apply_gate function: `'csd'`, `'csdg'`, `'csdag'`, `'csdagger'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `CSdag`
 
-### Controlled-Hadamard Gate
+### Controlled-Hardmard gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & \frac{1}{\sqrt 2} & \frac{1}{\sqrt 2} \\ 0 & 0 & \frac{1}{\sqrt 2} & -\frac{1}{\sqrt 2} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'ch'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `CH`
+- Call strings of the apply_gate function: `'ch'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `CH`
 
-### SWAP Gate
+### SWAP gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'sw'`, `'swap'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `SWAP`
+- Call strings of the apply_gate function: `'sw'`, `'swap'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `SWAP`
 
-### iSWAP Gate
+### iSWAP gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 0 & i & 0 \\ 0 & i & 0 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'isw'`, `'iswap'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `iSWAP`
+- Call strings of the apply_gate function: `'isw'`, `'iswap'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `iSWAP`
 
 ## 3. Three-Qubit Gates
-### Toffoli Gate (CCNOT Gate)
+### Toffoli gate (CCNOT gate)
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'ccx'`, `'ccnot'`, `'toffoli'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `Toffoli`
+- Call strings of the apply_gate function: `'ccx'`, `'ccnot'`, `'toffoli'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `Toffoli`
 
-### Fredkin Gate (Controlled-SWAP Gate)
+### Fredkin gate (controlled-SWAP gate)
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'csw'`, `'cswap'`, `'fredkin'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `Fredkin`
+- Call strings of the apply_gate function: `'csw'`, `'cswap'`, `'fredkin'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `Fredkin`
 
-### CCZ Gate
+### CCZ gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'ccz'`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `CCZ`
+- Call strings of the apply_gate function: `'ccz'`
+- SymPy matrix name in pyquantumkit.symbol.gate: `CCZ`
 
 ## 4. Single-Qubit Parameterized Gates
-### $R_x(\theta)$ Gate
+### $R_x(\theta)$ gate
 - Matrix:
 
 $$ \begin{bmatrix} \cos\frac{\theta}{2} & -i\sin\frac{\theta}{2} \\ -i\sin\frac{\theta}{2} & \cos\frac{\theta}{2} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'rx'`
-- `paras` parameter for the `apply_gate` function: `[theta_]`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `Rx(theta_)`
+- Call strings of the apply_gate function: `'rx'`
+- paras parameter of the apply_gate function: `[theta_]`
+- SymPy matrix name in pyquantumkit.symbol.gate: `Rx(theta_)`
 
-### $R_y(\theta)$ Gate
+### $R_y(\theta)$ gate
 - Matrix:
 
 $$ \begin{bmatrix} \cos\frac{\theta}{2} & -\sin\frac{\theta}{2} \\ \sin\frac{\theta}{2} & \cos\frac{\theta}{2} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'ry'`
-- `paras` parameter for the `apply_gate` function: `[theta_]`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `Ry(theta_)`
+- Call strings of the apply_gate function: `'ry'`
+- paras parameter of the apply_gate function: `[theta_]`
+- SymPy matrix name in pyquantumkit.symbol.gate: `Ry(theta_)`
 
-### $R_z(\theta)$ Gate
+### $R_z(\theta)$ gate
 - Matrix:
 
 $$ \begin{bmatrix} e^{-i\frac{\theta}{2}} & 0 \\ 0 & e^{i\frac{\theta}{2}} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'rz'`
-- `paras` parameter for the `apply_gate` function: `[theta_]`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `Rz(theta_)`
+- Call strings of the apply_gate function: `'rz'`
+- paras parameter of the apply_gate function: `[theta_]`
+- SymPy matrix name in pyquantumkit.symbol.gate: `Rz(theta_)`
 
-### $P(\theta)$ Gate ( $U1(\theta)$ Gate)
+### $P(\theta)$ gate ($U1(\theta)$ gate)
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 \\ 0 & e^{i\theta} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'p'`, `'u1'`, `'r1'`
-- `paras` parameter for the `apply_gate` function: `[theta_]`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `U1(theta_)`
+- Call strings of the apply_gate function: `'p'`, `'u1'`, `'r1'`
+- paras parameter of the apply_gate function: `[theta_]`
+- SymPy matrix name in pyquantumkit.symbol.gate: `U1(theta_)`
 
-### $U3(\theta,\phi,\lambda)$ Gate (General Single-Qubit Gate)
+### $U3(\theta,\phi,\lambda)$ gate (general single-qubit gate)
 - Matrix:
 
 $$ \begin{bmatrix} \cos\frac{\theta}{2} & -e^{i\lambda}\sin\frac{\theta}{2} \\ e^{i\phi}\sin\frac{\theta}{2} & e^{i(\phi+\lambda)}\cos\frac{\theta}{2} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'u'`, `'u3'`
-- `paras` parameter for the `apply_gate` function: `[theta_, phi_, lambda_]`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `U3(theta_, phi_, lambda_)`
+- Call strings of the apply_gate function: `'u'`, `'u3'`
+- paras parameter of the apply_gate function: `[theta_, phi_, lambda_]`
+- SymPy matrix name in pyquantumkit.symbol.gate: `U3(theta_, phi_, lambda_)`
 
 ## 5. Two-Qubit Parameterized Gates
-### Controlled $R_x(\theta)$ Gate
+### Controlled $R_x(\theta)$ gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & \cos\frac{\theta}{2} & -i\sin\frac{\theta}{2} \\ 0 & 0 & -i\sin\frac{\theta}{2} & \cos\frac{\theta}{2} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'crx'`
-- `paras` parameter for the `apply_gate` function: `[theta_]`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `CRx(theta_)`
+- Call strings of the apply_gate function: `'crx'`
+- paras parameter of the apply_gate function: `[theta_]`
+- SymPy matrix name in pyquantumkit.symbol.gate: `CRx(theta_)`
 
-### Controlled $R_y(\theta)$ Gate
+### Controlled $R_y(\theta)$ gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & \cos\frac{\theta}{2} & -\sin\frac{\theta}{2} \\ 0 & 0 & \sin\frac{\theta}{2} & \cos\frac{\theta}{2} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'cry'`
-- `paras` parameter for the `apply_gate` function: `[theta_]`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `CRy(theta_)`
+- Call strings of the apply_gate function: `'cry'`
+- paras parameter of the apply_gate function: `[theta_]`
+- SymPy matrix name in pyquantumkit.symbol.gate: `CRy(theta_)`
 
-### Controlled $R_z(\theta)$ Gate
+### Controlled $R_z(\theta)$ gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & e^{-i\frac{\theta}{2}} & 0 \\ 0 & 0 & 0 & e^{i\frac{\theta}{2}} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'crz'`
-- `paras` parameter for the `apply_gate` function: `[theta_]`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `CRz(theta_)`
+- Call strings of the apply_gate function: `'crz'`
+- paras parameter of the apply_gate function: `[theta_]`
+- SymPy matrix name in pyquantumkit.symbol.gate: `CRz(theta_)`
 
-### Controlled $P(\theta)$ Gate
+### Controlled $P(\theta)$ gate
 - Matrix:
 
 $$ \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & e^{i\theta} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'cp'`, `'cu1'`, `'cr1'`
-- `paras` parameter for the `apply_gate` function: `[theta_]`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `CU1(theta_)`
+- Call strings of the apply_gate function: `'cp'`, `'cu1'`, `'cr1'`
+- paras parameter of the apply_gate function: `[theta_]`
+- SymPy matrix name in pyquantumkit.symbol.gate: `CU1(theta_)`
 
-### $R_{xx}(\theta)$ Gate
+### $R_{xx}(\theta)$ gate
 - Matrix:
 
 $$ \begin{bmatrix} \cos\frac{\theta}{2} & 0 & 0 & -i\sin\frac{\theta}{2} \\ 0 & \cos\frac{\theta}{2} & -i\sin\frac{\theta}{2} & 0 \\ 0 & -i\sin\frac{\theta}{2} & \cos\frac{\theta}{2} & 0 \\ -i\sin\frac{\theta}{2} & 0 & 0 & \cos\frac{\theta}{2} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'rxx'`
-- `paras` parameter for the `apply_gate` function: `[theta_]`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `Rxx(theta_)`
+- Call strings of the apply_gate function: `'rxx'`
+- paras parameter of the apply_gate function: `[theta_]`
+- SymPy matrix name in pyquantumkit.symbol.gate: `Rxx(theta_)`
 
-### $R_{yy}(\theta)$ Gate
+### $R_{yy}(\theta)$ gate
 - Matrix:
 
 $$ \begin{bmatrix} \cos\frac{\theta}{2} & 0 & 0 & i\sin\frac{\theta}{2} \\ 0 & \cos\frac{\theta}{2} & -i\sin\frac{\theta}{2} & 0 \\ 0 & -i\sin\frac{\theta}{2} & \cos\frac{\theta}{2} & 0 \\ i\sin\frac{\theta}{2} & 0 & 0 & \cos\frac{\theta}{2} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'Ryy'`
-- `paras` parameter for the `apply_gate` function: `[theta_]`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `Ryy(theta_)`
+- Call strings of the apply_gate function: `'Ryy'`
+- paras parameter of the apply_gate function: `[theta_]`
+- SymPy matrix name in pyquantumkit.symbol.gate: `Ryy(theta_)`
 
-### $R_{zz}(\theta)$ Gate
+### $R_{zz}(\theta)$ gate
 - Matrix:
 
 $$ \begin{bmatrix} e^{-i\frac{\theta}{2}} & 0 & 0 & 0 \\ 0 & e^{i\frac{\theta}{2}} & 0 & 0 \\ 0 & 0 & e^{i\frac{\theta}{2}} & 0 \\ 0 & 0 & 0 & e^{-i\frac{\theta}{2}} \end{bmatrix} $$
 
-- Call strings for the `apply_gate` function: `'rzz'`
-- `paras` parameter for the `apply_gate` function: `[theta_]`
-- SymPy matrix name in `pyquantumkit.symbol.gate`: `Rzz(theta_)`
+- Call strings of the apply_gate function: `'rzz'`
+- paras parameter of the apply_gate function: `[theta_]`
+- SymPy matrix name in pyquantumkit.symbol.gate: `Rzz(theta_)`

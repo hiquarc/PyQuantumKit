@@ -98,9 +98,9 @@ def interpret_output_str(self, output_str : str, protocol : str = 'l') -> dict:
 
 不同的量子开发框架右不同的解读顺序约定，例如`'qiskit'`, `'pyqanda3'`为从右开始，`'pyquafu'`则为从左开始。可以调用`QProgramBuilder`类的`framework_interpret_protocol()`静态方法获得具体框架的解读约定：
 ```python
-print(QProgramBuilder.framework_interpret_protocol('qiskit'))       # -> 'r'
-print(QProgramBuilder.framework_interpret_protocol('pyqpanda3'))    # -> 'r'
-print(QProgramBuilder.framework_interpret_protocol('pyquafu'))      # -> 'l'
+print(framework_interpret_protocol('qiskit'))       # -> 'r'
+print(framework_interpret_protocol('pyqpanda3'))    # -> 'r'
+print(framework_interpret_protocol('pyquafu'))      # -> 'l'
 ```
 
 现在考虑前文提到的制备Bell态并测量的量子程序，它包含两个量子比特，因而测量结果`'0'`/`'1'`串的长度为2。测量结果会被解读为 `量子变量 : 取值` 的形式：

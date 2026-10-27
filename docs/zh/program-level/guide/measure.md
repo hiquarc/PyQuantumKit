@@ -113,9 +113,9 @@ def interpret_output_str(self, output_str : str, protocol : str = 'l') -> dict:
     - 可以调用`QProgramBuilder`类的`framework_interpret_protocol()`静态方法获得具体框架的解读约定：
         
     ```python
-    print(QProgramBuilder.framework_interpret_protocol('qiskit'))       # -> 'r'
-    print(QProgramBuilder.framework_interpret_protocol('pyqpanda3'))    # -> 'r'
-    print(QProgramBuilder.framework_interpret_protocol('pyquafu'))      # -> 'l'
+    print(framework_interpret_protocol('qiskit'))       # -> 'r'
+    print(framework_interpret_protocol('pyqpanda3'))    # -> 'r'
+    print(framework_interpret_protocol('pyquafu'))      # -> 'l'
     ```
         
 - 返回值为解读得到的字典，该字典的结构为：

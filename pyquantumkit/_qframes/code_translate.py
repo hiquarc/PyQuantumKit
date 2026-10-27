@@ -18,10 +18,11 @@ Standard_Gate_Name = {
     # 'SY', 'SYD', 'GP', 'CCY',    # Reserved gate names
 }
 
-def get_args_assign_str(argname : str, nargs : int) -> str:
+def get_args_assign_str(argname : str, indexlist : list[int]) -> str:
     s = ""
+    nargs = len(indexlist)
     for i in range(nargs):
-        s += f"{argname}[{i}]"
+        s += f"{argname}[{indexlist[i]}]"
         if i != nargs - 1:
             s += ","
     return s
@@ -73,3 +74,20 @@ def get_standard_gatename(origin_gate_name : str) -> str:
     if g in Standard_Gate_Name:
         return g
     raise FrameworkMapError("Gate is not supported: " + g)
+
+
+Standard_Subroutine_Name = {
+    'QFT', 'QFT_NS', 'IQFT', 'IQFT_NS',     # Series of Quantum Fourier Transform
+    # 'MCTL',                                 # Multi-Control Gate (reserved)
+}
+
+# Map the original subroutine name into standard name
+def get_standard_subroutine_name(origin_gate_name : str) -> str:
+    sub = origin_gate_name.upper()
+
+    # Convert the nonstandard gate name into standard gate name
+    # ......
+
+    if sub in Standard_Subroutine_Name:
+        return sub
+    raise FrameworkMapError("Subroutine is not supported: " + sub)

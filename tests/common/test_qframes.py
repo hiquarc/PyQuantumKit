@@ -10,17 +10,20 @@ from .common import is_exception
 class Test_qframes_code_translate(UT.TestCase):
     def test_get_args_assign_str(self):
         cases = {
-            ('arr', 0) : '',
-            ('arr', 1) : 'arr[0]',
-            ('arr', 2) : 'arr[0],arr[1]',
-            ('List', 4) : 'List[0],List[1],List[2],List[3]',
+            ('arr', ()) : "",
+            ('arr', (0,)) : "arr[0]",
+            ('arr', (0, 1)) : "arr[0],arr[1]",
+            ('Tree', (0, 1, 2)) : "Tree[0],Tree[1],Tree[2]",
+            ('Tree', (2, 1, 0)) : "Tree[2],Tree[1],Tree[0]",
+            ('List', (0, 1, 2, 3)) : "List[0],List[1],List[2],List[3]",
+            ('List', (0, 3, 1, 4)) : "List[0],List[3],List[1],List[4]",
         }
         for input in cases:
             with self.subTest(input):
                 argname = input[0]
-                narg = input[1]
+                indexlist = input[1]
                 output = cases[input]
-                self.assertEqual(get_args_assign_str(argname, narg), output)
+                self.assertEqual(get_args_assign_str(argname, indexlist), output)
 
     def test_get_standard_gatename(self):
         cases = {
@@ -40,7 +43,7 @@ class Test_qframes_code_translate(UT.TestCase):
             'Rx' : 'RX',
             'csdag' : 'CSD',
             'SqrtX' : 'SX',
-            'abc' : PyQuantumKitError,
+            'abc' : FrameworkMapError,
         }
         for input in cases:
             with self.subTest(input):

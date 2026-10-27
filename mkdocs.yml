@@ -50,6 +50,15 @@ plugins:
             "实验性功能总览": "Overview"
             "量子线路模块化构建": "Modular Construction of QCs"
             "量子哈密顿量模拟": "Quantum Hamiltonian Simulation"
+            "高级语言级量子程序开发": "High-level Development"
+            "高级语言级量子编程概览": "Overview"
+            "演示示例": "Demos"
+            "高级语言级量子编程指南": "Guides of HL programming"
+            "开始编写量子程序": "Start to Programming"
+            "量子类型系统": "Quantum Type System"
+            "量子变量内存布局和量子比特分配": "Memory Layout and Qubit Allocation"
+            "测量结果的存放与解读": "Storage and Interpretation of Measurement Results"
+            "自定义量子数据类型": "Custom Quantum Data Types"
             "更新历史": "Changelog"
             
       reconfigure_material: true

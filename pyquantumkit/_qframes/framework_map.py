@@ -14,10 +14,15 @@ Translate_Namespace = {}
 for fname in Supported_Frameworks:
     Translate_Namespace[fname] = importlib.import_module('pyquantumkit._qframes.translate_scripts.' + fname)
 
-def get_reverse_output_str(framework : str) -> bool:
+def framework_interpret_protocol(framework : str) -> str:
     if framework == 'pyquantumkit':
+        return 'l'
+    return Translate_Namespace[framework].INTERPRET_PROTOCOL
+
+def get_reverse_output_str(framework : str) -> bool:
+    if framework_interpret_protocol(framework) == 'l':
         return False
-    return Translate_Namespace[framework].REVERSE_OUTPUT_STRING
+    return True
 
 def get_support_inverse(framework : str) -> bool:
     if framework == 'pyquantumkit':
@@ -29,23 +34,30 @@ def get_support_remap(framework : str) -> bool:
         return True
     return Translate_Namespace[framework].SUPPORT_REMAP
 
+def framework_support_subroutines(framework : str) -> set[str]:
+    if framework == 'pyquantumkit':
+        return {'QFT', 'QFT_NS', 'IQFT', 'IQFT_NS'}
+    return Translate_Namespace[framework].SUPPORT_SUBROUTINES
+
 
 class Action(Enum):
-    NEW     = auto()
-    GATE    = auto()
-    CIRCUIT = auto()
+    NEW           = auto()
+    GATE          = auto()
+    CIRCUIT       = auto()
     MIXED_CIRCUIT = auto()
-    BITS    = auto()
-    RUN     = auto()
+    BITS          = auto()
+    RUN           = auto()
+    SUBROUTINE    = auto()
 
-def gate_applying_code(language : str, cir_name : str, gate_lib_name : str,
-                       gate_name : str, qbits : list[int], paras : list) -> str:
+
+def op_applying_code(language : str, cir_name : str, module_name : str,
+                     op_name : str, qbits : list[int], paras : list) -> str:
     if language in Translate_Namespace:
-        return Translate_Namespace[language].CODE(cir_name, gate_lib_name,
-                                                  gate_name, qbits, paras)
+        return Translate_Namespace[language].CODE(cir_name, module_name,
+                                                  op_name, qbits, paras)
     if language in Extra_Languages_CODE:
-        return Extra_Languages_CODE[language](cir_name, gate_lib_name,
-                                          gate_name, qbits, paras)
+        return Extra_Languages_CODE[language](cir_name, module_name,
+                                              op_name, qbits, paras)
     raise FrameworkMapError('Language "' + language + '" is not supported.')
 
 
@@ -78,23 +90,28 @@ def get_apply_function(action : Action, framework : str) -> callable:
         return ret
 
     if action == Action.RUN:
-        def ret(qvm, qc, run_shots : int, **kwargs):
+        def ret(qvm, qc, run_shots : int, options : dict):
             try:
                 # Use an explicit locals dict so exec-created variables are visible to eval
                 local_env = {
                     "qvm": qvm,
                     "qc": qc,
                     "run_shots": run_shots,
-                    "kwargs": kwargs,
+                    "options": options,
                 }
-                exec(Translate_Namespace[framework].RUN(1, **kwargs), globals(), local_env)
-                return eval(Translate_Namespace[framework].RUN(2, **kwargs), globals(), local_env)
+                exec(Translate_Namespace[framework].RUN(options), globals(), local_env)
+                return local_env['RESULT']
             except Exception:
-                #import sys
-                #sys.stderr.write('PyQuantumKit: some errors are occurred in RUN action.\n')
-                return {}
+                print("PyQuantumKit: some errors are occurred in RUN action.")
+                raise
         return ret
-    return None
+
+    if action == Action.SUBROUTINE:
+        def ret(qc, qsub : str, qbits : list[int], paras : list) -> None:
+            execstr = Translate_Namespace[framework].SUBROUTINE(qsub, qbits, paras)
+            #print(execstr)
+            exec(execstr)
+        return ret
 
 
 def get_apply_function_CircuitIO(action : Action) -> callable:
@@ -153,7 +170,11 @@ def get_apply_function_CircuitIO(action : Action) -> callable:
             #except Exception:
             #    return {}
         return ret
-    return None
+
+    if action == Action.SUBROUTINE:
+        def ret(qc : CircuitIO, qsub : str, qbits : list[int], paras : list) -> None:
+            qc.apply_subroutine(qsub, qbits, paras)
+        return ret
 
 
 def quantum_action(action : Action, framework_indicator : str|int, *args, **kwargs):

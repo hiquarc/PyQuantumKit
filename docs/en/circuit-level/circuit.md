@@ -2,67 +2,67 @@
 ## I. Basic Construction
 ### 1. Applying Quantum Gates
 
-In PyquantumKit, the key to constructing quantum circuits in a unified manner is the `apply_gate` function. The following examples illustrate the usage of this function.
+In PyQuantumKit, the key to constructing quantum circuits in a unified way is the `apply_gate` function. A few examples are given below to illustrate its usage.
 
-**Example 1**. Apply an S gate to the qubit with index 2, the code is written as:
+**Example 1**. Apply an S gate on the qubit with index 2. The code is written as
 ```python
 apply_gate(circuit, 'S', [2])
 ```
-**Detailed Explanation**
+**Detailed explanation**
 
-- `circuit` is an object of the quantum circuit class in a supported quantum development framework (e.g., `QuantumCircuit` of qiskit, `QCircuit` or `QProg` of pyqpanda3, `QuantumCircuit` of quafu, or `Circuit` of cqlib).
-- The string `'S'` indicates that an S gate is to be applied. [Click here](./api/supported-gates.md) to view the strings corresponding to specific quantum gates.
-- The array `[2]` indicates the indices of the qubits to which the quantum gate is applied. The number of elements in the array should be the same as the number of bits of the gate. Note that whether the quantum gate is single-bit or multi-bit, this parameter must be assigned **in the form of a list**.
+- `circuit` is an object of the quantum circuit class in a supported quantum development framework (for example qiskit's `QuantumCircuit`, pyqpanda3's `QCircuit` or `QProg`, quafu's `QuantumCircuit`, or cqlib's `Circuit`).
+- The string `'S'` indicates that an S gate is applied. [Click here](./api/supported-gates.md) to see the string corresponding to each quantum gate.
+- The array `[2]` indicates the indices on which the quantum gate is applied. The number of array elements should match the number of qubits of the gate. Note that regardless of whether the quantum gate is single-qubit or multi-qubit, this parameter must **be specified as a list**.
 
-**Example 2**. Apply a Toffoli gate to the qubits with indices 0, 2, and 3:
+**Example 2**. Apply a Toffoli gate on the qubits with indices 0, 2 and 3
 ```python
 apply_gate(circuit, 'CCNOT', [0, 2, 3])
 ```
 
-**Example 3**. Apply an $R_x$ gate to the qubit with index 1, with parameter $\theta=0.1$:
+**Example 3**. Apply an $R_x$ gate on the qubit with index 1, with parameter $\theta=0.1$
 ```python
 apply_gate(circuit, 'Rx', [1], [0.1])
 ```
 
-- The fourth parameter `[0.1]` is used to indicate the parameters of the quantum gate. For parameterless gates, this parameter is omitted.
+- The fourth parameter `[0.1]` is used to specify the parameters of the quantum gate. For parameter-free gates, this parameter is omitted.
 
-**Example 4**. Apply a $U_3$ gate to the qubit with index 0, with parameters $\theta=0.2,\phi=0.3,\lambda=0.4$:
+**Example 4**. Apply a $U_3$ gate on the qubit with index 0, with parameters $\theta=0.2,\phi=0.3,\lambda=0.4$
 ```python
 apply_gate(circuit, 'U3', [0], [0.2, 0.3, 0.4])
 ```
 
-The above gives 4 usage examples of the `apply_gate` function. **For a more detailed explanation of this function, please [click here](./api/construct.md#apply_gate).**
+The above gives 4 examples of using the `apply_gate` function. **For a more detailed description of this function, please [click here](./api/construct.md#apply_gate).**
 
-### 2. Applying Measurements
+### 2. Applying Measurement
 
-In PyquantumKit, the `apply_measure` function can measure one or a set of qubits and write the results into specified classical bits.
+In PyQuantumKit, the `apply_measure` function can measure one or a set of qubits and write the results into the specified classical bits.
 
-**Example 5**. Measure the qubit with index 2 and store the result in the classical bit with index 0:
+**Example 5**. Measure the qubit with index 2 and store the result in the classical bit with index 0
 ```python
 apply_measure(circuit, [2], [0])
 ```
 
-**Example 6**. Measure the qubits with indices 0~4 (a total of 5 qubits) and store the results in the classical bits with indices 0~4. There are two ways to write the code: the first is to specify the index corresponding to each bit using an array:
+**Example 6**. Measure the qubits with indices 0~4 (5 in total) and store the results in the classical bits with indices 0~4. There are two ways to write the code. The first is to use arrays to specify the index corresponding to each bit:
 ```python
 apply_measure(circuit, [0, 1, 2, 3, 4], [0, 1, 2, 3, 4])
 ```
-The second is to specify the index range using the `range` function:
+The second is to use the `range` function to specify the index range:
 ```python
 apply_measure(circuit, range(5), range(5))
 ```
 
 ## II. Modular Construction of Quantum Circuits (Experimental)
 
-- **Note 1: The content of this section may only apply to some quantum development frameworks**, [click here for details](./api/supported-platforms.md).
-- **Note 2: This feature is experimental, has not undergone systematic testing, and the interface may change in the future. Please use it with caution.**
-- **Note 3: If modular construction is required currently, it is recommended to use the CircuitIO class (see below)**
+- **Note 1: The content of this section may only apply to some quantum development frameworks**. [Click here for details](./api/supported-platforms.md).
+- **Note 2: This feature is experimental, has not been systematically tested, and its interface may change in the future. Please use it with caution.**
+- **Note 3: Currently, if you need to use modular construction, it is recommended to use the CircuitIO class (see below)**
 
-[Click here](../experimental/construct.md) to view the specific content of modular construction of quantum circuits.
+[Click here](../experimental/construct.md) for the specific content of modular construction of quantum circuits.
 
-## III. CircuitIO Class
-PyQuantumKit provides a CircuitIO class for temporarily storing constructed quantum circuits. The CircuitIO class can be used like a quantum circuit class of a quantum development framework, and operations such as `apply_gate` and `apply_measure` can also be performed on it. The CircuitIO object saves the information of the quantum circuit, which can then be formatted and output as a code string or inserted into the quantum circuit object of a specific quantum development framework.
+## III. The CircuitIO Class
+PyQuantumKit provides a CircuitIO class for temporarily storing constructed quantum circuits. The CircuitIO class can be used like the quantum circuit class of a quantum development framework, and operations such as `apply_gate` and `apply_measure` can also be performed on it. A CircuitIO object stores the information of a quantum circuit, which can then be formatted and output as a code string or inserted into a quantum circuit object of a specific quantum development framework.
 
-**Example 7**. The following code defines a CircuitIO object containing 2 qubits and 2 classical bits, on which a quantum circuit for preparing a Bell state is constructed:
+**Example 7**. The following code defines a CircuitIO object containing 2 qubits and 2 classical bits, on which a quantum circuit preparing a Bell state is constructed:
 
 ```python
 import pyquantumkit
@@ -72,15 +72,15 @@ pyquantumkit.apply_gate(cio, 'H', [0])    # Use generic function <gate_apply>
 cio.apply_gate('CX', [0, 1])              # Use CircuitIO member function <gate_apply>
 ```
 
-To apply a quantum gate on a CircuitIO object, you can directly use the general `apply_gate` function, passing the CircuitIO object as the quantum circuit object; or you can use the homonymous member function `CircuitIO.apply_gate` provided by the CircuitIO class.
+To apply quantum gates on a CircuitIO object, you can directly use the generic `apply_gate` function by passing the CircuitIO object as the quantum circuit object, or use the member function of the same name provided by the CircuitIO class, `CircuitIO.apply_gate`.
 
-**For a detailed explanation of the member functions included in the CircuitIO class, please [click here](./api/circuitio.md).** The following gives three typical usages of the CircuitIO class.
+**For a detailed description of the member functions contained in the CircuitIO class, please [click here](./api/circuitio.md).** Three typical usages of the CircuitIO class are given below.
 
 ### 1. Using the CircuitIO Class for Modular Construction of Quantum Circuits on Unsupported Quantum Development Platforms
 
-Some quantum development frameworks do not support modular construction functions of quantum circuits such as *automatic generation of inverse circuits* and *remapping of qubits*. In this case, the CircuitIO object can be used to complete the construction indirectly: first construct the circuit on the CircuitIO object and generate the inverse circuit or remap (using the `inverse`, `remap_qbits`, and `remap_cbits` member functions), then use the `>>` operator (or equivalently, the `append_into_actual_circuit` member function) to insert the quantum circuit contained in the CircuitIO into the quantum circuit of a specific quantum development framework.
+Some quantum development frameworks do not support quantum circuit modular construction features such as *automatic generation of inverse circuits* and *remapping of qubits*. In this case, you can use a CircuitIO object to accomplish the construction indirectly: first construct the circuit on the CircuitIO object and generate the inverse circuit or remapping (using the `inverse` and `remap_qbits`, `remap_cbits` member functions), then use the `>>` operator (or equivalently, the `append_into_actual_circuit` member function) to insert the quantum circuit contained in the CircuitIO object into the quantum circuit of the specific quantum development framework.
 
-**Example 8**. The Quafu framework does not support qubit remapping and automatic generation of inverse circuits. The following code indirectly implements this by using a CircuitIO object. We define a CircuitIO object, perform qubit remapping and conversion to an inverse circuit on it, and finally output the circuit on the CircuitIO object to the Quafu framework.
+**Example 8**. The Quafu framework does not support qubit remapping and automatic generation of inverse circuits. The following code implements these indirectly by using a CircuitIO object. We define a CircuitIO object, perform qubit remapping and conversion to an inverse circuit on it, and finally output the circuit on the CircuitIO object to the Quafu framework.
 
 ```python
 import quafu
@@ -97,11 +97,11 @@ quafu_circuit = quafu.QuantumCircuit(2, 2)
 cio >> quafu_circuit       # insert the CircuitIO object cio into quafu's circuit
 ```
 
-### 2. Exporting Code Using the CircuitIO Class
+### 2. Using the CircuitIO Class to Export Code
 
-The `get_circuit_code` function of the CircuitIO class can be used to convert a quantum circuit into code for supported frameworks or languages ([click here](./api/supported-platforms.md) for supported frameworks and languages). The output of the function is a string that can be copied into the source code file.
+You can use the `get_circuit_code` function of the CircuitIO class to convert a quantum circuit into code of a supported framework or language ([click here](./api/supported-platforms.md) for supported frameworks and languages). The output of the function is a string, which can be copied into a source code file.
 
-**Example 9**. Construct a GHZ state using the CircuitIO class and export it as qiskit code and Microsoft Q# code.
+**Example 9**. Use the CircuitIO class to construct a GHZ state and export it as qiskit code and Microsoft Q# code.
 
 ```python
 # import PyQuantumKit
@@ -124,7 +124,7 @@ qsharp_code = cio.get_circuit_code('QSharp', 'qs')     # Output the circuit into
 print(qsharp_code)
 ```
 
-The output results are:
+The output is:
 ```python
 qc.h(0)
 qc.cx(0, 1)
@@ -140,10 +140,10 @@ CNOT(qs[0], qs[3]);
 CNOT(qs[0], qs[4]);
 ```
 
-### 3. Symbolic Representation and Operation Using the CircuitIO Class
-PyQuantumKit supports symbolic representation of quantum circuit matrices (implemented based on SymPy). When constructing a quantum circuit on a CircuitIO object, for quantum gates with parameters, their parameters can use SymPy symbolic variables or expressions in addition to numerical values (`int` and `float` types). Moreover, when outputting the quantum circuit to a specific development framework, the SymPy variables can be assigned values and converted into numerical types supported by these development frameworks.
+### 3. Using the CircuitIO Class for Symbolic Representation and Computation
+PyQuantumKit supports the symbolic representation of quantum circuit matrices (implemented based on SymPy). When constructing a quantum circuit on a CircuitIO object, for parameterized quantum gates, besides numbers (`int` and `float` types), the parameters also support SymPy symbolic variables or expressions. Moreover, when outputting the quantum circuit to a specific development framework, the SymPy variables can be assigned values to convert them into numerical types supported by these development frameworks.
 
-**Example 10**. Apply an $R_{xx}(\alpha+\beta)$ gate using a CircuitIO object, where $\alpha$ and $\beta$ are represented as symbolic variables. Then substitute the values $\alpha=0.5$ and $\beta=0.7$, and output the quantum circuit to the quafu framework.
+**Example 10**. Use a CircuitIO object to apply an $R_{xx}(\alpha+\beta)$ gate, where $\alpha$ and $\beta$ are represented as symbolic variables. Then, after substituting the values $\alpha=0.5$ and $\beta=0.7$, output the quantum circuit to the quafu framework.
 
 ```python
 import quafu
@@ -161,4 +161,4 @@ quafu_circuit = quafu.QuantumCircuit(3, 3)
 cio.append_into_actual_circuit(qpanda_circuit, {alpha_ : 0.5, beta_ : 0.7})
 ```
 
-For more detailed content on how to use PyQuantumKit for symbolic representation and operation, please [click here](./symbol.md).
+For more detailed content on how to use PyQuantumKit for symbolic representation and computation, please [click here](./symbol.md).
