@@ -4,7 +4,7 @@
 #    Computing Center, Institute of High Energy Physics, CAS
 
 import math
-from pyquantumkit.procedure.generic import apply_gate, apply_reverse, derivative
+from pyquantumkit.procedure.generic import apply_gate, apply_reverse
 from pyquantumkit.procedure.derivative import derivative
 #from qiskit.circuit.library import QFT
 
@@ -43,7 +43,7 @@ def pqk_iqft_libo(q_circuit, qbitlist : list[int]):
 
     -> Return : q_circuit
     """
-    return derivative(q_circuit, qbitlist, pqk_qft_bilo, False, True, q_circuit, qbitlist)
+    return derivative(q_circuit, qbitlist, pqk_qft_bilo, False, True, qbitlist)
 
 
 def pqk_qft_bibo(q_circuit, qbitlist : list[int]):
@@ -76,7 +76,7 @@ def pqk_iqft_bibo(q_circuit, qbitlist : list[int]):
 
     -> Return : q_circuit
     """
-    return derivative(q_circuit, qbitlist, pqk_qft_bibo, False, True, q_circuit, qbitlist)
+    return derivative(q_circuit, qbitlist, pqk_qft_bibo, False, True, qbitlist)
 
 
 def pqk_qft_libo(q_circuit, qbitlist : list[int]):
@@ -91,7 +91,7 @@ def pqk_qft_libo(q_circuit, qbitlist : list[int]):
 
     -> Return : q_circuit
     """
-    return derivative(q_circuit, qbitlist, pqk_qft_bilo, True, False, q_circuit, qbitlist)
+    return derivative(q_circuit, qbitlist, pqk_qft_bilo, True, False, qbitlist)
 
 def pqk_iqft_bilo(q_circuit, qbitlist : list[int]):
     """
@@ -107,7 +107,7 @@ def pqk_iqft_bilo(q_circuit, qbitlist : list[int]):
 
     -> Return : q_circuit
     """
-    return derivative(q_circuit, qbitlist, pqk_qft_bilo, True, True, q_circuit, qbitlist)
+    return derivative(q_circuit, qbitlist, pqk_qft_bilo, True, True, qbitlist)
 
 
 def pqk_qft_lilo(q_circuit, qbitlist : list[int]):
@@ -122,7 +122,7 @@ def pqk_qft_lilo(q_circuit, qbitlist : list[int]):
 
     -> Return : q_circuit
     """
-    return derivative(q_circuit, qbitlist, pqk_qft_bibo, True, False, q_circuit, qbitlist)
+    return derivative(q_circuit, qbitlist, pqk_qft_bibo, True, False, qbitlist)
 
 def pqk_iqft_lilo(q_circuit, qbitlist : list[int]):
     """
@@ -138,4 +138,4 @@ def pqk_iqft_lilo(q_circuit, qbitlist : list[int]):
 
     -> Return : q_circuit
     """
-    return derivative(q_circuit, qbitlist, pqk_qft_bibo, True, True, q_circuit, qbitlist)
+    return derivative(q_circuit, qbitlist, pqk_qft_bibo, True, True, qbitlist)
