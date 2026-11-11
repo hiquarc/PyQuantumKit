@@ -1,15 +1,34 @@
-# _qframes/extra/isq.py
-#    2026/3/25
+# translate/extra/isq.py
+#    Create: 2026/3/25
+#    Update: 2026/11/6
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from ..code_translate import get_standard_gatename, get_standard_subroutine_name, FrameworkMapError, \
+from ..common import get_standard_gatename, get_standard_subroutine_name, FrameworkMapError, \
                              get_args_assign_str
 
 # Set of supported quantum subroutines
-SUPPORT_SUBROUTINES = {'QFT', 'IQFT'}
+SUPPORT_SUBROUTINES = {
+    'QFT' : 'qft',
+    'IQFT' : 'qft',
+}
 
-def CODE(cir_name : str, module_name : str,
+EXPORT_CONSTANTS = {
+    'comment' : "// isQ Code exported from PyQuantumKit",
+    'prefix' : """unit main()
+{""",
+    'suffix' : "}",
+    'stdlib_name' : 'std',
+}
+
+def IMPORT(module_name : str) -> str:
+    return f"import {module_name};"
+
+def DECLARE(cir_name : str, module_name : str,
+            mixed : bool, nqbits : int, ncbits : int) -> str:
+    return f"qbit {cir_name}[{nqbits}];"
+
+def APPLY(cir_name : str, module_name : str,
             op_name : str, qbits : list[int], paras : list,
             is_qsub : bool = False) -> str:
     if is_qsub:

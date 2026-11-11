@@ -1,22 +1,43 @@
-# _qframes/translate_scripts/qiskit.py
-#    2025/6/10
+# translate/translate_scripts/qiskit.py
+#    Create: 2025/6/10
+#    Update: 2026/11/6
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from ..code_translate import get_standard_gatename, get_standard_subroutine_name, FrameworkMapError
+from ..common import get_standard_gatename, get_standard_subroutine_name, FrameworkMapError
 import packaging.version
 
 # The interpret protocol
 INTERPRET_PROTOCOL = 'r'
-# Wether support inverse circuit
-SUPPORT_INVERSE = True
-# Wether support remap the index of bits
-SUPPORT_REMAP = True
 # Set of supported quantum subroutines
-SUPPORT_SUBROUTINES = {'QFT', 'QFT_NS', 'IQFT', 'IQFT_NS'}
+SUPPORT_SUBROUTINES = {
+    'QFT' : 'qiskit.circuit.library',       # qsub name : corresponding package name
+    'QFT_NS' : 'qiskit.circuit.library',
+    'IQFT' : 'qiskit.circuit.library',
+    'IQFT_NS' : 'qiskit.circuit.library',
+}
 
+EXPORT_CONSTANTS = {
+    'comment' : "# Qiskit code exported from PyQuantumKit",
+    'prefix' : "",
+    'suffix' : "",
+    'stdlib_name' : 'qiskit',
+}
 
-def CODE(cir_name : str, module_name : str,
+def IMPORT(module_name : str) -> str:
+    return f"from {module_name} import *"
+
+def DECLARE(cir_name : str, module_name : str,
+            mixed : bool, nqbits : int, ncbits : int) -> str:
+    circuit_type = "QuantumCircuit"
+    declare_str = "" if cir_name is None else cir_name + " = "
+    module_str = "" if module_name is None else module_name + "."
+    if mixed:
+        return f"{declare_str}{module_str}{circuit_type}({nqbits}, {ncbits})"
+    else:
+        return f"{declare_str}{module_str}{circuit_type}({nqbits})"
+
+def APPLY(cir_name : str, module_name : str,
           op_name : str, qbits : list[int], paras : list,
           is_qsub : bool = False) -> str:
     if is_qsub:
@@ -25,7 +46,8 @@ def CODE(cir_name : str, module_name : str,
         if s not in SUPPORT_SUBROUTINES:
             raise FrameworkMapError(f"Unsupported quantum subroutine: {s}")
 
-        slib = '' if module_name is None else module_name + "."
+        slibname = SUPPORT_SUBROUTINES.get(s, None)
+        slib = "" if slibname is None else f"framework_modules('qiskit', {slibname})."
         execstr = cir_name + ".append(" + slib
 
         # Qautnum Fourier Transform Series
@@ -46,13 +68,13 @@ def CODE(cir_name : str, module_name : str,
         execstr = cir_name
         #glib = '' if gate_lib_name is None else gate_lib_name + "."
 
-        if g == 'i':
-            g = 'id'
         if g == 'm':
             execstr += f".measure({qbits}, {paras})"
             return execstr
 
-        if g == 'sw':
+        if g == 'i':
+            g = 'id'
+        elif g == 'sw':
             g = 'swap'
         elif g == 'isw':
             g = 'iswap'
@@ -80,36 +102,15 @@ def CODE(cir_name : str, module_name : str,
             execstr += str(paras)[1:-1] + ", " + str(qbits)[1:-1] + ")"
         return execstr
 
-
 def GATE(gate_name : str, qbits : list[int], paras : list) -> str:
-    return CODE("qc", None, gate_name, qbits, paras)
+    return APPLY("qc", None, gate_name, qbits, paras)
 
+def SUBROUTINE(qsub_name : str, qbits : list[int], paras : list) -> str:
+    return APPLY("qc", None, qsub_name, qbits, paras, True)
 
-def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
-    execstr = "qc_dest.compose(qc_src"
-    if is_inv:
-        execstr += ".inverse()"
-    if is_remap:
-        execstr += ",rmlist"
-    execstr += ",inplace=True)"
-    return execstr
-
-
-def MIXED_CIRCUIT(remap_q : bool, remap_c : bool) -> str:
-    execstr = "qp_dest.compose(qp_src"
-    if remap_q:
-        execstr += ",qbits_remap"
-    if remap_c:
-        execstr += ",cbits_remap"
-    execstr += ",inplace=True)"
-    return execstr
-
-
-def NEW(contains_cbits : bool) -> str:
-    if contains_cbits:
-        return "framework_modules('qiskit', 0).QuantumCircuit(nqbits, ncbits)"
-    return "framework_modules('qiskit', 0).QuantumCircuit(nqbits)"
-
+def NEW(mixed_circuit : bool, nqbits : int, ncbits : int) -> str:
+    std = EXPORT_CONSTANTS['stdlib_name']
+    return DECLARE(None, f"framework_modules('qiskit', '{std}')", mixed_circuit, nqbits, ncbits)
 
 def BITS(ret_cbit : bool, ret_list : bool) -> str:
     if ret_list:
@@ -120,7 +121,7 @@ def BITS(ret_cbit : bool, ret_list : bool) -> str:
 
 def RUN(options : dict) -> str:
     return """
-compiled_qc = framework_modules('qiskit', 0).transpile(qc, qvm)
+compiled_qc = framework_modules('qiskit', 'qiskit').transpile(qc, qvm)
 job = qvm.run(compiled_qc, shots=run_shots)
 try:
     RESULT = job.result().get_counts()
@@ -132,6 +133,21 @@ except Exception as e:
     """
 
 
-def SUBROUTINE(qsub_name : str, qbits : list[int], paras : list) -> str:
-    return CODE("qc", "framework_modules('qiskit', 1)", qsub_name, qbits, paras, True)
-    
+# ---------- Actions just for internal usage ----------
+def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
+    execstr = "qc_dest.compose(qc_src"
+    if is_inv:
+        execstr += ".inverse()"
+    if is_remap:
+        execstr += ",rmlist"
+    execstr += ",inplace=True)"
+    return execstr
+
+def MIXED_CIRCUIT(remap_q : bool, remap_c : bool) -> str:
+    execstr = "qp_dest.compose(qp_src"
+    if remap_q:
+        execstr += ",qbits_remap"
+    if remap_c:
+        execstr += ",cbits_remap"
+    execstr += ",inplace=True)"
+    return execstr

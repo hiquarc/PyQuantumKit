@@ -4,7 +4,7 @@
 #    Computing Center, Institute of High Energy Physics, CAS
 
 from pyquantumkit import get_framework_from_object, PyQuantumKitError
-from pyquantumkit._qframes.framework_map import quantum_action, Action
+from pyquantumkit.translate.framework_map import quantum_action, Action
 from pyquantumkit.classical.common import indexlist_length
 
 # the error type for operations

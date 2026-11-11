@@ -2,6 +2,7 @@
 #   This file indicates the name of quantum frameworks and how to import
 
 #== Framework_library_name ==#    #== Import_Modules ==#
+#                Modules index:   0               1
 qiskit                            qiskit          qiskit.circuit.library
 pyqpanda3                         pyqpanda3.core
 pyquafu                           quafu           quafu.elements.element_gates

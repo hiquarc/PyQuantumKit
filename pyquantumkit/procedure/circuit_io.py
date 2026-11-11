@@ -5,9 +5,8 @@
 
 import copy, sympy, numpy
 from pyquantumkit import apply_gate, apply_subroutine, OperationError
-from pyquantumkit._qframes.framework_map import op_applying_code
-from pyquantumkit.classical.common import indexlist_length
-from pyquantumkit._qframes.code_translate import get_standard_gatename, get_standard_subroutine_name
+from pyquantumkit.translate.framework_map import op_applying_code, declare_qubits_code, export_constants, import_code
+from pyquantumkit.translate.common import get_standard_gatename, get_standard_subroutine_name
 from pyquantumkit.symbol.gate import symbol_gate_matrix
 from pyquantumkit.symbol.circuit import symbol_apply_gate
 
@@ -266,35 +265,51 @@ class CircuitIO:
     
     def __rshift__(self, dest_qcir):
         return self.append_into_actual_circuit(dest_qcir)
+
     
     def get_circuit_code(self, language : str, circuit_name : str,
-                          gate_lib_name : str = None, qsub_lib_dict : dict = None,
-                          linebreak : str = '\n', subsdict : dict = None) -> str:
+                          linebreak : str = '\n', include_declare = True,
+                          subsdict : dict = None) -> tuple[str, set]:
         """
         Convert the CircuitIO object into string of code
 
             language      : specify the language
             circuit_name  : specify the circuit name will be used in the code
-            gate_lib_name : specify the library name of gates used in the code (default None)
-            qsub_lib_dict : specify the library name of quantum subroutine used in the code (default None)
-                    NOTE:   If no gate library name will be used, please specify None (rather than empty str '') 
             linebreak     : the characters of linebreaks in the code (default '\n')
+            include_declare : whether output the declaration code line.
             subsdict  : (optional, default None) specify the substituted symbols.
                    e.g. {t : 3, x : 4} means substitute symbol t with number 3, and symbol x with 4
 
-        -> Return : the code string
+        -> Return : (code string, the set of required modules)
         """
-        ret = ""
+        require_modules = set()
+        code = ""
+        if include_declare:
+            mixed = True if self.get_ncbits() > 0 else False
+            code += declare_qubits_code(language, circuit_name, mixed,
+                                        self.get_nqbits(), self.get_ncbits())
+            code += linebreak
         for item in self.__gatelist:
-            if subsdict is None or item[2] is None:
-                ret += op_applying_code(language, circuit_name, gate_lib_name,
-                                            item[0], item[1], item[2])
-            else:
-                subsitem2 = [CircuitIO.__expression_subs(x, subsdict) for x in item[2]]
-                ret += op_applying_code(language, circuit_name, gate_lib_name,
-                                            item[0], item[1], subsitem2)
-            ret += linebreak
+            paras = item[2] if (subsdict is None or item[2] is None) \
+                            else [CircuitIO.__expression_subs(x, subsdict) for x in item[2]]
+            is_qsub = False
+            codeline, module = op_applying_code(language, circuit_name, item[0], item[1], paras, is_qsub)
+            code += codeline
+            require_modules.add(module)
+            code += linebreak
+        return (code, require_modules)
+
+    def export_standalone_code(self, language : str, circuit_name : str,
+                               linebreak : str = '\n', subsdict : dict = None) -> str:
+        maincode, modules = self.get_circuit_code(language, circuit_name, linebreak, True, subsdict)
+        ret = export_constants(language).get('comment', "") + linebreak
+        for m in modules:
+            ret += import_code(language, m) + linebreak
+        ret += export_constants(language).get('prefix', "") + linebreak
+        ret += maincode
+        ret += export_constants(language).get('suffix', "") + linebreak
         return ret
+
     
     def get_sympy_matrix(self, subsdict : dict = None, simplify : bool = True) -> sympy.Matrix:
         """

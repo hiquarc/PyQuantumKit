@@ -4,7 +4,7 @@
 #    Computing Center, Institute of High Energy Physics, CAS
 
 from pyquantumkit import CircuitIO
-from pyquantumkit._qframes.framework_map import get_reverse_output_str
+from pyquantumkit.translate.framework_map import get_reverse_output_str
 from .qtype import QVar, QuantumProgramBuildError, ResultInterpretError
 
 class QProgramBuilder:

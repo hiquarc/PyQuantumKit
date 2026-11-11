@@ -10,16 +10,17 @@ import functools
 Pauli_Characters = ['I', 'X', 'Y', 'Z']
 
 class QExpPauli(QAlg):
-    @staticmethod
-    def __origin_impl(focus : int, allow_2qubit_rotgate : bool,
-                            paulistr : str, t : float, qubitarray : QubitArray):
+    @classmethod
+    def _general_impl_(cls, paulistr : str, t : float, qubitarray : QubitArray,
+                       center : int = 0, allow_2qubit_rotgate : bool = True):
         """
         Append an Exp(-i*P*t) operation, where P is the tensor product of several Pauli operators.
 
-            q_circuit : applied quantum circuit
-            paulistr  : 'I'/'X'/'Y'/'Z' string to represent the tensor product of Pauli operators
-            qindex    : the indexes of applied qubits
-            focus     : (optional) the index of non-I Paulis which is applied the core rotation, default 0
+            paulistr   : 'I'/'X'/'Y'/'Z' string to represent the tensor product of Pauli operators
+            t          : the time parameter t
+            qubitarray : a QubitArray object to apply
+            center     : the index of non-I Paulis which is applied the core rotation, default 0
+            allow_2qubit_rotgate : whether use the 2-qubit gate in the implementation
 
         -> Return : q_circuit
         """
@@ -36,9 +37,9 @@ class QExpPauli(QAlg):
                 qi.append(i)
         len_noni = len(ps)
 
-        focusindex = focus if focus >= 0 else len_noni + focus
+        centerindex = center if center >= 0 else len_noni + center
 
-        # Consider separately: non-I length 0, 1, 2
+        # Consider separately: non-I with length 0, 1, 2
         if len_noni <= 0:
             return
         if len_noni == 1:
@@ -92,12 +93,12 @@ class QExpPauli(QAlg):
                 gate('H', [qubitarray[qi[i]]])
 
         for i in range(len_noni):
-            if i != focusindex:
-                gate('CX', [qubitarray[qi[i]], qubitarray[qi[focusindex]]])
-        gate('RZ', [qubitarray[qi[focusindex]]], [t * 2])
+            if i != centerindex:
+                gate('CX', [qubitarray[qi[i]], qubitarray[qi[centerindex]]])
+        gate('RZ', [qubitarray[qi[centerindex]]], [t * 2])
         for i in range(len_noni - 1, -1, -1):
-            if i != focusindex:
-                gate('CX', [qubitarray[qi[i]], qubitarray[qi[focusindex]]])
+            if i != centerindex:
+                gate('CX', [qubitarray[qi[i]], qubitarray[qi[centerindex]]])
 
         for i in range(len_noni):
             if ps[i] == 'X':
@@ -106,12 +107,12 @@ class QExpPauli(QAlg):
                 gate('H', [qubitarray[qi[i]]])
                 gate('S', [qubitarray[qi[i]]])
 
-    @classmethod
-    def impl(cls, focus : int|AutoParas = AutoParas,
-                  allow_2qubit_rotgate : bool|AutoParas = AutoParas,
-                  compile_option : str = 'auto') -> callable:
-        return functools.partial(cls.__origin_impl, focus, allow_2qubit_rotgate)
+    def __init__(self):
+        super().__init__()
+        self.center = 0
+        self.allow_2qubit_rotgate = True
 
-    @classmethod
-    def impl_auto(cls) -> callable:
-        return cls.impl(0, True)
+    def build_options():
+        pass
+
+    

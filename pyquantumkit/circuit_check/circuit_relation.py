@@ -12,7 +12,7 @@ from pyquantumkit import CircuitIO, new_mixed_circuit, get_n_qubits, get_n_cbits
 from pyquantumkit.state_prepare.int_state import create_ket_int_le, create_ket_int_plus_eiphi_neg_le
 from pyquantumkit.state_prepare.pauli_eigenstate import create_pauli_eigenstate, uncompute_pauli_eigenstate
 from pyquantumkit.library.swaptest import run_swaptest, check_tr_rho1_rho2_equals_1
-from pyquantumkit._qframes.framework_map import get_reverse_output_str
+from pyquantumkit.translate.framework_map import get_reverse_output_str
 
 # Implement the relation checking for quantum circuits,
 #   based on the article: https://arxiv.org/abs/2307.01481

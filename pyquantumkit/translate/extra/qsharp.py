@@ -1,13 +1,11 @@
-# _qframes/extra/qsharp.py
-#    2026/3/24
+# translate/extra/qsharp.py
+#    Create: 2026/3/24
+#    Update: 2026/11/6
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from ..code_translate import get_standard_gatename, get_standard_subroutine_name, FrameworkMapError, \
+from ..common import get_standard_gatename, get_standard_subroutine_name, FrameworkMapError, \
                              get_args_assign_str
-
-# Set of supported quantum subroutines
-SUPPORT_SUBROUTINES = {'QFT', 'IQFT'}
 
 def float_str(num : int|float) -> str:
     ret = str(float(num))
@@ -17,7 +15,28 @@ def float_str(num : int|float) -> str:
     # else:
     #     return ret + '.0'
 
-def CODE(cir_name : str, module_name : str,
+# Set of supported quantum subroutines
+SUPPORT_SUBROUTINES = {
+    'QFT' : 'Microsoft.Quantum.Canon',
+    'IQFT' : 'Microsoft.Quantum.Canon',
+}
+
+EXPORT_CONSTANTS = {
+    'comment' : "// Q# Code exported from PyQuantumKit",
+    'prefix' : """operation Main() : Unit
+{""",
+    'suffix' : "}",
+    'stdlib_name' : 'Microsoft.Quantum.Core',
+}
+
+def IMPORT(module_name : str) -> str:
+    return f"open {module_name};"
+
+def DECLARE(cir_name : str, module_name : str,
+            mixed : bool, nqbits : int, ncbits : int) -> str:
+    return f"use {cir_name} = Qubit[{nqbits}];"
+
+def APPLY(cir_name : str, module_name : str,
          op_name : str, qbits : list[int], paras : list,
          is_qsub : bool = False) -> str:
     if is_qsub:

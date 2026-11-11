@@ -5,7 +5,7 @@
 
 from pyquantumkit import get_framework_from_object
 from pyquantumkit.procedure.generic import new_circuit, append_circuit
-from pyquantumkit._qframes.framework_map import get_support_inverse, get_support_remap
+from pyquantumkit.translate.framework_map import get_support_inverse, get_support_remap
 from pyquantumkit.classical.common import indexlist_length
 from pyquantumkit.procedure.circuit_io import CircuitIO
 

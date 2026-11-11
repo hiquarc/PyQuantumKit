@@ -5,7 +5,7 @@
 
 from pyquantumkit.program_build.qtype import QVar, QStruct, QTuple, QUnion, QArray, QuantumProgramBuildError, ResultInterpretError
 from pyquantumkit.program_build.builder import QProgramBuilder
-from pyquantumkit._qframes.code_translate import get_standard_gatename
+from pyquantumkit.translate.common import get_standard_gatename
 from pyquantumkit import CircuitIO
 
 class Qubit(QVar):

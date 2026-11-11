@@ -208,23 +208,36 @@ def symbol_subs(self, subsdict : dict)
 
 - 参数`subsdict`是一个字典，指定代换方式。
 
-## 6. 导出线路
+## 6. 导出量子线路和代码
 ### get_circuit_code
 `get_circuit_code`函数将CircuitIO对象中的量子线路导出到受支持的编程语言的代码。
 
 ```python
 def get_circuit_code(self, language : str, circuit_name : str,
-                     gate_lib_name : str = None, linebreak : str = '\n',
-                     subsdict : dict = None) -> str
+                     linebreak : str = '\n', include_declare = True,
+                     subsdict : dict = None) -> tuple[str, set]:
 ```
 
 - 参数`language`是一个字符串，指定导出的语言（[点此查看](./supported-platforms.md)）。
 - 参数`circuit_name`是一个字符串，指定导出代码中，量子线路对象名称。
-- 参数`gate_lib_name`是一个字符串，指定导出代码中，量子线路对象名称的包前缀，默认为`None`，即无前缀。**注：无前缀请指定为`None`，不要指定为空字符串`''`。**
 - 参数`linebreak`是一个字符串，指定导出代码中各语句之间的分隔符，默认为换行符`'\n'`。
+- 参数`include_declare`是布尔变量，指定是否包含声明量子线路的代码，若为`True`则包含，否则只生成应用量子门的代码。
 - 参数`subsdict`是一个字典，指定在导出代码时是否需要对其中的符号进行代换，以及代换方式。默认为`None`，即不进行代换。
 
 函数返回包含导出代码的字符串。
+
+### export_standalone_code
+`get_circuit_code`函数可导出包含前后缀（包引用、主函数声明等）的可直接独立运行的代码。代码所需的前后缀等信息均来自量子开发框架翻译脚本的`EXPORT_CONSTANTS`常量（[查看详情](../custom-platform.md#export_constants)）。
+
+```python
+def export_standalone_code(self, language : str, circuit_name : str,
+                            linebreak : str = '\n', subsdict : dict = None) -> str:
+```
+
+- 参数`language`是一个字符串，指定导出的语言（[点此查看](./supported-platforms.md)）。
+- 参数`circuit_name`是一个字符串，指定导出代码中，量子线路对象名称。
+- 参数`linebreak`是一个字符串，指定导出代码中各语句之间的分隔符，默认为换行符`'\n'`。
+- 参数`subsdict`是一个字典，指定在导出代码时是否需要对其中的符号进行代换，以及代换方式。默认为`None`，即不进行代换。
 
 ### append_into_actual_circuit
 `append_into_actual_circuit`函数将CircuitIO对象中的量子线路插入到具体的量子开发框架的量子线路对象中。

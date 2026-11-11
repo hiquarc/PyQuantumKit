@@ -1,22 +1,38 @@
-# _qframes/translate_scripts/pyquafu.py
-#    2025/7/4
+# translate/translate_scripts/pyquafu.py
+#    Create: 2025/7/4
+#    Update: 2026/11/6
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-from ..code_translate import get_standard_gatename, get_standard_subroutine_name, FrameworkMapError
+from ..common import get_standard_gatename, get_standard_subroutine_name, FrameworkMapError
 import packaging.version
 
 # The interpret protocol
 INTERPRET_PROTOCOL = 'l'
-# Wether support inverse circuit
-SUPPORT_INVERSE = False
-# Wether support remap the index of bits
-SUPPORT_REMAP = False
 # Set of supported quantum subroutines
-SUPPORT_SUBROUTINES = set()
+SUPPORT_SUBROUTINES = {}
 
+EXPORT_CONSTANTS = {
+    'comment' : "# PyQuafu code exported from PyQuantumKit",
+    'prefix' : "",
+    'suffix' : "",
+    'stdlib_name' : 'quafu.elements.element_gates',
+}
 
-def CODE(cir_name : str, module_name : str,
+def IMPORT(module_name : str) -> str:
+    return f"from {module_name} import *"
+
+def DECLARE(cir_name : str, module_name : str,
+            mixed : bool, nqbits : int, ncbits : int) -> str:
+    circuit_type = "QuantumCircuit"
+    declare_str = "" if cir_name is None else cir_name + " = "
+    module_str = "" if module_name is None else module_name + "."
+    if mixed:
+        return f"{declare_str}{module_str}{circuit_type}({nqbits}, {ncbits})"
+    else:
+        return f"{declare_str}{module_str}{circuit_type}({nqbits})"
+
+def APPLY(cir_name : str, module_name : str,
           op_name : str, qbits : list[int], paras : list,
           is_qsub : bool = False) -> str:
     if is_qsub:
@@ -81,26 +97,16 @@ def CODE(cir_name : str, module_name : str,
             execstr += "(" + str(qbits)[1:-1] + ", " + str(paras)[1:-1] + ")"
         return execstr
 
-
 def GATE(gate_name : str, qbits : list[int], paras : list) -> str:
-    return CODE("qc", "framework_modules('pyquafu', 1)", gate_name, qbits, paras)
+    std = EXPORT_CONSTANTS['stdlib_name']
+    return APPLY("qc", f"framework_modules('pyquafu', '{std}')", gate_name, qbits, paras)
 
-
-def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
+def SUBROUTINE(qsub_name : str, qbits : list[int], paras : list) -> str:
     # unsupport
-    raise FrameworkMapError('Quantum circuit operations are not supported by quafu.')
+    raise FrameworkMapError('Quantum subroutines are not supported by quafu.')
 
-
-def MIXED_CIRCUIT(remap_q : bool, remap_c : bool) -> str:
-    # unsupport
-    raise FrameworkMapError('Quantum-classical-mixed circuit operations are not supported by quafu.')
-
-
-def NEW(contains_cbits : bool) -> str:
-    if contains_cbits:
-        return "framework_modules('pyquafu', 0).QuantumCircuit(nqbits, ncbits)"
-    return "framework_modules('pyquafu', 0).QuantumCircuit(nqbits)"
-
+def NEW(mixed_circuit : bool, nqbits : int, ncbits : int) -> str:
+    return DECLARE(None, f"framework_modules('pyquafu', 'quafu')", mixed_circuit, nqbits, ncbits)
 
 def BITS(ret_cbit : bool, ret_list : bool) -> str:
     if ret_list:
@@ -111,11 +117,16 @@ def BITS(ret_cbit : bool, ret_list : bool) -> str:
 
 def RUN(options : dict) -> str:
     return """
-res = qvm(qc, shots=run_shots) if qvm == framework_modules('pyquafu', 0).simulate else None
+res = qvm(qc, shots=run_shots) if qvm == framework_modules('pyquafu', 'quafu').simulate else None
 RESULT = res.counts
     """
 
 
-def SUBROUTINE(qsub_name : str, qbits : list[int], paras : list) -> str:
+# ---------- Actions just for internal usage ----------
+def CIRCUIT(is_remap : bool, is_inv : bool) -> str:
     # unsupport
-    raise FrameworkMapError('Quantum subroutines are not supported by quafu.')
+    raise FrameworkMapError('Quantum circuit operations are not supported by quafu.')
+
+def MIXED_CIRCUIT(remap_q : bool, remap_c : bool) -> str:
+    # unsupport
+    raise FrameworkMapError('Quantum-classical-mixed circuit operations are not supported by quafu.')

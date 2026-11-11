@@ -6,7 +6,7 @@
 import unittest as UT
 from pyquantumkit.symbol.gate import *
 from pyquantumkit.symbol.circuit import *
-from pyquantumkit._qframes.code_translate import Standard_Gate_Name
+from pyquantumkit.translate.common import Standard_Gate_Name
 
 # Symbols for gate parameters
 theta_ = sympy.Symbol('theta', real = True)

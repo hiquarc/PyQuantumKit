@@ -1,4 +1,4 @@
-# _qframes/code_translate.py
+# translate/common.py
 #    2025/6/10
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
@@ -18,17 +18,32 @@ Standard_Gate_Name = {
     # 'SY', 'SYD', 'GP', 'CCY',    # Reserved gate names
 }
 
-def get_args_assign_str(argname : str, indexlist : list[int]) -> str:
+def get_args_assign_str(argname : str, indexlist : list[int],
+                        left_bracket : str = '[', right_bracket : str = ']',
+                        delimiter : str = ',') -> str:
+    """
+    Assign the indexes as the subscripts of the argname and return the string
+    
+        argname   : (str)
+        indexlist : (list[int])
+        left_bracket, right_bracket, delimiter : the format characters, default '[' ']' and ','
+
+        e.g. 'a', [0, 1, 2] --> "a[0],a[1],a[2]"
+             'b', [2, 5, 1, 3] --> "b[2],b[5],b[1],b[3]"
+             'c', [2, 1, 0], '(', ')', ';' --> "c(2);c(1);c(0)"
+    """
     s = ""
     nargs = len(indexlist)
     for i in range(nargs):
-        s += f"{argname}[{indexlist[i]}]"
+        s += argname + left_bracket + str(indexlist[i]) + right_bracket
         if i != nargs - 1:
-            s += ","
+            s += delimiter
     return s
 
-# Map the original gate name into standard name
 def get_standard_gatename(origin_gate_name : str) -> str:
+    """
+    Map the original gate name into standard name
+    """
     g = origin_gate_name.upper()
 
     # Convert the nonstandard gate name into standard gate name
