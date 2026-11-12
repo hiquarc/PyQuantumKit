@@ -28,6 +28,9 @@
 
 ## 其他量子编程语言
 ### OpenQASM 2.0
+```python title="openqasm2.py"
+--8<-- "pyquantumkit/translate/extra/openqasm2.py"
+```
 
 ### Q\#
 ```python title="qsharp.py"

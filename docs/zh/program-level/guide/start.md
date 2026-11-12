@@ -96,7 +96,7 @@ def interpret_output_str(self, output_str : str, protocol : str = 'l') -> dict:
     - `'l'`或`'L'`：按照从左开始约定进行解读（默认方式）；
     - `'r'`或`'R'`：按照从右开始约定进行解读。
 
-不同的量子开发框架右不同的解读顺序约定，例如`'qiskit'`, `'pyqanda3'`为从右开始，`'pyquafu'`则为从左开始。可以调用`QProgramBuilder`类的`framework_interpret_protocol()`静态方法获得具体框架的解读约定：
+不同的量子开发框架右不同的解读顺序约定，例如`'qiskit'`, `'pyqanda3'`为从右开始，`'pyquafu'`（旧版Quafu框架）则为从左开始。可以调用`QProgramBuilder`类的`framework_interpret_protocol()`静态方法获得具体框架的解读约定：
 ```python
 print(framework_interpret_protocol('qiskit'))       # -> 'r'
 print(framework_interpret_protocol('pyqpanda3'))    # -> 'r'

@@ -7,12 +7,14 @@ PyQuantumKit采用“代码翻译”的方式实现对多个量子开发框架�
 
 - **IBM Qiskit** : `'qiskit'`
 - **本源量子PyQPanda3** : `'pyqpanda3'`
-- **北京量子院PyQuafu** : `'quafu'`
+- **北京量子院PyQuafu**（旧版） : `'quafu'`
 - **Cqlib** : `'cqlib'`
+
+注：北京量子院新版Quafu平台已改用OpenQASM 2.0格式来提交量子线路，不再使用旧版PyQuafu框架。详见新版Quafu平台网址：[https://quafu.com.cn/](https://quafu.com.cn/)
 
 由于不同的量子开发框架支持的功能有所不同，PyQuantumKit可能无法实现将一些统一代码翻译为对应量子开发框架的调用代码。如果需要在不支持的量子开发框架上使用这些功能，可以考虑基于CircuitIO类来间接实现（[查看详情](../circuit.md#circuitio)）。下表给出了各量子开发框架的功能支持情况：
 
-| | qiskit | pyqpanda3 | quafu | cqlib |  
+| | qiskit | pyqpanda3 | pyquafu | cqlib |  
 | --- |:---:|:---:|:---:|:---:| 
 | 新建量子线路 | &#10003; | &#10003; | &#10003; | &#10003; |
 | 应用量子门 | &#10003; | &#10003; | &#10003; | &#10003; |
@@ -27,7 +29,7 @@ PyQuantumKit采用“代码翻译”的方式实现对多个量子开发框架�
 
 PyQuantumKit可以从CircuitIO对象的量子线路导出代码，除了支持上述基于Python的量子开发框架外，还额外支持导出为以下编程语言的代码（名称字符串区分大小写）：
 
-- **OpenQASM 2.0** : `'OpenQASM2.0'`
+- **OpenQASM 2.0** : `'OpenQASM2.0'` （PyQuantumKit v.0.2.1新增支持）
 - **Microsoft Q\#** : `'Q#'`
 - **isQ** : `'isQ'`
 

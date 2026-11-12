@@ -21,6 +21,8 @@ class Test_extra_languages(UT.TestCase):
         print(test_apply_gate_all('Q#', 'qs'))
     def test_isq(self):
         print(test_apply_gate_all('isQ', 'qs'))
+    def test_openqasm2(self):
+        print(test_apply_gate_all('OpenQASM2.0', 'qs'))
 
 if __name__ == '__main__':
     UT.main()
