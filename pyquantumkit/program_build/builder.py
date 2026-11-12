@@ -4,7 +4,7 @@
 #    Computing Center, Institute of High Energy Physics, CAS
 
 from pyquantumkit import CircuitIO
-from pyquantumkit._qframes.framework_map import get_reverse_output_str
+from pyquantumkit.translate.framework_map import get_reverse_output_str
 from .qtype import QVar, QuantumProgramBuildError, ResultInterpretError
 
 class QProgramBuilder:
@@ -143,8 +143,8 @@ class QProgramBuilder:
 
             output_str : (str) the 0/1 string.
             protocol   : (str) the protocol in interpretation, default 'l'.
-                - 'l' or 'L': interpret from left, i.e., output_str[0] associated with the first qubit
-                - 'r' or 'R': interpret from right, i.e., output_str[0] associated with the last qubit
+                - 'l' or 'left': interpret from left, i.e., output_str[0] associated with the first qubit
+                - 'r' or 'right': interpret from right, i.e., output_str[0] associated with the last qubit
 
         Return the dict with form {qvar1: value1, qvar2: value2, ...}
         """
@@ -153,9 +153,9 @@ class QProgramBuilder:
                 f"The length of <output_str> {len(output_str)} is not match the number of measure bits {self.__n_measure_cbits}")
 
         correct_str = output_str
-        if protocol.lower() == 'l':
+        if protocol.lower() in {'l', 'left'}:
             pass
-        elif protocol.lower() == 'r':
+        elif protocol.lower() in {'r', 'right'}:
             correct_str = output_str[::-1]
         else:
             raise ResultInterpretError(f"Unsupported interpret protocol '{protocol}'")
@@ -171,8 +171,8 @@ class QProgramBuilder:
 
             output_str : (dict) the dict of the running results.
             protocol   : (str) the protocol in interpretation, default 'l'.
-                - 'l' or 'L': interpret from left, i.e., output_str[0] associated with the first qubit
-                - 'r' or 'R': interpret from right, i.e., output_str[0] associated with the last qubit
+                - 'l' or 'left': interpret from left, i.e., output_str[0] associated with the first qubit
+                - 'r' or 'right': interpret from right, i.e., output_str[0] associated with the last qubit
 
         Return the list with form [(interpreted result 1, times1), (interpreted result 2, times2), ...]
         """
@@ -185,17 +185,17 @@ class QProgramBuilder:
             ret.append((result, times))
         return ret
 
-    @staticmethod
-    def framework_interpret_protocol(framework : str) -> str:
-        """
-        Get the interpret protocol of the framework
+    # @staticmethod
+    # def framework_interpret_protocol(framework : str) -> str:
+    #     """
+    #     Get the interpret protocol of the framework
 
-            framework : (str) the framework name
-        """
-        if get_reverse_output_str(framework):
-            return 'r'
-        else:
-            return 'l'
+    #         framework : (str) the framework name
+    #     """
+    #     if get_reverse_output_str(framework):
+    #         return 'r'
+    #     else:
+    #         return 'l'
 
     def n_qvars_qubits(self) -> int:
         """

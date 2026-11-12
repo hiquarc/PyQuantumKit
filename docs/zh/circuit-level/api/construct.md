@@ -6,7 +6,7 @@ import pyquantumkit
 即可使用。
 
 ## 基本构建函数
-### apply_gate
+### apply_gate函数
 
 `apply_gate`函数提供了应用一个量子门的接口，函数原型为：
 ```python
@@ -24,7 +24,7 @@ apply_gate函数将根据传入的`q_circuit`参数所属的量子开发框架�
 
 此外，若目标量子开发框架不原生支持某个量子门，函数则会将其翻译为支持的量子门的组合。例如，一些量子开发框架不支持 $\sqrt{X}$ 门，函数会根据恒等式 $\sqrt{X}=HSH$ 将其翻译为 $H$, $S$, $H$ 门的依次应用。
 
-### apply_measure
+### apply_measure函数
 `apply_measure`函数以统一的方式实现测量目标量子比特，函数原型为：
 
 ```python
@@ -41,7 +41,7 @@ apply_measure(qc, [2, 4, 6], [0, 1, 2])
 ```
 测量`qc`中下标为2、4和6的量子比特，并将测量结果分别存入下标为0、1、2的经典比特中。
 
-### multi_apply_sqgate
+### multi_apply_sqgate函数
 `multi_apply_sqgate`函数对一组量子比特中的每一个量子比特应用同一个单比特量子门。
 
 ```python
@@ -59,7 +59,7 @@ multi_apply_sqgate(qc, 'H', range(7))
 ```
 对`qc`的下标为0~6的量子比特（共7个）的每一个分别应用一个H门。
 
-### apply_reverse
+### apply_reverse函数
 `apply_reverse`函数应用一些列SWAP操作，反转量子比特顺序。
 
 ```python
@@ -71,5 +71,14 @@ def apply_reverse(q_circuit, qbitlist : list[int])
 
 具体而言，该函数对下标数组`qbitlist`对应的首个量子比特和最后一个量子比特应用SWAP门，对第二个和倒数第二个应用SWAP门，以此类推。
 
-## 模块化构建
-[点此查看](../../experimental/construct.md)
+## 量子子例程的使用（实验性）
+### apply_subroutine函数
+`apply_subroutine`函数提供了应用一个量子子例程的接口，函数原型为：
+```python
+def apply_subroutine(q_circuit, qsub_str : str, qbits : list[int], paras : list = None)
+```
+
+- 参数`q_circuit`指定目标量子线路，它的类型是各量子开发框架的量子线路类（例如qiskit的`QuantumCircuit`、pyqpanda3的`QCircuit`或`QProg`、quafu的`QuantumCircuit`或cqlib的`Circuit`）或PyQuantumKit的`CircuitIO`类。
+- 参数`qsub_str`是一个字符串，用于指示需要应用的量子子例程，不区分大小写。[点此查看](supported-subroutines.md)具体支持的量子门及其对应的字符串。
+- 参数`qbits`是一个整数列表，指定量子子例程要应用到的量子比特下标列表。注意无论量子门是单比特还是多比特，都需要**以列表的方式指派此参数**。
+- 参数`paras`是一个列表，用于为量子子例程指派参数（如果子例程需要参数）。

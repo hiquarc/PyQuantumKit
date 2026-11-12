@@ -25,7 +25,7 @@
 - **符号表示：** 生成量子线路的矩阵符号表示（基于sympy）。
 
 ## 目前支持的框架
-PyQuantumKit v.0.2.0目前支持如下量子开发框架：
+PyQuantumKit v.0.2.1目前支持如下量子开发框架：
 
 - **IBM Qiskit**
 - **本源量子QPanda3**

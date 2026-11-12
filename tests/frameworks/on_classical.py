@@ -5,7 +5,7 @@
 
 import unittest as UT
 from tests.common.test_classical import Test_classical_common, Test_classical_run_result
-from tests.common.test_qframes import Test_qframes_code_translate
+from tests.common.test_translate import Test_translate_common
 from tests.common.test_procedure import Test_procedure_circuit_io
 from tests.common.test_symbol import Test_symbol_gate, Test_symbol_circuit
 from tests.common.test_circuit_check import Test_circuit_check_matrix_based

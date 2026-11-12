@@ -1,6 +1,6 @@
 # PyQuantumKit支持的量子门
 
-本页给出了PyQuantumKit支持的量子门及其对应的apply_gate函数的调用字符串及pyquantumkit.symbol.gate中的SymPy矩阵名，供用户查阅。
+本页给出了PyQuantumKit支持的量子门及其对应的`apply_gate`函数的调用字符串及pyquantumkit.symbol.gate中的SymPy矩阵名，供用户查阅。
 
 **apply_gate函数的调用字符串不区分大小写**，且若一个门列出多个字符串，采用其中的任意一个均可。例如，`'CCNOT'`, `'ccx'`, `'Toffoli'`, `'toFFoLi'`均为合法的代表Toffoli门的调用字符串。对于带参数量子门，需要指派一个数组作为`paras`参数，**注：即使只有一个参数也需要以数组形式指派**。
 

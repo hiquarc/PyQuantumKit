@@ -5,7 +5,8 @@
 
 from pyquantumkit.program_build.qtype import QVar, QStruct, QTuple, QUnion, QArray, QuantumProgramBuildError, ResultInterpretError
 from pyquantumkit.program_build.builder import QProgramBuilder
-from pyquantumkit._qframes.code_translate import get_standard_gatename
+from pyquantumkit.translate.common import get_standard_gatename
+from pyquantumkit import CircuitIO
 
 class Qubit(QVar):
     """
@@ -50,6 +51,21 @@ def gate(gate_name : str, qubit_var_list : list[Qubit], paras : list = None) -> 
 
     index_list = [var._gate_(gate_name, qubit_var_list, paras)._address for var in qubit_var_list]
     builder._apply_gate(gate_name, index_list, paras)
+
+
+def circuit(target_circuit : CircuitIO, qubit_var_list : list[Qubit]):
+    """
+    Apply a quantum circuit on several Qubit variables.
+
+        target_circuit : (CircuitIO) a CircuitIO object to identify the quantum circuit.
+        qubit_var_list : (list[Qubit]) the list of applied Qubit variables.
+    """
+    if target_circuit.contains_measure():
+        raise QuantumProgramBuildError("Cannot apply quantum circuit with measurement.")
+    gatelist = target_circuit.get_gate_list()
+    for item in gatelist:
+        gate_qubits = [qubit_var_list[i] for i in item[1]]
+        gate(item[0], gate_qubits, item[2])
 
 
 class QubitArray(QArray):

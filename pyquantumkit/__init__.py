@@ -3,7 +3,7 @@
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 import sys
 import os
@@ -31,8 +31,8 @@ def get_framework_from_type(t : type) -> str:
 def get_framework_from_object(obj) -> str:
     return get_framework_from_type(type(obj))
 
-def framework_modules(fm_name : str, index : int = 0):
-    return Framework_Namespace[fm_name][index]
+def framework_modules(fm_name : str, module_name : str):
+    return Framework_Namespace[fm_name][module_name]
 def framework_version(fm_name : str):
     return Framework_Version[fm_name]
 
@@ -54,13 +54,19 @@ def pyquantumkit_init():
 
     # Initialize the namespace and version of imported frameworks
     for lib_name in Supported_Frameworks:
-        namespace_items = []
+        namespace_items = {}
         for fn_item in Supported_Frameworks[lib_name]:
             if fn_item in sys.modules:
-                namespace_items.append(importlib.import_module(fn_item))
+                try:
+                    namespace_items[fn_item] = importlib.import_module(fn_item)
+                except Exception:
+                    print(f"WARNING: Fail to load the module {fn_item} from framework {lib_name}!")
         Framework_Namespace[lib_name] = namespace_items
         if namespace_items:
-            Framework_Version[lib_name] = importlib.metadata.version(lib_name)
+            try:
+                Framework_Version[lib_name] = importlib.metadata.version(lib_name)
+            except Exception:
+                print(f"WARNING: Cannot load the version info of framework {lib_name}!")
 
 pyquantumkit_init()
 
@@ -68,5 +74,6 @@ pyquantumkit_init()
 from .procedure.generic import *
 from .procedure.circuit_io import CircuitIO
 from .program_build.builder import QProgramBuilder
-from ._qframes.user_define import add_extra_framework
-from ._qframes.code_translate import get_standard_gatename
+from .translate.customize import update_framework_translation, update_language_translation
+from .translate.common import get_standard_gatename
+from .translate.framework_map import framework_interpret_protocol, framework_support_subroutines

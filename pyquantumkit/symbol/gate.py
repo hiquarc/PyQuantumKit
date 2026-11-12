@@ -5,7 +5,7 @@
 
 import sympy
 from pyquantumkit import PyQuantumKitError
-from pyquantumkit._qframes.code_translate import get_standard_gatename
+from pyquantumkit.translate.common import get_standard_gatename
 from pyquantumkit.classical.common import reverse_endianness, dim2nbits
 
 # the error type for symbol calculation

@@ -91,6 +91,27 @@ class Test_procedure_generic(UT.TestCase):
                 else:
                     T_run(self._fm, self._qvm, 4, apply_measure, qbits, cbits)
 
+    def test_apply_subroutine(self):
+        cases = {
+            'QFT' : ((0,), ()),
+            'QFT' : ((1, 2, 3), ()),
+            'QFT_NS' : ((2,), ()),
+            'QFT_NS' : ((0, 3), ()),
+            'IQFT' : ((2,), ()),
+            'IQFT' : ((3, 1), ()),
+            'IQFT_NS' : ((0,), ()),
+            'IQFT_NS' : ((1, 2, 3), ()),
+        }
+        for input in cases:
+            with self.subTest(input):
+                qbitlist = list(cases[input][0])
+                paras = list(cases[input][1])
+                err = None if input in framework_support_subroutines(self._fm) else PyQuantumKitError
+                if err is None:
+                    T_run(self._fm, self._qvm, 4, apply_subroutine, input, qbitlist, paras)
+                else:
+                    self.assertRaises(err, T_run, self._fm, self._qvm, 4,
+                                      apply_subroutine, input, qbitlist, paras)
 
 
 class Test_procedure_paulis(UT.TestCase):

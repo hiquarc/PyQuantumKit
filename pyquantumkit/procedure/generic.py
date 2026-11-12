@@ -4,7 +4,7 @@
 #    Computing Center, Institute of High Energy Physics, CAS
 
 from pyquantumkit import get_framework_from_object, PyQuantumKitError
-from pyquantumkit._qframes.framework_map import quantum_action, Action
+from pyquantumkit.translate.framework_map import quantum_action, Action
 from pyquantumkit.classical.common import indexlist_length
 
 # the error type for operations
@@ -253,19 +253,33 @@ def get_cbit_list(q_prog) -> list[int]:
     return quantum_action(Action.BITS, 0, q_prog, True, True)
 
 
-def run_and_get_counts(q_machine, q_prog, shots : int = 1, **kwargs):
+# Internal use
+def run_and_get_counts(q_machine, q_prog, shots : int = 1, options : dict = None):
     """
     Run quantum circuits on quantum machine and get the result dict (Experimental)
 
         q_machine : target quantum machine
         q_prog    : target quantum circuit or QC-mixed circuit
         shots     : running shots (repeat times)
-        kwargs    : (optional) Other parameters
+        options   : (optional) Other parameters
 
     -> Return : dict of results
     """
-    return quantum_action(Action.RUN, 1, q_machine, q_prog, shots, **kwargs)
+    return quantum_action(Action.RUN, 1, q_machine, q_prog, shots, options)
 
+# def simulate(framework : str, machine : str, qprog, shots : int, options : dict = None):
+#     """
+#     Simulate quantum circuits on given framework and qvm
+
+#         framework : (str) to identify the target framework
+#         machine   : (str) target quantum machine
+#         q_prog    : target quantum circuit or QC-mixed circuit
+#         shots     : (int) running shots (repeat times)
+#         options   : (optional) other parameters
+
+#     -> Return : the origin dict of results
+#     """
+#     return quantum_action(Action.SIMULATE, framework, machine, qprog, shots, options)
 
 def parallel_mixed_circuits(*args):
     """
@@ -318,3 +332,18 @@ def parallel_circuits(*args):
     for i in range(len(args)):
         append_circuit(retqc, args[i], qofflist[i])
     return retqc
+
+
+def apply_subroutine(q_circuit, qsub_str : str, qbits : list[int], paras : list = None):
+    """
+    Apply a quantum subroutine on a quantum circuit
+
+        q_circuit : applied quantum circuit
+        qsub_str  : a string to identify the quantum subroutine
+        qbits     : the indexes of applied qubits
+        paras     : (optional) the parameters of the quantum subroutine
+
+    -> Return : q_circuit
+    """
+    quantum_action(Action.SUBROUTINE, 0, q_circuit, qsub_str, qbits, paras)
+    return q_circuit

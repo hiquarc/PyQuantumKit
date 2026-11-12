@@ -4,15 +4,18 @@
 #    Computing Center, Institute of High Energy Physics, CAS
 
 import copy, sympy, numpy
-from pyquantumkit import apply_gate, OperationError
-from pyquantumkit._qframes.framework_map import gate_applying_code
-from pyquantumkit.classical.common import indexlist_length
-from pyquantumkit._qframes.code_translate import Standard_Gate_Name, get_standard_gatename
+from pyquantumkit import apply_gate, apply_subroutine, OperationError
+from pyquantumkit.translate.framework_map import op_applying_code, declare_qubits_code, export_constants, import_code
+from pyquantumkit.translate.common import get_standard_gatename, get_standard_subroutine_name
 from pyquantumkit.symbol.gate import symbol_gate_matrix
 from pyquantumkit.symbol.circuit import symbol_apply_gate
 
+QSUB_PREFIX = "QSUB_"
+LEN_QSUB_PREFIX = len(QSUB_PREFIX)
+
 class CircuitIO:
-    def __inverse_gate(self, item : list):
+    @staticmethod
+    def __inverse_gate(item : list):
         if item[0] == 'M':
             raise OperationError("Measurement cannot be inversed!")
         if item[0] == 'S':
@@ -28,11 +31,28 @@ class CircuitIO:
         elif item[0] == 'U3':
             item[2] = [-item[2][0], -item[2][2], -item[2][1]]
 
-    def __expression_subs(self, expression, subsdict : dict):
+        # For QFT subroutine
+        elif item[0] == QSUB_PREFIX + 'QFT':
+            item[0] = QSUB_PREFIX + 'IQFT'
+        elif item[0] == QSUB_PREFIX + 'IQFT':
+            item[0] = QSUB_PREFIX + 'QFT'
+        elif item[0] == QSUB_PREFIX + 'QFT_NS':
+            item[0] = QSUB_PREFIX + 'IQFT_NS'
+        elif item[0] == QSUB_PREFIX + 'IQFT_NS':
+            item[0] = QSUB_PREFIX + 'QFT_NS'
+
+    @staticmethod
+    def __expression_subs(expression, subsdict : dict):
         if not hasattr(expression, 'subs'):
             return expression
         ret = expression.subs(subsdict)
         return ret
+
+    @staticmethod
+    def __is_qsub(namestr) -> bool:
+        if namestr[0:LEN_QSUB_PREFIX] == QSUB_PREFIX:
+            return True
+        return False
     
     def __init__(self, nqbits : int = 0, ncbits : int = 0) -> None:
         """
@@ -159,7 +179,7 @@ class CircuitIO:
         """
         self.__gatelist.reverse()
         for item in self.__gatelist:
-            self.__inverse_gate(item)
+            CircuitIO.__inverse_gate(item)
         return self
     
     def remap_qbits(self, remap : int|list|range):
@@ -235,43 +255,61 @@ class CircuitIO:
                    e.g. {t : 3, x : 4} means substitute symbol t with number 3, and symbol x with 4
         """
         for item in self.__gatelist:
-            if subsdict is None or item[2] is None:
-                apply_gate(dest_qcir, item[0], item[1], item[2])
+            subsitem2 = item[2] if (subsdict is None or item[2] is None) \
+                        else [CircuitIO.__expression_subs(x, subsdict) for x in item[2]]
+            if CircuitIO.__is_qsub(item[0]):
+                apply_subroutine(dest_qcir, item[0][LEN_QSUB_PREFIX:], item[1], subsitem2)
             else:
-                subsitem2 = [self.__expression_subs(x, subsdict) for x in item[2]]
                 apply_gate(dest_qcir, item[0], item[1], subsitem2)
         return self
     
     def __rshift__(self, dest_qcir):
         return self.append_into_actual_circuit(dest_qcir)
+
     
     def get_circuit_code(self, language : str, circuit_name : str,
-                          gate_lib_name : str = None, linebreak : str = '\n',
-                          subsdict : dict = None) -> str:
+                          linebreak : str = '\n', include_declare = True,
+                          subsdict : dict = None) -> tuple[str, set]:
         """
         Convert the CircuitIO object into string of code
 
             language      : specify the language
             circuit_name  : specify the circuit name will be used in the code
-            gate_lib_name : specify the library name of gates used in the code (default None)
-            NOTE:   If no gate library name will be used, please specify None (rather than empty str '') 
             linebreak     : the characters of linebreaks in the code (default '\n')
+            include_declare : whether output the declaration code line.
             subsdict  : (optional, default None) specify the substituted symbols.
                    e.g. {t : 3, x : 4} means substitute symbol t with number 3, and symbol x with 4
 
-        -> Return : the code string
+        -> Return : (code string, the set of required modules)
         """
-        ret = ""
+        require_modules = set()
+        code = ""
+        if include_declare:
+            mixed = True if self.get_ncbits() > 0 else False
+            code += declare_qubits_code(language, circuit_name, mixed,
+                                        self.get_nqbits(), self.get_ncbits())
+            code += linebreak
         for item in self.__gatelist:
-            if subsdict is None or item[2] is None:
-                ret += gate_applying_code(language, circuit_name, gate_lib_name,
-                                            item[0], item[1], item[2])
-            else:
-                subsitem2 = [self.__expression_subs(x, subsdict) for x in item[2]]
-                ret += gate_applying_code(language, circuit_name, gate_lib_name,
-                                            item[0], item[1], subsitem2)
-            ret += linebreak
+            paras = item[2] if (subsdict is None or item[2] is None) \
+                            else [CircuitIO.__expression_subs(x, subsdict) for x in item[2]]
+            is_qsub = False
+            codeline, module = op_applying_code(language, circuit_name, item[0], item[1], paras, is_qsub)
+            code += codeline
+            require_modules.add(module)
+            code += linebreak
+        return (code, require_modules)
+
+    def export_standalone_code(self, language : str, circuit_name : str,
+                               linebreak : str = '\n', subsdict : dict = None) -> str:
+        maincode, modules = self.get_circuit_code(language, circuit_name, linebreak, True, subsdict)
+        ret = export_constants(language).get('comment', "") + linebreak
+        for m in modules:
+            ret += import_code(language, m) + linebreak
+        ret += export_constants(language).get('prefix', "") + linebreak
+        ret += maincode
+        ret += export_constants(language).get('suffix', "") + linebreak
         return ret
+
     
     def get_sympy_matrix(self, subsdict : dict = None, simplify : bool = True) -> sympy.Matrix:
         """
@@ -319,6 +357,12 @@ class CircuitIO:
             gatemat_total = numpy.array(gatemat_total_sp, dtype=complex)
             ret = gatemat_total @ ret
         return ret
+
+    def get_gate_list(self) -> list:
+        """
+        Return the gate list of this CircuitIO object
+        """
+        return self.__gatelist
     
     def symbol_subs(self, subsdict : dict):
         """
@@ -330,7 +374,7 @@ class CircuitIO:
         for item in self.__gatelist:
             if item[2] is not None:
                 for i in range(len(item[2])):
-                    item[2][i] = self.__expression_subs(item[2][i], subsdict)
+                    item[2][i] = CircuitIO.__expression_subs(item[2][i], subsdict)
 
     def contains_measure(self) -> bool:
         """
@@ -340,3 +384,28 @@ class CircuitIO:
             if item[0] == 'M':
                 return True
         return False
+
+    def contains_subroutine(self) -> bool:
+        """
+        Return whether a quantum subroutine is in the CircuitIO object
+        """
+        for item in self.__gatelist:
+            if CircuitIO.__is_qsub(item[0]):
+                return True
+        return False
+
+    def apply_subroutine(self, qsub_str : str, qbits : list[int], paras : list = None) -> None:
+        """
+        Apply a quantum subroutine on a quantum circuit
+
+            NOTE: this function will not do check for the validity of subroutine
+
+            q_circuit : applied quantum circuit
+            qsub_str  : a string to identify the quantum subroutine
+            qbits     : the indexes of applied qubits
+            paras     : (optional) the parameters of the gate
+
+        -> Return : q_circuit
+        """
+        s = get_standard_subroutine_name(qsub_str)
+        self.__gatelist.append([QSUB_PREFIX + s, qbits, paras])

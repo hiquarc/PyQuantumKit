@@ -13,37 +13,39 @@ RUN_TEST_FRAMEWORK = 'cqlib'
 RUN_TEST_MACHINE = None
 
 # BEGIN ---------- procedure ----------
-class On_quafu_Test_procedure_generic(T_P.Test_procedure_generic):
+class On_cqlib_Test_procedure_generic(T_P.Test_procedure_generic):
     def setUp(self):
         self._fm = RUN_TEST_FRAMEWORK
         self._qvm = RUN_TEST_MACHINE
+    def test_apply_measure(self):
+        pass
 
 
-# class On_quafu_Test_procedure_paulis(T_P.Test_procedure_paulis):
+# class On_cqlib_Test_procedure_paulis(T_P.Test_procedure_paulis):
 #     def setUp(self):
 #         self._fm = RUN_TEST_FRAMEWORK
 #         self._qvm = RUN_TEST_MACHINE
 # END ---------- procedure ----------
 
 # BEGIN ---------- state_prepare ----------
-# class On_quafu_Test_state_prepare_int_state(T_SP.Test_state_prepare_int_state):
+# class On_cqlib_Test_state_prepare_int_state(T_SP.Test_state_prepare_int_state):
 #     def setUp(self):
 #         self._fm = RUN_TEST_FRAMEWORK
 #         self._qvm = RUN_TEST_MACHINE
 
-# class On_quafu_Test_state_prepare_by_string(T_SP.Test_state_prepare_by_string):
+# class On_cqlib_Test_state_prepare_by_string(T_SP.Test_state_prepare_by_string):
 #     def setUp(self):
 #         self._fm = RUN_TEST_FRAMEWORK
 #         self._qvm = RUN_TEST_MACHINE
 
-# class On_quafu_Test_state_prepare_pauli_eigenstate(T_SP.Test_state_prepare_pauli_eigenstate):
+# class On_cqlib_Test_state_prepare_pauli_eigenstate(T_SP.Test_state_prepare_pauli_eigenstate):
 #     def setUp(self):
 #         self._fm = RUN_TEST_FRAMEWORK
 #         self._qvm = RUN_TEST_MACHINE
 # END ---------- state_prepare ----------
 
 # BEGIN ---------- circuit_check ----------
-# class On_quafu_Test_circuit_check_circuit_relation(T_PC.Test_circuit_check_circuit_relation):
+# class On_cqlib_Test_circuit_check_circuit_relation(T_PC.Test_circuit_check_circuit_relation):
 #     def setUp(self):
 #         self._fm = RUN_TEST_FRAMEWORK
 #         self._qvm = RUN_TEST_MACHINE

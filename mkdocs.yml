@@ -38,7 +38,7 @@ plugins:
             "API参考": "API reference"
             "跨平台量子线路构建": "Construct Quantum Circuit"
             "量子线路矩阵的符号表示": "Symbolic Representation"
-            "量子开发框架参考": "Quantum Development Frameworks"
+            "内置支持的量子开发框架": "Quantum Development Frameworks"
             "量子门参考": "Supported Quantum Gates"
             "量子线路构建API": "API of Construct QCs"
             "CircuitIO类": "CircuitIO Class"
@@ -50,6 +50,15 @@ plugins:
             "实验性功能总览": "Overview"
             "量子线路模块化构建": "Modular Construction of QCs"
             "量子哈密顿量模拟": "Quantum Hamiltonian Simulation"
+            "高级语言级量子程序开发": "High-level Development"
+            "高级语言级量子编程概览": "Overview"
+            "演示示例": "Demos"
+            "高级语言级量子编程指南": "Guides of HL programming"
+            "开始编写量子程序": "Start to Programming"
+            "量子类型系统": "Quantum Type System"
+            "量子变量内存布局和量子比特分配": "Memory Layout and Qubit Allocation"
+            "测量结果的存放与解读": "Storage and Interpretation of Measurement Results"
+            "自定义量子数据类型": "Custom Quantum Data Types"
             "更新历史": "Changelog"
             
       reconfigure_material: true
@@ -63,9 +72,12 @@ nav:
   - 量子线路级开发:
     - 跨平台量子线路构建: circuit-level/circuit.md
     - 量子线路矩阵的符号表示: circuit-level/symbol.md
+    - 自定义量子开发框架支持: circuit-level/custom-platform.md
     - API参考:
-      - 量子开发框架参考: circuit-level/api/supported-platforms.md
+      - 内置支持的量子开发框架: circuit-level/api/supported-platforms.md
+      - 内置翻译脚本参考: circuit-level/api/scripts.md
       - 量子门参考: circuit-level/api/supported-gates.md
+      - 量子子例程参考（实验性）: circuit-level/api/supported-subroutines.md
       - 量子线路构建API: circuit-level/api/construct.md
       - CircuitIO类: circuit-level/api/circuitio.md
       - symbol模块: circuit-level/api/symbol.md
@@ -81,10 +93,11 @@ nav:
       - 自定义量子数据类型: program-level/guide/user-define.md 
   - 实际应用案例:
     - 带参数量子线路的符号表示及检验: examples/z2.md
-  - 实验性功能:
-    - 实验性功能总览: experimental/overall.md
-    - 量子线路模块化构建: experimental/construct.md
-    - 量子哈密顿量模拟: experimental/hsim.md
+    - 在Quafu平台上运行高级语言级量子程序: examples/qdata-in-quafu.md
+  # - 实验性功能:
+  #   - 实验性功能总览: experimental/overall.md
+  #   - 量子线路模块化构建: experimental/construct.md
+  #   - 量子哈密顿量模拟: experimental/hsim.md
   - 更新历史: changelog.md
 
 
