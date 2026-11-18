@@ -67,8 +67,8 @@ class Z2Lattice(QStruct):
     # 设置模型的经典参数
     def set_mass(self, mass : float):
         # 设置电子和正电子的质量 m
-        Positron.mass = mass
-        Electron.mass = mass
+        Positron._mass = mass
+        Electron._mass = mass
     def set_eta(self, eta : float):
         # 设置相互作用强度参数 η
         self.__eta = eta

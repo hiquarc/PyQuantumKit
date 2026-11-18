@@ -1,5 +1,5 @@
 import quafu
-from pyquantumkit import QProgramBuilder, update_language_translation
+from pyquantumkit import QProgramBuilder
 from pyquantumkit.program.std import *
 from pyquantumkit.program.quint import *
 

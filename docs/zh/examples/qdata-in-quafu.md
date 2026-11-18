@@ -12,7 +12,7 @@ $$
 
 ```python
 import quafu
-from pyquantumkit import QProgramBuilder, update_language_translation
+from pyquantumkit import QProgramBuilder
 from pyquantumkit.program.std import *
 from pyquantumkit.program.quint import *
 
@@ -87,7 +87,7 @@ measure qs_q[10] -> qs_c[10];
 measure qs_q[11] -> qs_c[11];
 ```
 
-## 将OpenQASM 2.0代码提交到Quafu平台，运行并取得原始结果
+## 3. 将OpenQASM 2.0代码提交到Quafu平台，运行并取得原始结果
 这一步的具体代码编写可参考Quafu平台的用户手册，我们这里使用云平台提供的模拟器来运行（设置参数`target="sim"`），重复次数（shots）设置为1024。
 
 ```python
@@ -107,7 +107,7 @@ print("原始结果：", raw_counts)
 也可去Quafu网站查看更详细的运行信息：
 ![](../../imgs/quafu_website.jpg)
 
-## 解读原始结果
+## 4. 解读原始结果
 对于高级语言级量子程序，还需要从原始结果中恢复量子数据类型的信息。调用`interpret_result_dict`方法从原始结果字典解读量子数据类型信息。
 
 **注意：新版Quafu平台的测量结果采用从右开始约定（`'r'`），这与旧版PyQuafu的约定正好相反。**
