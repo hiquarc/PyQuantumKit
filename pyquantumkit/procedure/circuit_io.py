@@ -266,6 +266,13 @@ class CircuitIO:
     def __rshift__(self, dest_qcir):
         return self.append_into_actual_circuit(dest_qcir)
 
+    def run(self, provider : str = None, backend : str = None, shots : int = None,
+            api_key : str = None, api_key_file : str = None, subsdict : dict = None,
+            options : dict = None):
+        """Run this circuit on the backend selected by arguments or command line."""
+        from pyquantumkit.execution import run
+        return run(self, provider, backend, shots, api_key, api_key_file, subsdict, options)
+
     
     def get_circuit_code(self, language : str, circuit_name : str,
                           linebreak : str = '\n', include_declare = True,
