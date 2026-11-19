@@ -108,9 +108,30 @@ def _api_key(provider: str, api_key: str = None, api_key_file: str = None) -> st
     return key.strip()
 
 
+def _print_run_info(provider: str, backend: str, available: str = None,
+                    qpus: str = None, simulators: str = None) -> None:
+    lines = [f'provider: {provider}']
+    if qpus is not None or simulators is not None:
+        lines.append(f'available QPU backends: {qpus or "(none)"}')
+        lines.append(f'available remote simulator backends: {simulators or "(none)"}')
+    else:
+        lines.append(f'available backends: {available}')
+    lines.append(f'running on backend: {backend}')
+    rows = [f'  {line}' for line in lines[:-1]]
+    rows.append(f'▶ {lines[-1]}')
+    title = ' PyQuantumKit '
+    width = max(max(len(row) for row in rows), len(title) + 2)
+    print('┌' + title + '─' * (width - len(title)) + '┐')
+    for row in rows:
+        print('│' + row.ljust(width) + '│')
+    print('└' + '─' * width + '┘')
+
+
 class _ProviderBackend:
     provider: str
     framework: str
+    api_key_hint = 'Check the API key.'
+    _API_KEY_MARKERS = ('unauthorized',)
     default_backend = 'local'
     local_only = False
 
@@ -140,6 +161,7 @@ class _ProviderBackend:
 
     def run(self, circuit: CircuitIO, shots: int, subsdict: dict = None) -> RunResult:
         if self.backend == 'local':
+            _print_run_info(self.provider, self.backend, available='local')
             return self._run_local(circuit, shots, subsdict)
         return self._run_cloud(circuit, shots, subsdict)
 
@@ -148,6 +170,29 @@ class _ProviderBackend:
 
     def _run_cloud(self, circuit: CircuitIO, shots: int, subsdict: dict = None) -> RunResult:
         raise NotImplementedError
+
+    @classmethod
+    def _api_key_failure(cls, exc: BaseException) -> bool:
+        text = str(exc).lower()
+        return any(marker in text for marker in cls._API_KEY_MARKERS)
+
+    def _api_key_error(self, action: str, exc: BaseException) -> RunError:
+        return RunError(f'{self.provider} could not {action}: {exc}. {self.api_key_hint}')
+
+    def _invalid_backend(self, qpus: str, simulators: str) -> RunError:
+        return RunError(
+            f"Invalid {self.provider} backend '{self.backend}'. "
+            f"Available QPU backends: {qpus}. "
+            f"Available remote simulator backends: {simulators}."
+        )
+
+    def _announce_cloud(self, qpus: str, simulators: str) -> None:
+        _print_run_info(self.provider, self.backend, qpus=qpus, simulators=simulators)
+
+    @staticmethod
+    def _listed(names) -> str:
+        names = sorted(names)
+        return ', '.join(names) if names else '(none)'
 
 
 class QiskitBackend(_ProviderBackend):
@@ -166,6 +211,7 @@ class QiskitBackend(_ProviderBackend):
 class OriginQBackend(_ProviderBackend):
     provider = 'originq'
     framework = 'pyqpanda3'
+    api_key_hint = 'Check that the API key is an OriginQ QCloud key.'
 
     def _run_local(self, circuit: CircuitIO, shots: int, subsdict: dict = None) -> RunResult:
         from pyqpanda3.core import CPUQVM
@@ -179,48 +225,43 @@ class OriginQBackend(_ProviderBackend):
         try:
             catalog = service.backends()
         except RuntimeError as exc:
+            if self._api_key_failure(exc):
+                raise self._api_key_error('list backends', exc) from exc
             raise RunError(
-                'OriginQ could not list backends. The cloud response was not a backend list. '
-                'Check that the API key is an OriginQ QCloud key.'
+                f'{self.provider} could not list backends: {exc}. {self.api_key_hint}'
             ) from exc
         return dict(catalog)
 
     def _available_names(self, catalog: dict, simulator: bool) -> str:
-        names = sorted(
+        names = (
             name for name, available in catalog.items()
             if available and self._is_simulator(name) == simulator
         )
-        return ', '.join(names) if names else '(none)'
-
-    def _unknown_backend(self, catalog: dict) -> RunError:
-        return RunError(
-            f"Invalid OriginQ backend '{self.backend}'. "
-            f"Available QPU backends: {self._available_names(catalog, False)}. "
-            f"Available remote simulator backends: {self._available_names(catalog, True)}."
-        )
+        return self._listed(names)
 
     def _run_cloud(self, circuit: CircuitIO, shots: int, subsdict: dict = None) -> RunResult:
         from pyqpanda3.qcloud import QCloudService
         converted = _convert_circuit(circuit, self.framework, subsdict)
         service = QCloudService(self.api_key)
-        try:
-            catalog = self._catalog(service)
-        except RunError:
-            catalog = None
-        if catalog is not None and self.backend not in catalog:
-            raise self._unknown_backend(catalog)
+        catalog = self._catalog(service)
+        qpus = self._available_names(catalog, False)
+        simulators = self._available_names(catalog, True)
+        if self.backend not in catalog:
+            raise self._invalid_backend(qpus, simulators)
         try:
             cloud_backend = service.backend(self.backend)
         except RuntimeError as exc:
-            if catalog is not None:
-                raise self._unknown_backend(catalog) from exc
-            raise RunError(
-                f"OriginQ could not open backend '{self.backend}': {exc}. "
-                'Check that the API key is an OriginQ QCloud key.'
-            ) from exc
+            if self._api_key_failure(exc):
+                raise self._api_key_error(f"open backend '{self.backend}'", exc) from exc
+            raise self._invalid_backend(qpus, simulators) from exc
+        self._announce_cloud(qpus, simulators)
         try:
             job = cloud_backend.run(converted, shots)
         except RuntimeError as exc:
+            if self._api_key_failure(exc):
+                raise self._api_key_error(
+                    f"run backend '{self.backend}'", exc
+                ) from exc
             raise RunError(
                 f"OriginQ backend '{self.backend}' rejected the circuit: {exc}"
             ) from exc
@@ -252,22 +293,14 @@ class QuafuBackend(_ProviderBackend):
         status = device.get('status')
         return status is None or str(status).lower() in cls._AVAILABLE_STATUS
 
-    def _unknown_backend(self, devices) -> RunError:
+    def _available_groups(self, devices) -> tuple[str, str]:
         qpus = []
         simulators = []
         for device in devices:
             if not isinstance(device, dict) or not device.get('name') or not self._is_available(device):
                 continue
             (simulators if self._is_simulator(device) else qpus).append(device['name'])
-
-        def listed(names: list[str]) -> str:
-            return ', '.join(sorted(names)) if names else '(none)'
-
-        return RunError(
-            f"Invalid Quafu backend '{self.backend}'. "
-            f"Available QPU backends: {listed(qpus)}. "
-            f"Available remote simulator backends: {listed(simulators)}."
-        )
+        return self._listed(qpus), self._listed(simulators)
 
     def _run_local(self, circuit: CircuitIO, shots: int, subsdict: dict = None) -> RunResult:
         import quafu
@@ -297,8 +330,10 @@ class QuafuBackend(_ProviderBackend):
             device['name'] for device in devices
             if isinstance(device, dict) and device.get('name') and self._is_available(device)
         }
+        qpus, simulators = self._available_groups(devices)
         if self.backend not in available_backends:
-            raise self._unknown_backend(devices)
+            raise self._invalid_backend(qpus, simulators)
+        self._announce_cloud(qpus, simulators)
         compiler = self.options.get('compiler', 'qiskit')
         qasm = circuit.export_standalone_code('OpenQASM2.0', 'qs', subsdict=subsdict)
         job = client.submit(qasm, target=self.backend, shots=shots, compiler=compiler)
@@ -315,11 +350,6 @@ _BACKEND_CLASSES = {
     'originq': OriginQBackend,
     'quafu': QuafuBackend,
 }
-_PROVIDER_ALIASES = {
-    'origin': 'originq',
-    'pyqpanda3': 'originq',
-    'pyquafu': 'quafu',
-}
 
 
 def run(circuit, provider: str = None, backend: str = None, shots: int = None,
@@ -333,8 +363,7 @@ def run(circuit, provider: str = None, backend: str = None, shots: int = None,
         raise TypeError('run() expects a CircuitIO or QProgramBuilder object.')
 
     args = _cli_options()
-    provider = provider or args.provider
-    provider = _PROVIDER_ALIASES.get(provider.lower(), provider.lower())
+    provider = (provider or args.provider).lower()
     if provider not in _BACKEND_CLASSES:
         supported = ', '.join(_BACKEND_CLASSES)
         raise RunError(f"Unsupported provider '{provider}'. Available providers: {supported}.")
