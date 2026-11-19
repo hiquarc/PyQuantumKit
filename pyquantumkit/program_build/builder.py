@@ -130,6 +130,16 @@ class QProgramBuilder:
         Get the built CircuitIO object.
         """
         return self._built_circuit
+
+    def run(self, provider : str = None, backend : str = None, shots : int = None,
+            api_key : str = None, api_key_file : str = None, subsdict : dict = None,
+            options : dict = None):
+        """Run the built program and interpret its measurement results."""
+        result = self._built_circuit.run(
+            provider, backend, shots, api_key, api_key_file, subsdict, options
+        )
+        result.interpreted = self.interpret_result_dict(result.counts, result.protocol)
+        return result
     
     def _print_qvars(self):
         """
