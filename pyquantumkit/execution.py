@@ -485,6 +485,21 @@ class TianYanBackend(_ProviderBackend):
         counts = self._counts_from_bitstrings(raw, cbits, circuit.get_ncbits(), shots, False)
         return self._result(counts)
 
+    def _map_qcis(self, platform, qcis: str) -> str:
+        if self._is_simulator(self.backend) or self.options.get('transpile') is False:
+            return qcis
+        from cqlib.mapping import transpile_qcis
+        try:
+            mapped, _initial_layout, _swap_mapping, _final_layout = transpile_qcis(
+                qcis,
+                platform,
+                initial_layout=self.options.get('initial_layout'),
+                objective=self.options.get('mapping_objective', 'size'),
+            )
+        except Exception as exc:
+            raise self._guard(f"map backend '{self.backend}'", exc) from exc
+        return mapped.qcis
+
     def _run_cloud(self, circuit: CircuitIO, shots: int, subsdict: dict = None) -> RunResult:
         from cqlib import QuantumLanguage
         platform = self._platform()
@@ -497,9 +512,10 @@ class TianYanBackend(_ProviderBackend):
         self._announce_cloud(qpus, simulators)
         converted = _convert_circuit(circuit, self.framework, subsdict)
         platform.set_machine(self.backend)
+        qcis = self._map_qcis(platform, converted.qcis)
         try:
             query_ids = platform.submit_experiment(
-                circuit=converted.qcis,
+                circuit=qcis,
                 language=QuantumLanguage.QCIS,
                 num_shots=shots,
                 machine_name=self.backend,
