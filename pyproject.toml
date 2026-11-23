@@ -42,6 +42,7 @@ pyqpanda3 = ["pyqpanda3"]
 quafu = ["pyquafu"]
 quafu-sdk = ["quafu-sdk"]
 cqlib = ["cqlib"]
+iqm = ["iqm-client[qiskit]"]
 
 [project.urls]
 Homepage = "https://pyquantumkit.readthedocs.io/"
