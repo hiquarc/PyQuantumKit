@@ -43,6 +43,7 @@ quafu = ["pyquafu"]
 quafu-sdk = ["quafu-sdk"]
 cqlib = ["cqlib"]
 iqm = ["iqm-client[qiskit]"]
+openquantum = ["openquantum-sdk"]
 
 [project.urls]
 Homepage = "https://pyquantumkit.readthedocs.io/"
