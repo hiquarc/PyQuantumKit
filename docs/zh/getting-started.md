@@ -13,11 +13,7 @@ PyQuantumKit要求Python版本>=3.8，且依赖如下Python包：
 - numpy >= 1.22.0
 - packaging >= 20.0
 
-通常，PyQuantumKit需要与受支持的基于Python的量子开发框架（例如qiskit或pyqpanda3等）联合使用。可以在安装PyQuantumKit的同时安装受支持的量子开发框架，例如，使用如下命令在安装PyQuantumKit的同时安装qiskit：
-
-```sh
-pip install "pyquantumkit[qiskit]"
-```
+**PyQuantumKit是一个中间件，专注于代码生成**（到具体的量子开发框架/语言），软件本身独立且不依赖于任何具体的量子开发框架。但**PyQuantumKit可与具体的量子开发框架联合使用，生成在该开发框架上可执行的代码。**
 
 ## GitHub
 
@@ -109,7 +105,7 @@ print(qpanda_result)        # print running results
 
 ![](../imgs/ghz_qpanda.jpg){ style="width: 50%; height: auto;" }
 
-### 6. 在quafu上运行
+### 6. 在pyquafu上运行
 
 ```python
 print(' ### Run on quafu ### ')

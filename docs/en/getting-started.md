@@ -1,42 +1,38 @@
 # Installation and Usage
 ## Installing PyQuantumKit
 
-You can install PyQuantumKit with the `pip install` command:
+Use the `pip install` command to install PyQuantumKit.
 
 ```sh
 pip install pyquantumkit
 ```
 
-PyQuantumKit requires Python >= 3.8 and depends on the following Python packages:
+PyQuantumKit requires Python version >= 3.8 and depends on the following Python packages:
 
 - sympy >= 1.8
 - numpy >= 1.22.0
 - packaging >= 20.0
 
-Usually, PyQuantumKit needs to be used together with a supported Python-based quantum development framework (such as qiskit or pyqpanda3). You can install PyQuantumKit and a supported quantum development framework at the same time; for example, use the following command to install qiskit together with PyQuantumKit:
-
-```sh
-pip install "pyquantumkit[qiskit]"
-```
+**PyQuantumKit is a piece of middleware focused on code generation** (to specific quantum development frameworks/languages). The software itself is independent and does not depend on any specific quantum development framework. However, **PyQuantumKit can be used together with specific quantum development frameworks to generate code executable on those frameworks.**
 
 ## GitHub
 
-PyQuantumKit is open-source software under the MIT license. [Click here](https://github.com/hiquarc/PyQuantumKit) to visit the PyQuantumKit GitHub repository.
+PyQuantumKit is open-source software under the MIT license. [Click here](https://github.com/hiquarc/PyQuantumKit) to access the PyQuantumKit GitHub repository.
 
-Use the `git clone` command to copy the PyQuantumKit repository to your local machine:
+Use the `git clone` command to copy the PyQuantumKit repository locally:
 
 ```sh
 git clone https://github.com/hiquarc/PyQuantumKit.git
 ```
 
 ## Usage Example
-Here we use a simple example to illustrate how to use PyQuantumKit to build quantum circuits in a unified way on different quantum development frameworks.
+Here we use a simple example to illustrate how to use PyQuantumKit to build quantum circuits in a unified way across different quantum development frameworks.
 
-Requirement: construct a quantum circuit that generates a GHZ state, run it 1000 times and obtain the statistical measurement results. Write the code once, and use the three quantum development frameworks qiskit, pyqpanda3 and quafu respectively to build the quantum circuit, printing the constructed quantum circuit and the results of running on the simulator.
+Requirement: construct a quantum circuit that generates a GHZ state, run it 1000 times, and obtain the statistical measurement results. Write the code once, and use the three quantum development frameworks qiskit, pyqpanda3, and quafu to build the quantum circuit respectively, printing the constructed quantum circuit and the results of running it on a simulator.
 
 ### 1. Import the required quantum development packages and PyQuantumKit
 
-**Note:** In Python code, **`import pyquantumkit` must be placed after the imports of the specific quantum development packages**, to ensure that PyQuantumKit can recognize the imported quantum development package modules.
+**Note:** In the Python code, **`import pyquantumkit` must be placed after importing the specific quantum development packages**, to ensure that PyQuantumKit can recognize the imported quantum development package modules.
 
 ```python
 # import quantum development kits.
@@ -49,8 +45,8 @@ import quafu
 import pyquantumkit as PQK
 ```
 
-### 2. Write the circuit using functions provided by PyQuantumKit
-Here two functions, `apply_gate` and `apply_measure`, are used. [Click here](circuit-level/circuit.md) to see the details of the functions.
+### 2. Use the functions provided by PyQuantumKit to write the circuit
+Here we use the `apply_gate` and `apply_measure` functions. [Click here](circuit-level/circuit.md) for details of the functions.
 
 ```python
 def ghz_state(circuit, nqbits : int):
@@ -62,7 +58,7 @@ def ghz_state(circuit, nqbits : int):
 ```
 
 ### 3. Set the running parameters
-Here 5 qubits are used and the number of running shots is 1000:
+Here we use 5 qubits and 1000 running shots:
 
 ```python
 # The number of qubits
@@ -109,7 +105,7 @@ The running result is:
 
 ![](../imgs/ghz_qpanda.jpg){ style="width: 50%; height: auto;" }
 
-### 6. Run on quafu
+### 6. Run on pyquafu
 
 ```python
 print(' ### Run on quafu ### ')

@@ -195,3 +195,5 @@ cython_debug/
 .cursorindexingignore
 
 run.py
+originir.py
+wuyue.py

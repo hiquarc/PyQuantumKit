@@ -1,5 +1,6 @@
 # translate/extra/openqasm2.py
-#    2026/11/4
+#    Create: 2026/11/4
+#    Update: 2026/11/4
 #    Author: Peixun Long
 #    Computing Center, Institute of High Energy Physics, CAS
 
